@@ -133,6 +133,32 @@ def inventory(root: Path = ROOT) -> dict[str, str]:
     return found
 
 
+def print_catalog(root: Path, skills: dict[str, str]) -> None:
+    """List validated skills with the named roles installed for each host.
+
+    Parameters
+    ----------
+    root : Path
+        Toolkit source containing the role metadata validated by ``inventory``.
+    skills : dict of str to str
+        Skill names and descriptions returned by ``inventory``.
+    """
+    print("Package catalog: named roles installed when each skill is selected.\n")
+    for skill, description in skills.items():
+        print(f"{skill}: {description}")
+        for host, groups in AGENTS.items():
+            names = []
+            for filename in groups.get(skill, []):
+                path = root / "agents" / host / filename
+                if host == "codex":
+                    name = tomllib.loads(path.read_text(encoding="utf-8"))["name"]
+                else:
+                    name, _ = skill_metadata(path)
+                names.append(name)
+            print(f"  {host.title()} roles: {', '.join(names) or 'none (skill only)'}")
+        print()
+
+
 def locations(home: Path, codex_home: Path) -> dict[str, Path]:
     """Return host directories without reading or changing host configuration."""
     return {
@@ -466,7 +492,7 @@ def main(argv: list[str] | None = None) -> int:
     """Run the command-line interface and return a process exit status."""
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("list", help="List the included skills.")
+    commands.add_parser("list", help="List packaged skills and associated named agent roles.")
     commands.add_parser("check", help="Validate package sources without installing.")
     apply = commands.add_parser("install", help="Link selected skills into an agent host.")
     apply.add_argument("--target", choices=tuple(AGENTS), required=True)
@@ -489,10 +515,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "restore":
             restore(args.receipt.expanduser().absolute(), dry_run=args.dry_run)
         else:
-            skills = inventory()
+            skills = inventory(ROOT)
             if args.command == "list":
-                for name, description in skills.items():
-                    print(f"{name}: {description}")
+                print_catalog(ROOT, skills)
             elif args.command == "check":
                 counts = {
                     host: len({name for names in groups.values() for name in names})

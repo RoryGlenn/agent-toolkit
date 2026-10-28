@@ -1,26 +1,85 @@
 # Agent Toolkit
 
-Rory's reusable agents and skills, maintained in one repository. Install the skills you need for a project, then improve their shared instructions as you use them. Projects still supply their own architecture, audience, commands, terminology, and conventions.
+Rory's reusable skills and named agent roles, maintained in one repository. Choose a skill
+for the work you want to do; the installer also supplies any roles associated with that
+skill. Projects still supply their own architecture, audience, commands, terminology,
+and conventions.
 
-The installer requires Python 3.11 or newer on macOS or Linux. It uses the standard library and creates links to this checkout; keep the checkout in a stable location. No service, credentials, or runtime dependencies are needed to install it.
+## Skills, roles, and specialists
+
+| Term | Meaning in this project |
+| --- | --- |
+| **Skill** | Reusable instructions, references, and optional tools that the current agent can load. Its entrypoint is `skills/<name>/SKILL.md`. |
+| **Named agent role** | A host-specific definition of an agent's job. In Codex, a parent can delegate to a separate worker with that role. Role files live in `agents/<host>/`; installing one does not start a permanent worker or service. |
+| **Specialist** | A description of expertise, not a third file type. The three book-based specialists below each combine a skill with a dedicated Codex role. |
+| **Workflow skill** | A skill that coordinates a process. It may use shared engineering roles; it does not necessarily have a dedicated agent. |
+
+For example, these Codex prompts use the same guidance in different ways:
+
+- **Use the current agent:** “Use `$software-design-specialist` to review this API.”
+- **Delegate to another worker:** “Ask `software_design_specialist` to review this API.”
+
+The first loads the skill into the current agent's work. The second asks for a worker using
+the named role, which loads that skill. Use the exact identifiers in the catalog below;
+skill names and role names are distinct. If a host cannot dispatch a named role, follow
+the skill's documented fallback rather than claiming a separate specialist ran.
 
 ## Included skills
 
-| Skill | Use it for |
-| --- | --- |
-| [doc-agent](skills/doc-agent/SKILL.md) | Documentation grounded in *Docs for Developers*: writing, review, maintenance, examples, and reader task success. |
-| [ddia-specialist](skills/ddia-specialist/SKILL.md) | Data architecture, transaction/concurrency correctness, replication, messaging, and recovery grounded in a personal DDIA Second Edition EPUB. |
-| [software-design-specialist](skills/software-design-specialist/SKILL.md) | Module boundaries, API contracts, information hiding, and maintenance complexity grounded in a personal copy of *A Philosophy of Software Design*, Second Edition. |
-| [book-to-agent](skills/book-to-agent/SKILL.md) | Turn a supplied book into a source-grounded specialist, with substantive study, scoped instructions, and verified behavior. |
-| [independent-diff-review](skills/independent-diff-review/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. |
-| [issue-to-tested-pr](skills/issue-to-tested-pr/SKILL.md) | One-writer implementation followed by independent review and verification. |
-| [release-and-docs](skills/release-and-docs/SKILL.md) | Package, installation, upgrade, and release-documentation verification. |
-| [simplify-or-delete](skills/simplify-or-delete/SKILL.md) | Evidence-based proposals to reduce unnecessary complexity. |
-| [recruiter-followup](skills/recruiter-followup/SKILL.md) | Recruiter triage, response audits, and requested replies. |
+The role columns show **roles installed with the selected skill**, not the state of your
+current installation. **None** means the installer supplies the skill without a named role
+for that host. `python3 install.py list` reads these associations from `install.py` and the
+actual role names from their definitions.
 
-Codex has six agent definitions: `doc_agent`, `ddia_specialist`, `software_design_specialist`, `implementation_owner`, `adversarial_reviewer`, and `verifier`. Copilot has the existing Doc Agent definition. Skills carry reusable procedures; agent definitions configure the specialist that uses them.
+### Book-based specialists
+
+| Skill | Use it for | Codex roles installed | Copilot roles installed |
+| --- | --- | --- | --- |
+| [doc-agent](skills/doc-agent/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [doc_agent](agents/codex/doc-agent.toml) | [Doc Agent](agents/copilot/doc-agent.agent.md) |
+| [ddia-specialist](skills/ddia-specialist/SKILL.md) | Data architecture, transactions, replication, and recovery, using DDIA Second Edition. | [ddia_specialist](agents/codex/ddia-specialist.toml) | None |
+| [software-design-specialist](skills/software-design-specialist/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_specialist](agents/codex/software-design-specialist.toml) | None |
+
+### Workflow and task skills
+
+| Skill | Use it for | Codex roles installed | Copilot roles installed |
+| --- | --- | --- | --- |
+| [book-to-agent](skills/book-to-agent/SKILL.md) | Study a book and build a grounded specialist skill or agent. The workflow itself has no factory role. | None | None |
+| [independent-diff-review](skills/independent-diff-review/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. | [adversarial_reviewer](agents/codex/adversarial-reviewer.toml), [verifier](agents/codex/verifier.toml) | None |
+| [issue-to-tested-pr](skills/issue-to-tested-pr/SKILL.md) | Implementation by one writer, followed by independent review and verification. | [implementation_owner](agents/codex/implementation-owner.toml), [adversarial_reviewer](agents/codex/adversarial-reviewer.toml), [verifier](agents/codex/verifier.toml) | None |
+| [release-and-docs](skills/release-and-docs/SKILL.md) | Package, installation, upgrade, and release-documentation verification. | None | None |
+| [simplify-or-delete](skills/simplify-or-delete/SKILL.md) | Proposals to reduce unnecessary complexity. | None | None |
+| [recruiter-followup](skills/recruiter-followup/SKILL.md) | Recruiter triage, response audits, and requested replies. | None | None |
+
+The writer, reviewer, and verifier are shared engineering roles. Selecting both engineering
+workflows installs their shared roles once. On hosts without named custom roles, those
+workflows use separate generic agents when delegation is available and disclose when
+independent evidence cannot be obtained.
+
+## Repository map
+
+```text
+skills/<skill-name>/
+  SKILL.md                 Reusable instructions and invocation boundary
+  agents/openai.yaml       Optional skill display metadata, not a named role
+  references/, scripts/    Supporting material or tools, when needed
+agents/
+  codex/*.toml             Named Codex role definitions
+  copilot/*.agent.md       Named Copilot agent definitions
+books/                     Included source books; not skills or agent roles
+install.py                 Skill discovery, role associations, installation, restore
+tests/                     Package, retrieval, and installer behavior checks
+```
+
+Detailed personal studies and some source books live in `~/.local/share/<specialist>/`,
+outside this checkout; see the specialist setup sections below. The top-level `agents/`
+directory contains roles. A skill's optional `agents/openai.yaml` describes how that skill
+appears in the host and does not create a separate worker.
 
 ## Install
+
+The installer requires Python 3.11 or newer on macOS or Linux. It uses the standard library
+and creates links to this checkout; keep the checkout in a stable location. No service,
+credentials, or runtime dependencies are needed to install it.
 
 Run these commands from the repository root:
 
@@ -40,7 +99,10 @@ python3 install.py install --target codex --all
 python3 install.py install --target copilot --skill doc-agent
 ```
 
-Selecting `doc-agent` also installs its host's agent definition. Selecting `ddia-specialist` installs the `ddia_specialist` Codex role; selecting `software-design-specialist` installs `software_design_specialist`. For Codex, `independent-diff-review` installs the reviewer and verifier roles; `issue-to-tested-pr` installs those roles plus the implementation owner. Shared roles are installed once when selecting both skills. The remaining skills need no separate agent definition. On hosts without named custom roles, the review workflows use separate generic agents when delegation is available and disclose when independent evidence cannot be obtained.
+Select skills with `--skill`; their associated roles are included automatically, as shown
+in the catalog above. You do not need to install each role separately. For example,
+selecting `book-to-agent` installs only that workflow skill, while selecting `ddia-specialist`
+for Codex installs its skill and the `ddia_specialist` role.
 
 | Target | Skills | Agent definitions |
 | --- | --- | --- |

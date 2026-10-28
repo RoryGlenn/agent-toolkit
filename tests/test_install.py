@@ -61,6 +61,93 @@ class InstallerTests(unittest.TestCase):
             dry_run=dry_run,
         )
 
+    def list_catalog(self) -> str:
+        """Run the list command against the disposable package and host."""
+        output = io.StringIO()
+        with (
+            patch.object(install, "ROOT", self.root),
+            patch.object(Path, "home", return_value=self.home),
+            contextlib.redirect_stdout(output),
+        ):
+            self.assertEqual(install.main(["list"]), 0)
+        return output.getvalue()
+
+    def test_list_shows_skill_only_and_shared_role_associations(self) -> None:
+        """The catalog distinguishes no role, specialist roles, and shared workflow roles."""
+        output = self.list_catalog()
+        lines = output.splitlines()
+        skills = install.inventory(self.root)
+        entries = {
+            name: lines[index + 1 : index + 3]
+            for index, line in enumerate(lines)
+            for name in skills
+            if line.startswith(f"{name}: ")
+        }
+        self.assertEqual(set(entries), set(skills))
+        self.assertEqual(
+            entries["book-to-agent"],
+            ["  Codex roles: none (skill only)", "  Copilot roles: none (skill only)"],
+        )
+        self.assertEqual(
+            entries["ddia-specialist"],
+            ["  Codex roles: ddia_specialist", "  Copilot roles: none (skill only)"],
+        )
+        self.assertEqual(
+            entries["doc-agent"],
+            ["  Codex roles: doc_agent", "  Copilot roles: Doc Agent"],
+        )
+        self.assertEqual(
+            entries["independent-diff-review"],
+            [
+                "  Codex roles: adversarial_reviewer, verifier",
+                "  Copilot roles: none (skill only)",
+            ],
+        )
+        self.assertEqual(
+            entries["issue-to-tested-pr"],
+            [
+                "  Codex roles: adversarial_reviewer, implementation_owner, verifier",
+                "  Copilot roles: none (skill only)",
+            ],
+        )
+
+    def test_list_uses_role_metadata_instead_of_filenames(self) -> None:
+        """Displayed role names come from host metadata, including names with spaces."""
+        codex_role = self.root / "agents/codex/doc-agent.toml"
+        codex_role.write_text(
+            codex_role.read_text().replace('name = "doc_agent"', 'name = "docs_consultant"')
+        )
+        copilot_role = self.root / "agents/copilot/doc-agent.agent.md"
+        copilot_role.write_text(
+            copilot_role.read_text().replace("name: Doc Agent", 'name: "Documentation Guide"')
+        )
+        output = self.list_catalog()
+        self.assertIn("  Codex roles: docs_consultant\n", output)
+        self.assertIn("  Copilot roles: Documentation Guide\n", output)
+        self.assertNotIn("  Codex roles: doc_agent\n", output)
+        self.assertNotIn("  Copilot roles: Doc Agent\n", output)
+
+    def test_list_does_not_change_package_or_host(self) -> None:
+        """Listing available capabilities preserves package files and existing host state."""
+        marker = self.codex / "agents/unrelated.toml"
+        marker.parent.mkdir(parents=True)
+        marker.write_text("unrelated host state")
+
+        def snapshot() -> dict[Path, tuple[int, int, bytes | None]]:
+            """Capture directory entries and file contents without access-time metadata."""
+            return {
+                path.relative_to(self.base): (
+                    path.stat().st_ino,
+                    path.stat().st_mtime_ns,
+                    path.read_bytes() if path.is_file() else None,
+                )
+                for path in self.base.rglob("*")
+            }
+
+        before = snapshot()
+        self.list_catalog()
+        self.assertEqual(snapshot(), before)
+
     def test_selected_install_links_canonical_skill_and_agent(self) -> None:
         """A selected docs install exposes the complete skill and its wrapper."""
         receipt = self.apply()
