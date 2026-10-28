@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Design Specialist"
+  short_description: "Improve module boundaries and maintenance complexity"
+  default_prompt: "Use $software-design-specialist to assess the module boundaries and API contracts in this change."

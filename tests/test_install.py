@@ -78,14 +78,45 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((skill / "local-example.md").read_text(), "new content")
 
     def test_all_skills_and_associated_agents_for_both_hosts(self) -> None:
-        """Each host receives all seven skills and only its supported wrappers."""
+        """Each host receives all nine skills and only its supported wrappers."""
         skills = list(install.inventory(self.root))
         self.apply(skills)
         self.apply(skills, target="copilot")
-        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 7)
-        self.assertEqual(len(list((self.codex / "agents").iterdir())), 5)
-        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 7)
+        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 9)
+        self.assertEqual(len(list((self.codex / "agents").iterdir())), 6)
+        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 9)
         self.assertEqual(len(list((self.home / ".copilot/agents").iterdir())), 1)
+
+    def test_book_workflow_install_preserves_roles_and_restores_independently(self) -> None:
+        """The coordinating skill installs alone without changing existing specialists."""
+        self.apply(["ddia-specialist", "software-design-specialist"])
+        roles = {
+            path.name: (path.stat().st_ino, path.read_bytes())
+            for path in (self.codex / "agents").iterdir()
+        }
+        receipt = self.apply(["book-to-agent"])
+        assert receipt is not None
+        skill = self.home / ".agents/skills/book-to-agent"
+        self.assertEqual(skill.resolve(), self.root / "skills/book-to-agent")
+        self.assertIsNone(self.apply(["book-to-agent"]))
+        self.assertEqual(
+            {
+                path.name: (path.stat().st_ino, path.read_bytes())
+                for path in (self.codex / "agents").iterdir()
+            },
+            roles,
+        )
+        install.restore(receipt)
+        self.assertFalse(install.present(skill))
+        self.assertTrue((self.home / ".agents/skills/ddia-specialist").is_symlink())
+        self.assertTrue((self.home / ".agents/skills/software-design-specialist").is_symlink())
+        self.assertEqual(
+            {
+                path.name: (path.stat().st_ino, path.read_bytes())
+                for path in (self.codex / "agents").iterdir()
+            },
+            roles,
+        )
 
     def test_legacy_role_symlink_migration_is_selected_and_reversible(self) -> None:
         """Selected roles become regular files; old receipts and symlink backups still restore."""

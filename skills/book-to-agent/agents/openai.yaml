@@ -1,0 +1,4 @@
+interface:
+  display_name: "Book to Agent"
+  short_description: "Turn books into source-grounded specialist agents"
+  default_prompt: "Use $book-to-agent to turn this book into a useful specialist for my workflow, following my existing agent setup."

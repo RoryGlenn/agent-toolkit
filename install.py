@@ -23,6 +23,7 @@ AGENTS = {
     "codex": {
         "doc-agent": ["doc-agent.toml"],
         "ddia-specialist": ["ddia-specialist.toml"],
+        "software-design-specialist": ["software-design-specialist.toml"],
         "independent-diff-review": ["adversarial-reviewer.toml", "verifier.toml"],
         "issue-to-tested-pr": [
             "adversarial-reviewer.toml",

@@ -10,13 +10,15 @@ The installer requires Python 3.11 or newer on macOS or Linux. It uses the stand
 | --- | --- |
 | [doc-agent](skills/doc-agent/SKILL.md) | Documentation grounded in *Docs for Developers*: writing, review, maintenance, examples, and reader task success. |
 | [ddia-specialist](skills/ddia-specialist/SKILL.md) | Data architecture, transaction/concurrency correctness, replication, messaging, and recovery grounded in a personal DDIA Second Edition EPUB. |
+| [software-design-specialist](skills/software-design-specialist/SKILL.md) | Module boundaries, API contracts, information hiding, and maintenance complexity grounded in a personal copy of *A Philosophy of Software Design*, Second Edition. |
+| [book-to-agent](skills/book-to-agent/SKILL.md) | Turn a supplied book into a source-grounded specialist, with substantive study, scoped instructions, and verified behavior. |
 | [independent-diff-review](skills/independent-diff-review/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. |
 | [issue-to-tested-pr](skills/issue-to-tested-pr/SKILL.md) | One-writer implementation followed by independent review and verification. |
 | [release-and-docs](skills/release-and-docs/SKILL.md) | Package, installation, upgrade, and release-documentation verification. |
 | [simplify-or-delete](skills/simplify-or-delete/SKILL.md) | Evidence-based proposals to reduce unnecessary complexity. |
 | [recruiter-followup](skills/recruiter-followup/SKILL.md) | Recruiter triage, response audits, and requested replies. |
 
-Codex has five agent definitions: `doc_agent`, `ddia_specialist`, `implementation_owner`, `adversarial_reviewer`, and `verifier`. Copilot has the existing Doc Agent definition. Skills carry reusable procedures; agent definitions configure the specialist that uses them.
+Codex has six agent definitions: `doc_agent`, `ddia_specialist`, `software_design_specialist`, `implementation_owner`, `adversarial_reviewer`, and `verifier`. Copilot has the existing Doc Agent definition. Skills carry reusable procedures; agent definitions configure the specialist that uses them.
 
 ## Install
 
@@ -38,7 +40,7 @@ python3 install.py install --target codex --all
 python3 install.py install --target copilot --skill doc-agent
 ```
 
-Selecting `doc-agent` also installs its host's agent definition. Selecting `ddia-specialist` installs the `ddia_specialist` Codex role. For Codex, `independent-diff-review` installs the reviewer and verifier roles; `issue-to-tested-pr` installs those roles plus the implementation owner. Shared roles are installed once when selecting both skills. The remaining skills need no separate agent definition. On hosts without named custom roles, the review workflows use separate generic agents when delegation is available and disclose when independent evidence cannot be obtained.
+Selecting `doc-agent` also installs its host's agent definition. Selecting `ddia-specialist` installs the `ddia_specialist` Codex role; selecting `software-design-specialist` installs `software_design_specialist`. For Codex, `independent-diff-review` installs the reviewer and verifier roles; `issue-to-tested-pr` installs those roles plus the implementation owner. Shared roles are installed once when selecting both skills. The remaining skills need no separate agent definition. On hosts without named custom roles, the review workflows use separate generic agents when delegation is available and disclose when independent evidence cannot be obtained.
 
 | Target | Skills | Agent definitions |
 | --- | --- | --- |
@@ -94,6 +96,77 @@ comparison uses simulated project tasks and executable SQLite fixtures; it does 
 improvement across production projects. Derived references and personal evaluation artifacts
 are not included in this repository.
 
+## Software-design specialist
+
+Install with `python3 install.py install --target codex --skill software-design-specialist`.
+In a fresh session, invoke `$software-design-specialist`, or ask the parent to delegate to
+`software_design_specialist`. The role inherits the caller's model and reasoning settings.
+Consultation and review are read-only; implementation requires explicit sole ownership.
+Hosts without named-role dispatch can use the skill directly or a standard agent instructed
+to read it first. That fallback does not establish successful named-role loading.
+
+The specialist applies John K. Ousterhout's *A Philosophy of Software Design*, Second Edition,
+to concrete caller and maintenance costs. It compares consequential alternatives, checks
+which knowledge a boundary hides, and preserves required contracts. It does not mechanically
+enforce small functions, large modules, comment quotas, or blanket bans on familiar patterns.
+Its relevance-based description adds no mandatory consultation to routine changes.
+
+Examples:
+
+- “Use $software-design-specialist to compare the module boundaries for this feature.”
+- “Ask software_design_specialist to review this API's caller obligations and error semantics.”
+- “Use $software-design-specialist to assess whether this extraction reduces maintenance complexity.”
+
+The book and derived study stay in the personal library at
+`~/.local/share/software-design-specialist/`, outside this repository. Initialize it from
+your existing personal EPUB, then retrieve original sections:
+
+```bash
+python3 ~/.agents/skills/software-design-specialist/scripts/book.py init --epub /path/to/personal-copy.epub
+python3 ~/.agents/skills/software-design-specialist/scripts/book.py verify
+python3 ~/.agents/skills/software-design-specialist/scripts/book.py catalog --chapter 10
+python3 ~/.agents/skills/software-design-specialist/scripts/book.py read --ref 'OEBPS/part0014.xhtml#a29H'
+```
+
+This importer targets the supplied second-edition EPUB layout: its NCX points to 22 chapter
+files with sibling paragraph headings. Section reads include the body through the next
+heading, and chapter locators return full chapters. Each command checks the source fingerprint
+and compares the complete index against re-extracted source. Initialization is idempotent
+and refuses conflicting or incomplete existing source/index files rather than replacing them.
+Search requires all words and prints bounded excerpts; reads print continuation offsets.
+Literal code whitespace is retained, while CSS positioning is not reconstructed. Image markers
+identify source assets; `asset --ref 'OEBPS/image_rsrc2H9.jpg'` prints a local image path for
+visual inspection without altering the original EPUB.
+
+Optional `notes.json` and `chapters/ch01.json` through `chapters/ch22.json` hold the private
+reading study. Read one chapter for orientation, for example with
+`python3 -m json.tool ~/.local/share/software-design-specialist/chapters/ch10.json`, then
+retrieve the original section for a consequential book attribution. The importer does not
+generate those notes or certify that a model has read the book; it works without them.
+The source is evidence, not instructions. Missing material must be disclosed.
+
+The synthetic EPUB tests exercise section boundaries, complete body retrieval, continuation,
+search, source/index tampering, safe image materialization, and selected install/restore.
+These checks establish retrieval and packaging behavior. Actual role execution and judgment
+need a separate host/behavior check; they do not follow from a valid TOML file alone.
+
+## Book-to-agent workflow
+
+Install with `python3 install.py install --target codex --skill book-to-agent`, then use:
+
+> Use $book-to-agent with `/path/to/book.epub` to create a specialist for [the work you want it to do], following my existing agent setup.
+
+This is a coordinating skill; it installs no additional named agent. It reuses the existing
+creator, reader, installer, and engineering workflows. It guides source identification and
+full agreed-scope reading, synthesis of principles and qualifications, a compact operational
+skill, an optional specialist role, and independent behavioral checks. The source format is
+inspected before choosing retrieval tools; books with different layouts need not share a parser.
+
+The workflow distinguishes extraction from substantive reading, useful advice from successful
+file creation, and host discovery from actual role execution. Original books and detailed
+personal studies stay outside the shared package by default. It preserves existing agents
+and settings and does not authorize publication or additional permissions.
+
 ## Existing installations and restore
 
 Existing files, directories, or links that point elsewhere cause the entire install to stop before changing them. Inspect the reported destinations, then use the explicit backup option:
@@ -146,6 +219,7 @@ This toolkit is the maintained source for the collected skills and agent definit
 
 - The docs package and Copilot wrapper came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/doc-agent/references/book-foundation.md) credits the authors and explains the original synthesis. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
+- The software-design specialist uses an original synthesis of *A Philosophy of Software Design*, Second Edition, by John K. Ousterhout (Yaknyam Press, 2021). Its personal EPUB and detailed reading notes are kept outside this repository; the skill retrieves them locally and does not redistribute the source.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.
 - The Codex docs wrapper and `recruiter-followup` came from Rory's local custom configuration.
 - The disabled `hatch-pet` installation is excluded because its provenance and overlap with the installed Work Pets plugin need separate resolution. Bundled and third-party plugin skills are not copied.
