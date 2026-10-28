@@ -68,13 +68,13 @@ Examples:
 - “Ask ddia_specialist to review the transaction boundaries in this diff for reachable races.”
 - “Use $ddia-specialist to trace commit, retry, acknowledgment, and replay behavior in this consumer.”
 
-The source EPUB, extracted index, chapter syntheses, and validation evidence stay outside
-this repository at `~/.local/share/ddia-specialist/`. The installed skill links to this
-personal reference library; another machine needs its own authorized source. To initialize
-source retrieval on that machine:
+The [DDIA Second Edition EPUB](books/designing-data-intensive-applications-2nd-edition.epub)
+is included under `books/`. The extracted index, chapter syntheses, and validation evidence
+remain in the personal reference library at `~/.local/share/ddia-specialist/`.
+To initialize source retrieval from the repository root:
 
 ```bash
-python3 ~/.agents/skills/ddia-specialist/scripts/book.py init --epub /path/to/book.epub
+python3 ~/.agents/skills/ddia-specialist/scripts/book.py init --epub books/designing-data-intensive-applications-2nd-edition.epub
 python3 ~/.agents/skills/ddia-specialist/scripts/book.py verify
 python3 ~/.agents/skills/ddia-specialist/scripts/book.py search 'write skew' --chapter 8
 python3 ~/.agents/skills/ddia-specialist/scripts/book.py read --ref 'OEBPS/ch08.html#sec_transactions_write_skew'
@@ -92,7 +92,8 @@ original diagram assets when their visual content affects a decision.
 Personal validation evidence is at `~/.local/share/ddia-specialist/evaluation/`.
 Unit tests validate retrieval/integrity and reversible installation. The separate behavioral
 comparison uses simulated project tasks and executable SQLite fixtures; it does not establish
-improvement across production projects. The book and derived references are not published.
+improvement across production projects. Derived references and personal evaluation artifacts
+are not included in this repository.
 
 ## Existing installations and restore
 
@@ -145,6 +146,7 @@ The tests cover selected and full installs, both host layouts, conflicts, dry ru
 This toolkit is the maintained source for the collected skills and agent definitions. Original repositories and installations are retained until deliberately migrated; no source repository, published history, or old installer manifest is changed by this package.
 
 - The docs package and Copilot wrapper came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/doc-agent/references/book-foundation.md) credits the authors and explains the original synthesis. The book itself is not included.
+- *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.
 - The Codex docs wrapper, `career-positioning`, and `recruiter-followup` came from Rory's local custom configuration. Personal preferences are intentional; other users should adapt them.
 - The disabled `hatch-pet` installation is excluded because its provenance and overlap with the installed Work Pets plugin need separate resolution. Bundled and third-party plugin skills are not copied.
