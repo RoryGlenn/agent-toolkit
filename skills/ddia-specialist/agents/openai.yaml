@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Engineering Specialist"
+  short_description: "Data architecture and correctness grounded in DDIA"
+  default_prompt: "Use $ddia-specialist to assess the data guarantees and simplest sufficient design for this task."

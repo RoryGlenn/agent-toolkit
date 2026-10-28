@@ -1,0 +1,16 @@
+{
+  "name": "doc-agent-optional-checks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Optional Markdown and documentation-site checks for Doc Agent",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "lint:markdown": "markdownlint-cli2",
+    "test:site": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "markdownlint-cli2": "0.23.3"
+  }
+}

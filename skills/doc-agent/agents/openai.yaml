@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doc Agent"
+  short_description: "Documentation that builds understanding and confidence"
+  default_prompt: "Use $doc-agent to improve this documentation for its intended reader, preserving accurate behavior and including only the detail they need to succeed."

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Career Positioning"
+  short_description: "Align career profiles with goals and verified work"
+  default_prompt: "Use $career-positioning to improve my LinkedIn profile while preserving my full-stack positioning and showing supported AI experience."
+policy:
+  allow_implicit_invocation: true

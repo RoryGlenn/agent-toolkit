@@ -1,0 +1,5 @@
+include_fragments = "anchor-only"
+max_retries = 1
+timeout = 15
+max_concurrency = 8
+no_progress = true
