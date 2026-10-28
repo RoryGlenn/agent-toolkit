@@ -73,18 +73,18 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(role.samefile(self.root / "agents/codex/doc-agent.toml"))
         with os.fdopen(os.open(role, os.O_RDONLY | os.O_NOFOLLOW)) as handle:
             self.assertIn('name = "doc_agent"', handle.read())
-        self.assertFalse((self.home / ".agents/skills/career-positioning").exists())
+        self.assertFalse((self.home / ".agents/skills/recruiter-followup").exists())
         (self.root / "skills/doc-agent/local-example.md").write_text("new content")
         self.assertEqual((skill / "local-example.md").read_text(), "new content")
 
     def test_all_skills_and_associated_agents_for_both_hosts(self) -> None:
-        """Each host receives all eight skills and only its supported wrappers."""
+        """Each host receives all seven skills and only its supported wrappers."""
         skills = list(install.inventory(self.root))
         self.apply(skills)
         self.apply(skills, target="copilot")
-        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 8)
+        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 7)
         self.assertEqual(len(list((self.codex / "agents").iterdir())), 5)
-        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 8)
+        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 7)
         self.assertEqual(len(list((self.home / ".copilot/agents").iterdir())), 1)
 
     def test_legacy_role_symlink_migration_is_selected_and_reversible(self) -> None:

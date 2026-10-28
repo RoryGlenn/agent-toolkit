@@ -14,7 +14,6 @@ The installer requires Python 3.11 or newer on macOS or Linux. It uses the stand
 | [issue-to-tested-pr](skills/issue-to-tested-pr/SKILL.md) | One-writer implementation followed by independent review and verification. |
 | [release-and-docs](skills/release-and-docs/SKILL.md) | Package, installation, upgrade, and release-documentation verification. |
 | [simplify-or-delete](skills/simplify-or-delete/SKILL.md) | Evidence-based proposals to reduce unnecessary complexity. |
-| [career-positioning](skills/career-positioning/SKILL.md) | Evidence-backed profile, resume, and portfolio improvements; includes Rory's positioning preferences. |
 | [recruiter-followup](skills/recruiter-followup/SKILL.md) | Recruiter triage, response audits, and requested replies. |
 
 Codex has five agent definitions: `doc_agent`, `ddia_specialist`, `implementation_owner`, `adversarial_reviewer`, and `verifier`. Copilot has the existing Doc Agent definition. Skills carry reusable procedures; agent definitions configure the specialist that uses them.
@@ -148,7 +147,7 @@ This toolkit is the maintained source for the collected skills and agent definit
 - The docs package and Copilot wrapper came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/doc-agent/references/book-foundation.md) credits the authors and explains the original synthesis. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.
-- The Codex docs wrapper, `career-positioning`, and `recruiter-followup` came from Rory's local custom configuration. Personal preferences are intentional; other users should adapt them.
+- The Codex docs wrapper and `recruiter-followup` came from Rory's local custom configuration.
 - The disabled `hatch-pet` installation is excluded because its provenance and overlap with the installed Work Pets plugin need separate resolution. Bundled and third-party plugin skills are not copied.
 
 This repository has no redistribution license assigned. Review provenance and choose licensing before publishing it for others.
