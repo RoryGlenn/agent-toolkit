@@ -1,6 +1,6 @@
 # Foundation and design intent
 
-This skill is an original operational synthesis of *Docs for Developers: An Engineer's Field Guide to Technical Writing*, second edition (Apress, 2026), by Jared Bhatti, Sarah Corleissen, Jen Lambourne, David Nunez, and Heidi Waterhouse. E-ISBN: 979-8-8688-2509-5. It was developed from a full reading of the user-provided EPUB, including all eleven chapters, three appendices, code, tables, and substantive figures. The copyrighted book itself is not bundled or needed at runtime.
+This skill is an original operational synthesis of *Docs for Developers: An Engineer's Field Guide to Technical Writing*, second edition (Apress, 2026), by Jared Bhatti, Sarah Corleissen, Jen Lambourne, David Nunez, and Heidi Waterhouse. E-ISBN: 979-8-8688-2509-5. It was developed from a full reading of the user-provided EPUB, including all eleven chapters, three appendices, code, tables, and substantive figures. The [source EPUB](../../../books/docs-for-developers-2nd-edition.epub) is included in the repository for reference; it is not required at runtime. The book retains its original copyright notices.
 
 ## Intentions and their roots
 
