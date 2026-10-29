@@ -17,7 +17,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from benchmarks.files import read_regular
-from benchmarks.large_projects.adapters import commands, manifest
+from benchmarks.large_projects.adapters import Command, commands, manifest
 from benchmarks.large_projects.artifacts import (
     apply_delta,
     fingerprint,
@@ -28,6 +28,7 @@ from benchmarks.large_projects.artifacts import (
 from benchmarks.large_projects.deadline import progress, supervise
 from benchmarks.large_projects.export import export_parent
 from benchmarks.large_projects.finalize import collector_control, finalize
+from benchmarks.large_projects.grading import candidate_compile_failure
 from benchmarks.large_projects.prepare import CATALOG, git
 from benchmarks.large_projects.resources import (
     Deadline,
@@ -44,6 +45,43 @@ from benchmarks.large_projects.runner import (
     verify_preparation,
     write_json,
 )
+from benchmarks.process import bounded_process, sanitized_environment
+
+CHROMIUM_VERSION = "154.0.8037.57"
+CHROMIUM_EXECUTABLE = Path("/usr/lib/chromium/chromium")
+
+
+def browser_identity(executable: Path) -> dict[str, Any]:
+    """Explicitly qualify the existing Linux browser; never impersonate a downloaded build."""
+    if executable.resolve(strict=True) != CHROMIUM_EXECUTABLE:
+        raise ValueError("supported preinstalled Chromium executable is /usr/lib/chromium/chromium")
+    version = require(
+        bounded_process(
+            [str(executable), "--version"],
+            Path("/tmp"),
+            sanitized_environment(Path("/var/empty"), Path("/tmp")),
+            timeout=10,
+        )
+    ).stdout.strip()
+    if version.split()[:2] != ["Chromium", CHROMIUM_VERSION]:
+        raise ValueError(f"preinstalled Chromium {CHROMIUM_VERSION} is required")
+    return {
+        "mode": "preinstalled",
+        "executable": str(CHROMIUM_EXECUTABLE),
+        "version": version,
+        "runtime_fingerprint": fingerprint(tree_hashes(CHROMIUM_EXECUTABLE.parent)),
+    }
+
+
+def dependency_paths(case_id: str, browser: dict[str, Any] | None) -> tuple[str, ...]:
+    """Browser mode is explicit and forms part of dependency/plan provenance."""
+    paths = DEPENDENCIES.get(case_id, ())
+    if browser is not None:
+        if case_id != "vscode-snippet-selections" or browser.get("mode") != "preinstalled":
+            raise ValueError("unsupported explicit browser mode")
+        return tuple(path for path in paths if path != "cache/playwright")
+    return paths
+
 
 DEPENDENCIES = {
     "otel-queue-cancellation": ("cache/go-mod",),
@@ -141,12 +179,15 @@ def unpack_trusted(archive: Path, destination: Path, expected_root: str) -> None
 
 def verify_bundle(case: dict[str, Any], bundle: Path | None) -> dict[str, Any]:
     """Only source/dependency caches whose complete inventory matches may cross the boundary."""
-    paths = DEPENDENCIES.get(case["id"], ())
-    if not paths:
+    if case["id"] not in DEPENDENCIES:
         return {"required": False}
     if bundle is None:
         raise ValueError("this case requires a separately prefetched dependency bundle")
     receipt = json.loads(read_regular(bundle / "dependencies.json"))
+    browser = receipt.get("browser")
+    paths = dependency_paths(case["id"], browser)
+    if browser is not None and browser != browser_identity(Path(browser["executable"])):
+        raise ValueError("preinstalled browser changed since dependency qualification")
     if receipt.get("case_id") != case["id"] or receipt.get("parent") != case["parent"]:
         raise ValueError("dependency bundle belongs to another source pin")
     if receipt.get("status") != "prefetched" or set(receipt.get("paths", [])) != set(paths):
@@ -159,24 +200,41 @@ def verify_bundle(case: dict[str, Any], bundle: Path | None) -> dict[str, Any]:
         not any(name == path or name.startswith(path + "/") for path in paths) for name in actual
     ):
         raise ValueError("dependency bundle contains undeclared inputs")
-    return {
+    identity = {
         "required": True,
         "receipt_sha256": sha(bundle / "dependencies.json"),
         "input_fingerprint": fingerprint(actual),
     }
+    if browser is not None:
+        identity["browser"] = browser
+    return identity
 
 
 def seed_bundle(case: dict[str, Any], bundle: Path | None, stage: Path) -> dict[str, Any]:
     """Copy only declared verified dependency inputs; compilation always starts cold."""
     receipt = verify_bundle(case, bundle)
     if bundle is not None and receipt["required"]:
-        for relative in DEPENDENCIES[case["id"]]:
+        staged = {}
+        for relative in dependency_paths(case["id"], receipt.get("browser")):
             shutil.copytree(bundle / "inputs" / relative, stage / relative, symlinks=True)
+            staged.update(
+                {
+                    relative + "/" + name: value
+                    for name, value in tree_hashes(stage / relative).items()
+                }
+            )
+        if fingerprint(staged) != receipt["input_fingerprint"]:
+            raise ValueError("dependency inputs changed while staging")
     return receipt
 
 
 def prefetch(
-    case: dict[str, Any], curator: Path, output: Path, toolchains: list[Path], seconds: int = 1800
+    case: dict[str, Any],
+    curator: Path,
+    output: Path,
+    toolchains: list[Path],
+    seconds: int = 1800,
+    chromium: Path | None = None,
 ) -> dict[str, Any]:
     """Fetch dependencies from the untouched parent in a separate bounded network phase."""
     limits = Limits(seconds=seconds)
@@ -185,6 +243,8 @@ def prefetch(
         from benchmarks.cases import REPOSITORY
 
         checked_toolchains(toolchains, [curator, output, REPOSITORY])
+        browser = browser_identity(chromium) if chromium is not None else None
+        paths = dependency_paths(case["id"], browser)
         verify_preparation(case, curator)
         stage = output / "staging"
         stage.mkdir()
@@ -210,6 +270,18 @@ def prefetch(
             for command in commands(
                 case["id"], inside / "workspace", inside / "build", "fixed", dependency_only=True
             ):
+                if command.name == "browser" and browser is not None:
+                    smoke = (
+                        "const {chromium}=require('@playwright/test'); "
+                        "(async()=>{const b=await chromium.launch({executablePath:"
+                        + json.dumps(browser["executable"])
+                        + "}); try {const p=await b.newPage();await p.setContent('<h1>ready</h1>');"
+                        "if(await p.locator('h1').textContent()!=='ready')throw Error('DOM');"
+                        "console.log('preinstalled Chromium DOM control passed');}"
+                        "finally{await b.close()}})()"
+                        ".catch(e=>{console.error(e);process.exit(1)});"
+                    )
+                    command = Command("browser", ["node", "-e", smoke], command.cwd, timeout=60)
                 if not (
                     command.name.startswith("dependencies")
                     or command.name in {"browser", "go-version", "node-version", "npm-version"}
@@ -222,7 +294,6 @@ def prefetch(
                 write_json(output / f"command-{command.name}.json", records[-1])
                 require(result)
                 verify_version(command.name, result.stdout)
-            paths = DEPENDENCIES.get(case["id"], ())
             # Export only source dependencies. No source/build/home/trace tree is retained.
             cell.freeze()
             inputs = output / "inputs"
@@ -236,6 +307,7 @@ def prefetch(
             "status": "prefetched",
             "case_id": case["id"],
             "parent": case["parent"],
+            "browser": browser,
             "paths": list(paths),
             "hashes": tree_hashes(inputs),
             "commands": records,
@@ -378,6 +450,8 @@ def evaluate(
     ) as cell:
         cell.upload(stage, inside)
         env = environment(inside, toolchains, network=False)
+        if dependencies.get("browser"):
+            env["TOOLKIT_CHROMIUM_EXECUTABLE"] = dependencies["browser"]["executable"]
         for toolchain in toolchains:
             if (toolchain / "share/bison").is_dir():
                 env["BISON_PKGDATADIR"] = str(toolchain / "share/bison")
@@ -413,6 +487,13 @@ def evaluate(
                 return require(cell.execute(["/bin/cat", str(path)], timeout=10)).stdout
 
             status, checks = outcome(command, result, read_text)
+            if status == "environment_failure" and candidate_compile_failure(
+                command,
+                result,
+                scored=artifact is not None and expected_side is None,
+                oom=bool(cell.events()["oom_kill"]),
+            ):
+                status = "candidate_build_failure"
             if status == "passed":
                 verify_version(command.name, result.stdout)
             record = {
@@ -431,7 +512,7 @@ def evaluate(
                 setup_seconds += result.elapsed_seconds
             else:
                 test_seconds += result.elapsed_seconds
-            if status == "environment_failure":
+            if status in {"environment_failure", "candidate_build_failure"}:
                 break
         events = cell.events()
         enforcement = cell.enforcement
@@ -443,6 +524,8 @@ def evaluate(
             if complete
             else "environment_failure"
             if any(r["status"] == "environment_failure" for r in records)
+            else "candidate_failure"
+            if any(r["status"] == "candidate_build_failure" for r in records)
             else "behavior_mismatch"
         )
     result = {

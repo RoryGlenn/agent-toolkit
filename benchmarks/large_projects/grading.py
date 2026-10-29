@@ -6,7 +6,48 @@ import json
 import re
 from typing import Any
 
+from benchmarks.large_projects.adapters import Command
 from benchmarks.process import Execution
+
+
+def candidate_compile_failure(
+    command: Command,
+    result: Execution,
+    *,
+    scored: bool,
+    oom: bool = False,
+) -> bool:
+    """Attribute ordinary compiler diagnostics to a submission, keeping runtime faults separate.
+
+    Trusted qualification controls never use this classification: a failed control build
+    cannot establish the expected behavioral failure. Signals, resource/runtime failures
+    and incomplete output remain environmental evidence.
+    """
+    if (
+        not scored
+        or command.phase != "setup"
+        or command.name not in {"build", "rebuild", "compile-queue", "typecheck", "transpile"}
+        or result.returncode not in (1, 2)
+        or result.timed_out
+        or result.output_limited
+        or oom
+    ):
+        return False
+    text = (result.stdout + result.stderr).lower()
+    if any(
+        marker in text
+        for marker in (
+            "killed",
+            "signal",
+            "no space left",
+            "cannot allocate",
+            "permission denied",
+            "read-only file system",
+            "resource temporarily unavailable",
+        )
+    ):
+        return False
+    return bool(re.search(r"error:|error ts\d|syntax error|undefined reference|undefined:", text))
 
 
 def classify(result: Execution, checks: dict[str, str], expected: dict[str, str]) -> str:

@@ -63,6 +63,14 @@ def finalize(case_id: str, source: Path) -> list[Path]:
         path.write_text(text)
         changed.append(path)
     elif case_id == "vscode-snippet-selections":
+        harness = source / "test/unit/browser/index.js"
+        replace_once(
+            harness,
+            "channel: browserChannel });",
+            "channel: browserChannel, executablePath: "
+            "process.env.TOOLKIT_CHROMIUM_EXECUTABLE || undefined });",
+        )
+        changed.append(harness)
         path = source / "src/vs/editor/contrib/snippet/test/browser/snippetSession.test.ts"
         text = path.read_text()
         marker = "\n\t\ttest('cross-edit placeholder backfill resolves variables in earlier edit'"

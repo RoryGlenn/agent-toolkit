@@ -15,7 +15,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from benchmarks.files import hash_regular
-from benchmarks.large_projects.adapters import VS_REGRESSIONS, commands
+from benchmarks.large_projects.adapters import VS_REGRESSIONS, Command, commands
 from benchmarks.large_projects.artifacts import (
     apply_delta,
     freeze_delta,
@@ -23,8 +23,10 @@ from benchmarks.large_projects.artifacts import (
     tree_hashes,
 )
 from benchmarks.large_projects.candidate import grade_record, load_context, validate_context
+from benchmarks.large_projects.grading import candidate_compile_failure
 from benchmarks.large_projects.integration import (
     case_at,
+    dependency_paths,
     evaluate,
     evaluator_command,
     unpack_trusted,
@@ -47,6 +49,16 @@ from benchmarks.process import bounded_process
 
 class PipelineDataTests(unittest.TestCase):
     """Archive data and incomplete checks cannot become authoritative passing evidence."""
+
+    def test_explicit_preinstalled_browser_never_uses_a_download_cache(self) -> None:
+        mode = {"mode": "preinstalled"}
+        self.assertEqual(
+            dependency_paths("vscode-snippet-selections", mode),
+            ("workspace/node_modules", "workspace/build/node_modules"),
+        )
+        self.assertIn("cache/playwright", dependency_paths("vscode-snippet-selections", None))
+        with self.assertRaises(ValueError):
+            dependency_paths("otel-queue-cancellation", mode)
 
     def test_deferred_dependency_links_cannot_create_any_host_outside_entry(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -254,6 +266,32 @@ class PipelineDataTests(unittest.TestCase):
         self.assertEqual(grade["status"], "failed")
         self.assertIsNone(grade["harness_error"])
         self.assertEqual(grade["failures"], ["required"])
+
+    def test_real_candidate_compiler_error_is_not_an_environment_failure(self) -> None:
+        compiler = shutil.which("cc")
+        if compiler is None:
+            self.skipTest("C compiler unavailable")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "broken.c"
+            source.write_text("int broken( { return 1; }\n")
+            result = bounded_process([compiler, "-c", str(source)], root, {"PATH": "/usr/bin:/bin"})
+            command = Command("build", result.argv, root)
+            self.assertTrue(candidate_compile_failure(command, result, scored=True))
+            self.assertFalse(candidate_compile_failure(command, result, scored=False))
+            self.assertFalse(candidate_compile_failure(command, result, scored=True, oom=True))
+            grade = grade_record(
+                "case",
+                {
+                    "status": "candidate_failure",
+                    "commands": [
+                        {**result.to_dict(), "name": "build", "status": "candidate_build_failure"}
+                    ],
+                },
+            )
+            self.assertEqual(grade["status"], "failed")
+            self.assertIsNone(grade["harness_error"])
+            self.assertEqual(grade["failures"], ["build"])
 
     def test_missing_runtime_gates_block_planning(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

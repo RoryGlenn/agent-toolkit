@@ -384,6 +384,10 @@ def manifest() -> dict[str, object]:
         "vscode": {
             "node": "22.22.1",
             "npm": "10.9.4",
+            "browser_modes": {
+                "playwright_download": "locked package default",
+                "explicit_preinstalled_chromium": "154.0.8037.57; runtime hash bound",
+            },
             "constraint": "private _snippet backfill test excluded; "
             "six observable regressions and 79 passing checks plus one upstream pending test",
         },

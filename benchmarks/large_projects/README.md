@@ -42,6 +42,7 @@ uv run python -m benchmarks large prefetch --case otel-queue-cancellation \
 uv run python -m benchmarks large prefetch --case vscode-snippet-selections \
   --curator /absolute/new/curator/vscode-snippet-selections \
   --toolchain /absolute/tools/node-v22.22.1-linux-x64 \
+  --chromium /usr/lib/chromium/chromium \
   --output /absolute/new/dependencies/vscode-snippet-selections
 uv run python -m benchmarks large qualify \
   --prepared /absolute/new/curator --output /absolute/new/qualification \
@@ -64,6 +65,17 @@ It exports only Go module source, root/build npm dependencies and the Playwright
 installation, as applicable. Complete inventories and receipts bind these inputs to their
 parent. Every actor/evaluator starts with an empty project compilation cache. Verified
 source/dependency bundles may be reused; compiled reference output is never an actor input.
+For VS Code, the optional explicit `--chromium` mode uses the already installed Linux
+Chromium **154.0.8037.57** at `/usr/lib/chromium/chromium`. It binds the executable version
+and complete runtime-directory fingerprint, executes a real DOM smoke, and passes the
+explicit executable path to the browser harness identically on parent/reference/candidates.
+It neither downloads a replacement nor poses as Playwright's default cached browser. The
+selector and runtime identity are included in dependency/qualification/plan provenance.
+Omitting it retains the locked Playwright download mode, which needs the environment
+allowlist for `cdn.playwright.dev` and `playwright.download.prss.microsoft.com`. A policy
+denial is a setup failure; no alternate download route is supplied. The selected VS suites
+must qualify on the actual chosen browser before planning.
+
 CPython and PostgreSQL require no separate dependency bundle. A missing browser download or
 native library is a setup failure, never a negative regression control.
 
@@ -209,6 +221,10 @@ distinct in receipts and the existing reports.
   `2BP01`; required waiting/completion order remains constrained. Nearby controls retain
   their original renderer. ICU/readline/zlib are disabled. No full regression, TAP, recovery
   or check-world coverage is claimed.
+
+For scored submissions, ordinary compiler diagnostics become candidate build failures.
+Signals, resource/runtime faults and incomplete output remain distinct environment failures;
+a failed trusted-control build cannot establish regression reproduction.
 
 Required tests cannot skip, disappear, report errors, time out, compile unsuccessfully or
 execute zero tests and still qualify. Parent exit 1 alone is insufficient: the expected

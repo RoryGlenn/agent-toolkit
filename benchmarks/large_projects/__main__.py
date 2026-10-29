@@ -43,6 +43,11 @@ def main(argv: list[str] | None = None) -> None:
     fetch.add_argument("--output", type=Path, required=True)
     fetch.add_argument("--toolchain", type=Path, action="append", default=[])
     fetch.add_argument("--seconds", type=int, default=1800)
+    fetch.add_argument(
+        "--chromium",
+        type=Path,
+        help="explicit preinstalled Chromium154 executable; no browser download",
+    )
     export = sub.add_parser("export")
     export.add_argument("--case", required=True, choices=[c["id"] for c in cases])
     export.add_argument("--curator", type=Path, required=True)
@@ -97,7 +102,9 @@ def main(argv: list[str] | None = None) -> None:
             from benchmarks.large_projects.integration import prefetch
 
             case = next(c for c in cases if c["id"] == args.case)
-            result = prefetch(case, args.curator, args.output, args.toolchain, args.seconds)
+            result = prefetch(
+                case, args.curator, args.output, args.toolchain, args.seconds, args.chromium
+            )
             print(
                 json.dumps(
                     {k: v for k, v in result.items() if k not in {"hashes", "commands"}}, indent=2

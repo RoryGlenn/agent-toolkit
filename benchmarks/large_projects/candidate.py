@@ -136,7 +136,11 @@ def validate_context(plan: dict[str, Any]) -> None:
 def grade_record(case_id: str, evaluated: dict[str, Any]) -> dict[str, Any]:
     """Use the existing report schema; environment failure never becomes candidate failure."""
     environmental = evaluated["status"] == "environment_failure"
-    failures = [r["name"] for r in evaluated["commands"] if r["status"] == "behavior_mismatch"]
+    failures = [
+        r["name"]
+        for r in evaluated["commands"]
+        if r["status"] in {"behavior_mismatch", "candidate_build_failure"}
+    ]
     if evaluated.get("artifact_failure"):
         failures.append(evaluated["artifact_failure"])
     passed = evaluated["status"] == "qualified"
@@ -258,6 +262,21 @@ def run_attempt(
             shutil.copytree(stage / "cache", state / "cache", dirs_exist_ok=True, symlinks=True)
         env = environment(state, tools, network=False)
         env.update(HOME=str(stage / "actor-home"), TMPDIR=str(stage / "private-tmp"))
+        if result["dependencies"].get("browser"):
+            browser = result["dependencies"]["browser"]
+            env["TOOLKIT_CHROMIUM_EXECUTABLE"] = browser["executable"]
+            note = (
+                "\n\nBrowser runtime: " + browser["version"] + ". For local Playwright calls, "
+                "use chromium.launch({executablePath: "
+                + json.dumps(browser["executable"])
+                + "}). The default downloaded browser cache is absent in this explicit "
+                "preinstalled mode. Network downloads are unavailable during execution.\n"
+            )
+            task = stage / "workspace/TASK.md"
+            task.write_text(task.read_text() + note)
+            prompt = stage / "prompt.txt"
+            prompt.write_text(prompt.read_text() + note)
+            result["prompt_fingerprint"] = fingerprint(prompt.read_text())
         config = config_text(
             stage / "workspace",
             stage / "actor-home",
@@ -373,6 +392,7 @@ def run_attempt(
             "unavailable unless emitted. Null is not zero.",
         }
         if result["status"] == "completed":
+            progress(root, result)
             evaluated = evaluate(
                 case,
                 curator,
