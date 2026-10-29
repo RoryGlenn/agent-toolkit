@@ -176,6 +176,58 @@ class ClassificationTests(unittest.TestCase):
             self.assertTrue((root / (ids[0] + ".json")).is_file())
             self.assertTrue((root / (ids[1] + ".json")).is_file())
 
+    def test_passing_parent_is_behavior_mismatch(self) -> None:
+        """A parent that passes is non-discriminating, rather than an environment failure."""
+        for name in GO_REGRESSIONS:
+            output = "\n".join(
+                json.dumps({"Action": action, "Test": name}) for action in ("run", "pass")
+            )
+            command = Command("regression", [], Path("."), parser="go", expected={name: "fail"})
+            self.assertEqual(
+                outcome(command, Execution([], 0, output, "", 1))[0], "behavior_mismatch"
+            )
+
+    def test_postgres_tap_plan_and_discovery(self) -> None:
+        """Exact TAP identities and complete execution are required for passing controls."""
+        expected = {"ddl-dependency-locking": "pass", "drop-owned-grant": "pass"}
+        command = Command("controls", [], Path("."), parser="postgres", expected=expected)
+        good = (
+            "# initializing database system\n"
+            "ok 1       - ddl-dependency-locking       245 ms\n"
+            "ok 2       - drop-owned-grant              24 ms\n1..2\n"
+        )
+        self.assertEqual(outcome(command, Execution([], 0, good, "", 1))[0], "qualified")
+        for bad in (
+            good.replace("1..2", "1..3"),
+            good.replace("drop-owned-grant", "other"),
+            good.replace("24 ms", "24 ms # SKIP"),
+            good.replace("ok 2", "ok 1"),
+        ):
+            self.assertEqual(
+                outcome(command, Execution([], 0, bad, "", 1))[0], "environment_failure"
+            )
+
+    def test_clean_handles_readonly_go_cache_and_preserves_receipts(self) -> None:
+        """Read-only module directories are removed without following unrelated symlinks."""
+        from benchmarks.large_projects.__main__ import main
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "qualification"
+            cache = root / "parent/cache/go-mod/example@v1"
+            cache.mkdir(parents=True)
+            (cache / "module.go").write_text("fixture")
+            outside = Path(directory) / "unrelated"
+            outside.mkdir()
+            (outside / "keep").write_text("keep")
+            (cache / "alias").symlink_to(outside, target_is_directory=True)
+            cache.chmod(0o555)
+            (root / "qualification.json").write_text("{}")
+            (root / "parent/00-command.json").write_text("{}")
+            main(["clean", str(root)])
+            self.assertFalse((root / "parent/cache").exists())
+            self.assertTrue((root / "parent/00-command.json").is_file())
+            self.assertEqual((outside / "keep").read_text(), "keep")
+
 
 class ExportTests(CuratorPreparationTests):
     """Use a local upstream to detect hidden tests, fixes and source contamination."""
@@ -208,6 +260,23 @@ class ExportTests(CuratorPreparationTests):
         (curator / "parent/tests.txt").write_text("fake test")
         with self.assertRaisesRegex(ValueError, "test contents"):
             verify_preparation(self.case, curator)
+
+    def test_export_rejects_chained_symlink_escape(self) -> None:
+        """Lexically safe paths cannot escape by resolving through another source symlink."""
+        (self.upstream / "base").symlink_to(".", target_is_directory=True)
+        (self.upstream / "escape").symlink_to("base/../outside")
+        self.run_git("add", ".")
+        self.run_git("commit", "-qm", "symlink fixture")
+        revision = self.run_git("rev-parse", "HEAD").decode().strip()
+        curator = self.root / "curator-links"
+        curator.mkdir()
+        (curator / "repository").symlink_to(self.upstream, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "chained source symlink"):
+            export_parent(
+                {**self.case, "parent": revision, "task": "fixture"},
+                curator,
+                self.root / "unsafe-export",
+            )
 
 
 @unittest.skipUnless(sys.platform == "linux" and shutil.which("bwrap"), "requires Linux Bubblewrap")

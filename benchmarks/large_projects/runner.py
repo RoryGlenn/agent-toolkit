@@ -126,7 +126,10 @@ def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
         checks = go_checks(
             result.stdout, list(command.expected), allow_detected_deadlock=known_deadlock
         )
-        if command.expected.get("TestCondSignalDoesNotBlockBehindCanceledWaiters") == "fail":
+        if (
+            command.expected.get("TestCondSignalDoesNotBlockBehindCanceledWaiters") == "fail"
+            and checks.get("TestCondSignalDoesNotBlockBehindCanceledWaiters") == "fail"
+        ):
             if "Signal blocked while holding the condition lock" not in combined:
                 return "environment_failure", checks
         if (
@@ -162,13 +165,19 @@ def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
             )
         ):
             return "environment_failure", checks
-        clean = result.stdout
-        for name in command.expected:
-            matches = re.findall(
-                rf"^\s*(?:\d+: )?{re.escape(name)}\s+\.\.\.\s+(ok|FAILED)\s*$", clean, re.MULTILINE
-            )
-            if len(matches) == 1:
-                checks[name] = "pass" if matches[0] == "ok" else "fail"
+        # PostgreSQL 20 pg_regress emits TAP. Require its complete plan and exact names.
+        rows = re.findall(
+            r"^(not )?ok\s+(\d+)\s+[-+]\s+(\S+)\s+[\d.]+ ms\s*$", result.stdout, re.MULTILINE
+        )
+        plans = re.findall(r"^1\.\.(\d+)\s*$", result.stdout, re.MULTILINE)
+        if (
+            plans != [str(len(command.expected))]
+            or len(rows) != len(command.expected)
+            or [int(row[1]) for row in rows] != list(range(1, len(rows) + 1))
+            or {row[2] for row in rows} != set(command.expected)
+        ):
+            return "environment_failure", checks
+        checks = {name: "fail" if negative else "pass" for negative, _, name in rows}
         if command.expected.keys() == {"tablespace-dependency-locking"}:
             if not postgres_schedules(command):
                 return "environment_failure", checks
@@ -420,6 +429,7 @@ def prepare_set(case_ids: list[str], root: Path) -> list[dict[str, Any]]:
     for case in cases:
         if case["id"] not in case_ids:
             continue
+        prepare_started = time.monotonic()
         try:
             results.append(prepare(case, root / case["id"]))
         except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
@@ -431,5 +441,6 @@ def prepare_set(case_ids: list[str], root: Path) -> list[dict[str, Any]]:
                     "ready_for_model_comparison": False,
                 }
             )
+        results[-1]["source_preparation_seconds"] = time.monotonic() - prepare_started
         write_json(root / f"{case['id']}.json", results[-1])
     return results

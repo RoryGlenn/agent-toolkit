@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
+import stat
 from pathlib import Path
 
 from benchmarks.large_projects.export import export_parent
@@ -87,6 +89,12 @@ def main(argv: list[str] | None = None) -> None:
                     if path.is_symlink():
                         raise ValueError("refusing symlink cleanup")
                     if path.is_dir():
+                        # Go module caches intentionally make directories read-only.
+                        # Walk only this owned tree and never follow directory symlinks.
+                        for directory, _, _ in os.walk(path, followlinks=False):
+                            owned = Path(directory)
+                            if not owned.is_symlink():
+                                owned.chmod(stat.S_IMODE(owned.stat().st_mode) | stat.S_IRWXU)
                         shutil.rmtree(path)
             print(f"Removed build/source/cache trees; evidence retained in {root}")
     except (ValueError, OSError, RuntimeError) as exc:
