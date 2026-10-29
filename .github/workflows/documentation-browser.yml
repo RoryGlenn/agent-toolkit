@@ -1,0 +1,31 @@
+name: Documentation browser regressions
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/documentation-browser.yml'
+      - 'tests/browser_regression.py'
+      - 'skills/documentation-skill/tooling/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/documentation-browser.yml'
+      - 'tests/browser_regression.py'
+      - 'skills/documentation-skill/tooling/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - run: npm ci --prefix skills/documentation-skill/tooling
+      - run: npm exec --prefix skills/documentation-skill/tooling -- playwright install --with-deps chromium
+      - run: python3 tests/browser_regression.py

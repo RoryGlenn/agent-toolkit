@@ -75,7 +75,7 @@ The readiness selector is required, including for existing callers of this check
 
 The test checks HTTP success, visible page content, and axe's detectable accessibility issues, and records a screenshot and accessibility report. It does not crawl the site, start a server, authenticate, publish, or prove comprehensive accessibility. Inspect the screenshot and try the reader's task manually. Add representative pages and interactions to the project's existing tests when needed; avoid duplicating a mature browser-test setup.
 
-Maintainers can run `tests/browser_regression.py` from a checkout of the Documentation Agent repository. Install the optional tools in that checkout so the suite tests its current site-check code:
+From an `agent-toolkit` checkout, maintainers can run `tests/browser_regression.py`. Run these commands from the repository root so the suite tests this checkout's site-check code:
 
 ```sh
 npm ci --prefix skills/documentation-skill/tooling
@@ -84,6 +84,8 @@ python3 tests/browser_regression.py
 ```
 
 This repository-only suite is not copied by the agent installer. It exercises the actual site-check configuration against loopback-only fixtures, covering delayed clean and inaccessible content, missing/invalid/ambiguous selectors, and bounded readiness failures, including screenshot and report timing. The fixture server is temporary and does not contact a live service. These tests are separate from basic Python test discovery so optional browser dependencies remain optional.
+
+The separate `Documentation browser regressions` GitHub Actions workflow runs this suite for pull requests that change the runner or tooling, matching changes on `main`, or manual dispatch. It installs the optional dependencies in its own job; ordinary Python checks remain independent.
 
 ## Authoritative references
 

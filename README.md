@@ -426,6 +426,13 @@ git diff --check
 
 The tests cover personal installs and restore, project copies and relocation, selected host layouts, ownership conflicts, explicit updates, dry runs, rollback, source provenance, source validation, custom homes, and the docs environment checker. The docs skill also contains [behavior evaluation cases](skills/documentation-skill/evals/README.md) and [optional site tooling](skills/documentation-skill/tooling/README.md). Those tools have their own prerequisites; passing the installer tests does not establish live host loading, browser accessibility, or documentation quality.
 
+After installing the optional Node tools and Chromium as described in the tooling guide,
+run `python3 tests/browser_regression.py` from this repository root. This separate suite
+checks the shipped documentation site check against loopback-only readiness and
+accessibility fixtures; it is excluded from ordinary unit-test discovery.
+The separate documentation browser workflow runs it for pull requests that change the
+runner or site tooling, for matching changes on `main`, and on manual dispatch.
+
 ## Development benchmark
 
 The [public development benchmark](benchmarks/README.md) supplies twelve original RecordBatch
@@ -447,7 +454,7 @@ repository controls and the existing checks, with no model credentials or paid c
 
 This toolkit is the maintained source for the collected skills and agent definitions. Original repositories and installations are retained until deliberately migrated; no source repository, published history, or old installer manifest is changed by this package.
 
-- The docs package and Copilot wrapper came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/documentation-skill/references/book-foundation.md) credits the authors and explains the original synthesis. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
+- The docs package, Copilot wrapper, and optional browser regression runner came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/documentation-skill/references/book-foundation.md) credits the authors and explains the original synthesis. The [archived standalone validation record](docs/validation/doc-agent-2026-09-26.md) preserves the initial package's evidence and limits; it does not validate this toolkit or later changes. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - The software-design specialist uses an original synthesis of *A Philosophy of Software Design*, Second Edition, by John K. Ousterhout (Yaknyam Press, 2021). Its personal EPUB and detailed reading notes are kept outside this repository; the skill retrieves them locally and does not redistribute the source.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.
