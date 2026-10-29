@@ -63,8 +63,9 @@ and PostgreSQL need C build tools; PostgreSQL needs suitable Bison/Flex. Preserv
 versions. Do not infer that host browser-control support determines whether CLI Playwright
 can launch: test the headless harness explicitly. Repository development checks use `uv`.
 
-No cloud task, environment, Linux build or model comparison was validated by this handoff.
-Follow issue #5 for the remaining adapter, grading, runtime-isolation and verification work.
+The original handoff did not validate a cloud environment or Linux build. The Linux sections
+below and the [current verification record](verification/README.md) describe the adapter work
+completed since then. No model comparison has been run; issue #5 remains open.
 
 ## Linux curator execution
 
