@@ -856,7 +856,11 @@ def main() -> None:
                     f"{entry['case_id']} {entry['arm']} #{entry['attempt']}: {result['status']}",
                     flush=True,
                 )
+                if result["status"] == "cancelled":
+                    break
             write_json(arguments.output / "report.json", report(campaign_results(arguments.output)))
+            if any(result["status"] == "cancelled" for result in results):
+                raise SystemExit(130)
         elif arguments.command == "grade":
             if arguments.curator:
                 from benchmarks.large_projects.candidate import grade_artifact

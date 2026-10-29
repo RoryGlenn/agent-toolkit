@@ -15,6 +15,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from benchmarks.files import hash_regular
+from benchmarks.large_projects.__main__ import main as large_main
 from benchmarks.large_projects.adapters import VS_REGRESSIONS, Command, commands
 from benchmarks.large_projects.artifacts import (
     apply_delta,
@@ -44,7 +45,7 @@ from benchmarks.large_projects.resources import (
     require,
 )
 from benchmarks.large_projects.runner import harness_hashes
-from benchmarks.process import bounded_process
+from benchmarks.process import Execution, bounded_process
 
 
 class PipelineDataTests(unittest.TestCase):
@@ -293,6 +294,53 @@ class PipelineDataTests(unittest.TestCase):
             self.assertIsNone(grade["harness_error"])
             self.assertEqual(grade["failures"], ["build"])
 
+    def test_signal_identifiers_and_compiler_crashes_have_distinct_classifications(
+        self,
+    ) -> None:
+        command = Command("compile-queue", ["go", "test", "-c"], Path("/tmp"))
+        result = Execution(
+            command.argv,
+            1,
+            "",
+            "cond_test.go:61:4: c.Signal undefined (type *cond has no field or method Signal)",
+            1,
+        )
+        self.assertTrue(candidate_compile_failure(command, result, scored=True))
+        for error in (
+            "foo.c:1: internal compiler error: crash",
+            "panic: compiler crashed\nfoo.go:1:1:",
+            "cc1: fatal error: Killed signal terminated program cc1",
+        ):
+            result.stderr = error
+            self.assertFalse(candidate_compile_failure(command, result, scored=True))
+
+    def test_cancelled_set_does_not_start_another_case(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "set"
+
+            def cancelled(case: dict[str, object], *_args: object) -> dict[str, object]:
+                return {"case_id": case["id"], "status": "cancelled"}
+
+            with patch("benchmarks.large_projects.__main__.qualify", side_effect=cancelled) as call:
+                with self.assertRaises(SystemExit) as stopped:
+                    large_main(
+                        [
+                            "qualify",
+                            "--case",
+                            "cpython-import-locks",
+                            "--case",
+                            "otel-queue-cancellation",
+                            "--prepared",
+                            str(root.parent),
+                            "--output",
+                            str(root),
+                        ]
+                    )
+            self.assertEqual(stopped.exception.code, 130)
+            self.assertEqual(call.call_count, 1)
+            rows = json.loads((root / "report.json").read_text())
+            self.assertEqual([row["status"] for row in rows], ["cancelled", "not_started"])
+
     def test_missing_runtime_gates_block_planning(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -474,4 +522,10 @@ else:raise AssertionError('authoritative fixture was writable')
                     require(cell.execute(["/bin/cat", str(source / "hidden")])).stdout,
                     "authoritative",
                 )
+                cell.freeze()
+                with patch("benchmarks.large_projects.resources.shutil.disk_usage") as disk:
+                    disk.return_value.free = 0
+                    with self.assertRaisesRegex(ValueError, "insufficient controller disk"):
+                        cell.download(source, root / "snapshot.tar")
+                self.assertFalse((root / "snapshot.tar").exists())
             self.assertEqual(tree_hashes(seed).keys(), {"hidden"})

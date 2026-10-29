@@ -95,7 +95,23 @@ def main(argv: list[str] | None = None) -> None:
                 )
                 results.append(result)
                 print(f"{case['id']}: {result['status']}", flush=True)
+                if result["status"] == "cancelled":
+                    attempted = {item["case_id"] for item in results}
+                    results.extend(
+                        {
+                            "case_id": pending["id"],
+                            "status": "not_started",
+                            "ready_for_model_comparison": False,
+                            "reason": "operator cancelled the qualification set",
+                        }
+                        for pending in cases
+                        if pending["id"] not in attempted
+                        and (not args.case or pending["id"] in args.case)
+                    )
+                    break
             (args.output / "report.json").write_text(json.dumps(results, indent=2) + "\n")
+            if any(r["status"] == "cancelled" for r in results):
+                raise SystemExit(130)
             if any(r["status"] != "qualified" for r in results):
                 raise SystemExit(1)
         elif args.operation == "prefetch":

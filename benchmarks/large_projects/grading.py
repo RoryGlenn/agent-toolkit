@@ -37,8 +37,6 @@ def candidate_compile_failure(
     if any(
         marker in text
         for marker in (
-            "killed",
-            "signal",
             "no space left",
             "cannot allocate",
             "permission denied",
@@ -47,7 +45,14 @@ def candidate_compile_failure(
         )
     ):
         return False
-    return bool(re.search(r"error:|error ts\d|syntax error|undefined reference|undefined:", text))
+    if re.search(
+        r"internal compiler error:|^panic:|compiler panic:|killed signal|"
+        r"terminated by signal|signal:\s*(?:killed|segmentation)|segmentation fault",
+        text,
+        re.MULTILINE,
+    ):
+        return False
+    return bool(re.search(r"error:|error ts\d|syntax error|\bundefined\b|\.go:\d+:\d+:", text))
 
 
 def classify(result: Execution, checks: dict[str, str], expected: dict[str, str]) -> str:

@@ -87,6 +87,9 @@ unscored operation with its own deadline. Qualification shares its deadline acro
 controls. A watchdog process kills a blocked staging worker and removes only containers and
 volumes bearing that attempt's unpredictable ownership label. Cleanup has a separately
 bounded grace period and remains recorded on timeout, cancellation, success and failure.
+Operator cancellation stops the set/campaign; later work remains `not_started`. Controller
+staging checks available disk, and kernel-limited archive capture preserves a 2 GiB evidence
+reserve rather than allowing a full actor filesystem to fill the controller disk.
 
 Cells use a readonly image and readonly system/toolchain mounts, no capabilities, a private
 PID/cgroup namespace, no-new-privileges, a process ceiling, `memory.max`, zero swap and a CPU

@@ -24,6 +24,7 @@ from benchmarks.process import Execution, bounded_process
 IMAGE = "busybox@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec"
 LABEL = "org.agent-toolkit.attempt"
 SELECTORS = ("DOCKER_HOST", "DOCKER_CONTEXT", "DOCKER_TLS", "DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH")
+CONTROLLER_RESERVE = 2 * 1024**3
 
 
 @dataclass(frozen=True)
@@ -358,12 +359,15 @@ class ResourceCell:
         """Capture a frozen raw tar; never let Docker extract candidate paths on the host."""
         if not self.paused or not source.is_relative_to(self.root) or destination.exists():
             raise ValueError("artifact download requires a frozen cell and new destination")
+        available = shutil.disk_usage(destination.parent).free - CONTROLLER_RESERVE
+        if available < 1024**2:
+            raise ValueError("insufficient controller disk for a bounded artifact transfer")
         require(
             docker(
                 ["cp", f"{self.name}:{source}", "-"],
                 timeout=self.deadline.remaining(300),
                 stdout_path=destination,
-                max_output=self.limits.filesystem_bytes,
+                max_output=min(self.limits.filesystem_bytes, available),
             )
         )
 

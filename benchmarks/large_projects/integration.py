@@ -31,6 +31,7 @@ from benchmarks.large_projects.finalize import collector_control, finalize
 from benchmarks.large_projects.grading import candidate_compile_failure
 from benchmarks.large_projects.prepare import CATALOG, git
 from benchmarks.large_projects.resources import (
+    CONTROLLER_RESERVE,
     Deadline,
     Limits,
     ResourceCell,
@@ -214,6 +215,13 @@ def seed_bundle(case: dict[str, Any], bundle: Path | None, stage: Path) -> dict[
     """Copy only declared verified dependency inputs; compilation always starts cold."""
     receipt = verify_bundle(case, bundle)
     if bundle is not None and receipt["required"]:
+        required = sum(
+            path.lstat().st_size
+            for path in (bundle / "inputs").rglob("*")
+            if path.is_file() and not path.is_symlink()
+        )
+        if shutil.disk_usage(stage).free < required + CONTROLLER_RESERVE:
+            raise ValueError("insufficient controller disk for verified dependency staging")
         staged = {}
         for relative in dependency_paths(case["id"], receipt.get("browser")):
             shutil.copytree(bundle / "inputs" / relative, stage / relative, symlinks=True)
