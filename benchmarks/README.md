@@ -255,3 +255,9 @@ score. Use a bounded pilot to inspect model/tool compatibility, native routing/s
 observability, task validity and failure rates before a larger run. Preserve failed attempts
 when changing the next plan, and label results exploratory until difficulty and independent
 review have been calibrated.
+
+## Large-project work
+
+The [curator handoff for issue #5](large_projects/README.md) records four historical
+regressions in VS Code, CPython, OpenTelemetry Collector and PostgreSQL. It is not wired into
+the comparison CLI and contains answers; never copy it into a candidate workspace.
