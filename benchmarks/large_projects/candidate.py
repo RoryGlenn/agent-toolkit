@@ -63,6 +63,7 @@ def load_context(path: Path, cases: list[str]) -> dict[str, Any]:
         for case_id, bundle in context.get("dependencies", {}).items()
     }
     receipts = {}
+    dependencies = {}
     for case_id in cases:
         case = case_at(case_id)
         root = Path(context["qualification"]) / case_id
@@ -94,9 +95,13 @@ def load_context(path: Path, cases: list[str]) -> dict[str, Any]:
         if "qualification.json" not in hashes:
             raise ValueError("qualification summary is not sealed")
         bundle = context.get("dependencies", {}).get(case_id)
-        verify_bundle(case, Path(bundle) if bundle else None)
+        identity = verify_bundle(case, Path(bundle) if bundle else None)
+        if any(side.get("dependencies") != identity for side in report["sides"].values()):
+            raise ValueError("dependency inputs differ from the qualified evaluator")
+        dependencies[case_id] = identity
         receipts[case_id] = digest(root / "evidence-sha256.json")
     context["qualification_receipts"] = receipts
+    context["dependency_identities"] = dependencies
     limits = Limits(**context.get("limits", {}))
     limits.validate()
     if limits.memory_bytes != limits.filesystem_bytes:
@@ -116,6 +121,12 @@ def validate_context(plan: dict[str, Any]) -> None:
         report = json.loads(read_regular(root / "qualification.json"))
         if report.get("runner_hashes") != harness_hashes() or report.get("status") != "qualified":
             raise ValueError("qualification no longer matches the running harness")
+        bundle = context.get("dependencies", {}).get(case_id)
+        actual = verify_bundle(case_at(case_id), Path(bundle) if bundle else None)
+        if actual != context["dependency_identities"][case_id] or any(
+            side.get("dependencies") != actual for side in report.get("sides", {}).values()
+        ):
+            raise ValueError("dependency inputs changed since qualification or planning")
         for name, value in json.loads(read_regular(root / "evidence-sha256.json")).items():
             relative = Path(name)
             if relative.is_absolute() or ".." in relative.parts or digest(root / relative) != value:
@@ -126,6 +137,8 @@ def grade_record(case_id: str, evaluated: dict[str, Any]) -> dict[str, Any]:
     """Use the existing report schema; environment failure never becomes candidate failure."""
     environmental = evaluated["status"] == "environment_failure"
     failures = [r["name"] for r in evaluated["commands"] if r["status"] == "behavior_mismatch"]
+    if evaluated.get("artifact_failure"):
+        failures.append(evaluated["artifact_failure"])
     passed = evaluated["status"] == "qualified"
     return {
         "case_id": case_id,

@@ -33,6 +33,63 @@ SCOPES = {
 }
 MAX_DELTA = 64 * 1024**2
 MAX_FILE = 8 * 1024**2
+SOURCE_SUFFIXES = {
+    ".py",
+    ".pyi",
+    ".go",
+    ".c",
+    ".cc",
+    ".cpp",
+    ".h",
+    ".hpp",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".mjs",
+    ".rs",
+}
+
+
+def scope_contract(case_id: str) -> str:
+    """A non-solution grading contract shown identically to every candidate arm."""
+    if case_id not in SCOPES:
+        return ""
+    return (
+        "\n\nGrading scope\n\nProduction changes must stay within these component paths:\n"
+        + "\n".join("- " + pattern for pattern in SCOPES[case_id])
+        + "\nTest files are excluded from production scope. Changes to tests, documentation "
+        "and build/configuration files are retained for review; the evaluator restores "
+        "its authoritative checks and build inputs. Other production-source changes "
+        "are unsupported and fail the scope gate. Put new production helpers within "
+        "the declared component. Generated output, caches and Git history are not graded.\n"
+    )
+
+
+def unsupported_source(name: str) -> bool:
+    """Distinguish retained tests/build/docs from production silently omitted by the scope."""
+    path = PurePosixPath(name)
+    excluded = {
+        "test",
+        "tests",
+        "testdata",
+        "fixtures",
+        "scripts",
+        "Tools",
+        "build",
+        "PCbuild",
+        "Doc",
+        "doc",
+        "docs",
+        "Documentation",
+        ".github",
+    }
+    if any(part in excluded for part in path.parts) or path.name.endswith("_test.go"):
+        return False
+    if path.name.startswith("test_") or path.name.endswith((".test.ts", ".spec.ts")):
+        return False
+    if path.name in {"setup.py", "gulpfile.ts", "gulpfile.js"}:
+        return False
+    return path.suffix in SOURCE_SUFFIXES
 
 
 def production(case_id: str, name: str) -> bool:
@@ -120,6 +177,23 @@ def freeze_delta(
             content = stream.extractfile(member)
             if content is None:
                 raise ValueError("missing candidate archive content")
+            if name not in baseline and not production(case_id, name):
+                generated = any(
+                    part in {"build", "frozen_modules", "dist"}
+                    for part in PurePosixPath(name).parts
+                )
+                text_source = PurePosixPath(name).suffix in SOURCE_SUFFIXES | {
+                    ".md",
+                    ".rst",
+                    ".txt",
+                    ".json",
+                    ".toml",
+                    ".yaml",
+                    ".yml",
+                    ".sh",
+                }
+                if generated or not text_source:
+                    continue
             # Do not allocate or retain arbitrary build files; only declared source entries.
             accepted = production(case_id, name)
             if member.size > (MAX_FILE if accepted else 20_000_000):
@@ -145,6 +219,12 @@ def freeze_delta(
         "changed": changed,
         "deleted": deleted,
         "excluded_changes": excluded,
+        "unsupported_production_changes": sorted(
+            name
+            for name in set(excluded)
+            | {name for name in baseline if name not in seen and not production(case_id, name)}
+            if unsupported_source(name)
+        ),
         "excluded_deletions": sorted(
             name for name in baseline if name not in seen and not production(case_id, name)
         ),

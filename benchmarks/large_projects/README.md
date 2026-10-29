@@ -156,8 +156,9 @@ exec`, retaining parent-death protection and namespace teardown.
 The declared production scope is the affected component: VS Code snippet browser sources;
 CPython importlib and import C/internal headers; Collector queue Go sources excluding test
 files; PostgreSQL command/catalog/locking C and include headers. These scopes are explicit
-in `artifacts.py`. Edits to tests, build/configuration files and other components remain
-excluded from authoritative grading and are identified in the artifact manifest. This is a
+in `artifacts.py`. The exact non-solution scope and ignored-file contract are included in every candidate
+TASK.md. Tests and build/configuration changes are retained for review and excluded from
+authoritative grading. Production-source edits outside the component fail the scope gate. This is a
 component repair benchmark, not an unrestricted whole-repository patch acceptance service.
 The evaluator measures behavior, not patch similarity. Maintainability remains a separate
 independent review dimension.
@@ -193,7 +194,9 @@ distinct in receipts and the existing reports.
   explicit diagnostic-interface constraint. Lock-lifetime and new `_resolve_parents`
   monkeypatch tests are excluded from acceptance. Five memory-heavy tests are separate
   diagnostics with skips reported. A fresh debug/GIL interpreter regenerates frozen importlib
-  in its build directory and verifies its loaded source path. Full suites, free-threaded
+  in its build directory and verifies its loaded source path. The test cleanup helper checks
+  whether a pyc exists before unlinking it: Linux returns EROFS for absent files on readonly
+  mounts. Existing-file cleanup failures remain errors. Full suites, free-threaded
   builds and other architectures are not claimed.
 - Collector keeps deterministic `L`/`Wait`/`Signal` coordination and removes counter checks
   and queue-lock injection. Six memory/persistent groups and notification accounting are

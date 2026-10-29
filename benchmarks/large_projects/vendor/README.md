@@ -6,9 +6,9 @@ Its Apache 2.0 license is retained in `MOBY-LICENSE`.
 
 The only additional allowed syscalls are `clone`, `clone3`, `unshare`, `setns`,
 `mount`, `umount2`, `pivot_root` and `chroot`, needed by Codex's nested command
-sandbox. No Linux capabilities are added. Evaluators retain Docker's default
-seccomp profile. Actor cells additionally require filesystem budget >= memory.max,
+sandbox and the evaluator's Bubblewrap launcher. No Linux capabilities are added.
+Both actor and evaluator cells use this extended profile and require filesystem budget = memory.max,
 zero swap, exclusively tmpfs writable data and in-cgroup data materialization:
-actors can create another private tmpfs, so the sum of initial mount sizes alone
+payloads can create another private tmpfs, so the sum of initial mount sizes alone
 is not an aggregate filesystem bound. Cgroup memory enforces the total allocated
 memory-backed storage even across such nested mounts.

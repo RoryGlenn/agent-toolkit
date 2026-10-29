@@ -104,7 +104,15 @@ def browser_expectations(source: Path, broken: bool) -> dict[str, str]:
     return expected
 
 
-def commands(case_id: str, source: Path, state: Path, side: str) -> list[Command]:
+def commands(
+    case_id: str,
+    source: Path,
+    state: Path,
+    side: str,
+    *,
+    dependency_only: bool = False,
+    discovery_source: Path | None = None,
+) -> list[Command]:
     """Describe separate setup and warm tests, using at most two compiler workers."""
     broken = side == "parent"
     result: list[Command] = []
@@ -328,7 +336,7 @@ def commands(case_id: str, source: Path, state: Path, side: str) -> list[Command
                 "test",
                 300,
                 "mocha",
-                browser_expectations(source, broken),
+                {} if dependency_only else browser_expectations(discovery_source or source, broken),
             ),
         ]
     else:
@@ -337,6 +345,13 @@ def commands(case_id: str, source: Path, state: Path, side: str) -> list[Command
         for command in result:
             if "TestCondCancellationNotification" in command.expected:
                 command.expected["TestCondCancellationNotification"] = "fail"
+    if dependency_only:
+        return [
+            command
+            for command in result
+            if command.name.startswith("dependencies")
+            or command.name in {"browser", "go-version", "node-version", "npm-version"}
+        ]
     return result
 
 

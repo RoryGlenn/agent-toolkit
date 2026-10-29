@@ -8,6 +8,7 @@ import tarfile
 from pathlib import Path
 from typing import Any
 
+from benchmarks.large_projects.artifacts import scope_contract
 from benchmarks.large_projects.prepare import git
 
 
@@ -63,7 +64,7 @@ def export_parent(case: dict[str, Any], curator: Path, destination: Path) -> dic
             resolved = (destination / member.name).resolve()
             if not resolved.is_relative_to(destination.resolve()):
                 raise ValueError("chained source symlink escapes the snapshot")
-    (destination / "TASK.md").write_text(case["task"] + "\n")
+    (destination / "TASK.md").write_text(case["task"] + scope_contract(case["id"]) + "\n")
     return {
         "case_id": case["id"],
         "source_only": True,

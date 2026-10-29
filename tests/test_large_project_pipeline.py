@@ -12,11 +12,24 @@ import tempfile
 import unittest
 import uuid
 from pathlib import Path
+from unittest.mock import patch
 
 from benchmarks.files import hash_regular
-from benchmarks.large_projects.artifacts import apply_delta, freeze_delta, tree_hashes
-from benchmarks.large_projects.candidate import grade_record, load_context
-from benchmarks.large_projects.integration import evaluator_command
+from benchmarks.large_projects.adapters import VS_REGRESSIONS, commands
+from benchmarks.large_projects.artifacts import (
+    apply_delta,
+    freeze_delta,
+    scope_contract,
+    tree_hashes,
+)
+from benchmarks.large_projects.candidate import grade_record, load_context, validate_context
+from benchmarks.large_projects.integration import (
+    case_at,
+    evaluate,
+    evaluator_command,
+    unpack_trusted,
+    verify_bundle,
+)
 from benchmarks.large_projects.native import validate_native
 from benchmarks.large_projects.qualification import kernel_controls, watchdog_controls
 from benchmarks.large_projects.resources import (
@@ -28,11 +41,100 @@ from benchmarks.large_projects.resources import (
     docker,
     require,
 )
+from benchmarks.large_projects.runner import harness_hashes
 from benchmarks.process import bounded_process
 
 
 class PipelineDataTests(unittest.TestCase):
     """Archive data and incomplete checks cannot become authoritative passing evidence."""
+
+    def test_deferred_dependency_links_cannot_create_any_host_outside_entry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = root / "links.tar"
+            with tarfile.open(archive, "w") as output:
+                for name, target in (
+                    ("a", "."),
+                    ("a/escape", ".."),
+                    ("a/escape/leaked", "payload"),
+                ):
+                    member = tarfile.TarInfo("node_modules/" + name)
+                    member.type = tarfile.SYMTYPE
+                    member.linkname = target
+                    output.addfile(member)
+            with self.assertRaises(ValueError):
+                unpack_trusted(archive, root / "destination", "node_modules")
+            self.assertFalse((root / "leaked").is_symlink())
+            self.assertFalse((root / "leaked").exists())
+
+    def test_candidate_sees_scope_and_unsupported_helper_fails_before_execution(self) -> None:
+        case = case_at("otel-queue-cancellation")
+        self.assertIn("exporter/exporterhelper/internal/queue/*.go", scope_contract(case["id"]))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            parent = root / "parent"
+            parent.mkdir()
+            helper = "outside_component.go"
+            (parent / helper).write_text("old production")
+            archive = root / "worker.tar"
+            with tarfile.open(archive, "w") as output:
+                data = b"new production"
+                member = tarfile.TarInfo("workspace/" + helper)
+                member.size = len(data)
+                output.addfile(member, io.BytesIO(data))
+            artifact = root / "artifact"
+            frozen = freeze_delta(case["id"], archive, parent, artifact)
+            self.assertEqual(frozen["unsupported_production_changes"], [helper])
+            with patch(
+                "benchmarks.large_projects.integration.export_parent",
+                side_effect=lambda _c, _r, target: shutil.copytree(parent, target),
+            ):
+                outcome = evaluate(
+                    case,
+                    root / "curator",
+                    root / "evaluation",
+                    [],
+                    Deadline(30),
+                    str(uuid.uuid4()),
+                    Limits(),
+                    artifact=artifact,
+                )
+            grade = grade_record(case["id"], outcome)
+            self.assertEqual(grade["status"], "failed")
+            self.assertTrue(grade["failures"])
+            self.assertFalse(grade["objective_complete"])
+            self.assertEqual(grade["commands"], [])
+
+    def test_prefetch_and_trusted_host_discovery_use_separate_paths(self) -> None:
+        remote = Path("/container-only/workspace")
+        dependencies = commands(
+            "vscode-snippet-selections", remote, Path("/build"), "fixed", dependency_only=True
+        )
+        self.assertEqual(
+            [c.name for c in dependencies],
+            ["node-version", "npm-version", "dependencies-root", "dependencies-build", "browser"],
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory)
+            tests = source / "src/vs/editor/contrib/snippet/test/browser"
+            tests.mkdir(parents=True)
+            titles = [*sorted(VS_REGRESSIONS), *(f"existing {n}" for n in range(79))]
+            (tests / "snippetSession.test.ts").write_text(
+                "\n".join(f"test({title!r}, () => {{}});" for title in titles)
+                + "\ntest.skip('existing pending', () => {});\n"
+            )
+            (tests / "snippetController2.test.ts").write_text("")
+            plan = commands(
+                "vscode-snippet-selections",
+                remote,
+                Path("/build"),
+                "fixed",
+                discovery_source=source,
+            )
+            browser = plan[-1]
+            self.assertEqual(len(browser.expected), 86)
+            self.assertEqual(list(browser.expected.values()).count("skip"), 1)
+            self.assertEqual(browser.cwd, remote)
 
     def test_frozen_delta_restores_authoritative_tests(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -170,6 +272,66 @@ class PipelineDataTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "runtime qualification"):
                 load_context(context, ["otel-queue-cancellation"])
+
+    def test_refreshing_a_valid_same_parent_bundle_invalidates_the_plan(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            case = case_at("otel-queue-cancellation")
+            bundle = root / "bundle"
+            module = bundle / "inputs/cache/go-mod/example.mod"
+            module.parent.mkdir(parents=True)
+            module.write_text("dependency one")
+
+            def seal_bundle() -> None:
+                (bundle / "dependencies.json").write_text(
+                    json.dumps(
+                        {
+                            "case_id": case["id"],
+                            "parent": case["parent"],
+                            "status": "prefetched",
+                            "paths": ["cache/go-mod"],
+                            "hashes": tree_hashes(bundle / "inputs"),
+                        }
+                    )
+                )
+
+            seal_bundle()
+            identity = verify_bundle(case, bundle)
+            runtime = root / "runtime.json"
+            runtime.write_text("{}")
+            qualified = root / "qualified" / case["id"]
+            qualified.mkdir(parents=True)
+            (qualified / "qualification.json").write_text(
+                json.dumps(
+                    {
+                        "status": "qualified",
+                        "runner_hashes": harness_hashes(),
+                        "sides": {"parent": {"dependencies": identity}},
+                    }
+                )
+            )
+            (qualified / "evidence-sha256.json").write_text(
+                json.dumps({"qualification.json": hash_regular(qualified / "qualification.json")})
+            )
+            plan = {
+                "entries": [{"case_id": case["id"]}],
+                "large_context": {
+                    "runtime_qualification": str(runtime),
+                    "runtime_receipt_sha256": hash_regular(runtime),
+                    "qualification": str(qualified.parent),
+                    "qualification_receipts": {
+                        case["id"]: hash_regular(qualified / "evidence-sha256.json")
+                    },
+                    "dependencies": {case["id"]: str(bundle)},
+                    "dependency_identities": {case["id"]: identity},
+                },
+            }
+            validate_context(plan)
+            module.write_text("dependency two")
+            seal_bundle()
+            self.assertNotEqual(verify_bundle(case, bundle), identity)
+            with self.assertRaisesRegex(ValueError, "dependency inputs changed"):
+                validate_context(plan)
 
     def test_budget_child_uses_first_header_not_inherited_parent(self) -> None:
         root = {"type": "session_meta", "payload": {"id": "root", "source": "exec"}}

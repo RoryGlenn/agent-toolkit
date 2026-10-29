@@ -124,7 +124,13 @@ def unpack_trusted(archive: Path, destination: Path, expected_root: str) -> None
                 links.append((target, member.linkname))
             else:
                 raise ValueError("dependency archive contains special or hardlinked data")
-    # Links are last, so no archive write can traverse a link. Chained escapes also fail.
+    # Validate the complete link/member graph *before* creating any link. Otherwise
+    # a later link's parent.mkdir() can traverse an earlier alias and write outside.
+    link_paths = {PurePosixPath(str(target.relative_to(destination))) for target, _ in links}
+    members = [PurePosixPath(*path.parts[1:]) for path in seen]
+    if any(any(parent in link_paths for parent in path.parents) for path in members):
+        raise ValueError("dependency archive member traverses a symlink")
+    # Links are last, so no archive file or link creation can traverse an alias.
     for target, link in links:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.symlink_to(link)
@@ -201,7 +207,9 @@ def prefetch(
             # Docker already has the platform's reachable proxy defaults. Do not replace
             # them with an outer-only hostname; only explicit CA paths need mounting.
             env = {k: v for k, v in env.items() if "proxy" not in k.lower()}
-            for command in commands(case["id"], inside / "workspace", inside / "build", "fixed"):
+            for command in commands(
+                case["id"], inside / "workspace", inside / "build", "fixed", dependency_only=True
+            ):
                 if not (
                     command.name.startswith("dependencies")
                     or command.name in {"browser", "go-version", "node-version", "npm-version"}
@@ -333,6 +341,16 @@ def evaluate(
     }
     export_parent(selected, curator, source)
     if artifact is not None:
+        frozen = json.loads(read_regular(artifact / "changes.json"))
+        if frozen.get("unsupported_production_changes"):
+            result = {
+                "status": "candidate_failure",
+                "commands": [],
+                "artifact_failure": "production changes outside the declared component scope",
+                "unsupported_production_changes": frozen["unsupported_production_changes"],
+            }
+            write_json(output / "evaluation.json", result)
+            return result
         apply_delta(case["id"], artifact, source)
     # Immutable tests always replace candidate-authored tests, from the verified pin.
     for name in case["test_paths"]:
@@ -364,7 +382,11 @@ def evaluate(
             if (toolchain / "share/bison").is_dir():
                 env["BISON_PKGDATADIR"] = str(toolchain / "share/bison")
         plan = commands(
-            case["id"], insource, build, expected_side or (side if artifact is None else "fixed")
+            case["id"],
+            insource,
+            build,
+            expected_side or (side if artifact is None else "fixed"),
+            discovery_source=source,
         )
         plan = [c for c in plan if not (c.name.startswith("dependencies") or c.name == "browser")]
         for index, command in enumerate(plan):
