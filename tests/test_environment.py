@@ -38,7 +38,7 @@ def load_module(name: str, path: Path) -> ModuleType:
     return module
 
 
-doctor = load_module("doctor", ROOT / "skills/doc-agent/scripts/check_environment.py")
+doctor = load_module("doctor", ROOT / "skills/documentation-skill/scripts/check_environment.py")
 
 
 class DiscoveryTests(unittest.TestCase):
@@ -162,7 +162,7 @@ class DiscoveryTests(unittest.TestCase):
     def test_fifo_manifest_returns_without_blocking(self) -> None:
         """A real FIFO is skipped, with a subprocess timeout bounding regressions."""
         os.mkfifo(self.root / "package.json")
-        checker = ROOT / "skills/doc-agent/scripts/check_environment.py"
+        checker = ROOT / "skills/documentation-skill/scripts/check_environment.py"
         result = subprocess.run(
             [sys.executable, "-B", str(checker), "--project", str(self.root), "--json"],
             capture_output=True,

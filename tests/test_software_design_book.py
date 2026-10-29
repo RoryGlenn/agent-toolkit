@@ -16,7 +16,7 @@ import install
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "software_design_book", ROOT / "skills/software-design-specialist/scripts/book.py"
+    "software_design_book", ROOT / "skills/software-design-skill/scripts/book.py"
 )
 assert SPEC is not None and SPEC.loader is not None
 book = importlib.util.module_from_spec(SPEC)
@@ -239,14 +239,14 @@ class SoftwareDesignBookTests(unittest.TestCase):
         other.write_text("unrelated user agent")
         with contextlib.redirect_stdout(io.StringIO()):
             receipt = install.install(
-                ROOT, "codex", ["software-design-specialist"], home, home / ".codex"
+                ROOT, "codex", ["software-design-skill"], home, home / ".codex"
             )
         assert receipt is not None
-        role = home / ".codex/agents/software-design-specialist.toml"
-        skill = home / ".agents/skills/software-design-specialist"
+        role = home / ".codex/agents/software-design-agent.toml"
+        skill = home / ".agents/skills/software-design-skill"
         self.assertFalse(role.is_symlink())
-        self.assertTrue(role.samefile(ROOT / "agents/codex/software-design-specialist.toml"))
-        self.assertEqual(skill.resolve(), ROOT / "skills/software-design-specialist")
+        self.assertTrue(role.samefile(ROOT / "agents/codex/software-design-agent.toml"))
+        self.assertEqual(skill.resolve(), ROOT / "skills/software-design-skill")
         self.assertTrue((skill / "scripts/book.py").is_file())
         with contextlib.redirect_stdout(io.StringIO()):
             install.restore(receipt)

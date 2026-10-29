@@ -21,17 +21,39 @@ IGNORED = {"__pycache__", ".DS_Store", ".ruff_cache", ".mypy_cache", "node_modul
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 AGENTS = {
     "codex": {
-        "doc-agent": ["doc-agent.toml"],
-        "ddia-specialist": ["ddia-specialist.toml"],
-        "software-design-specialist": ["software-design-specialist.toml"],
-        "independent-diff-review": ["adversarial-reviewer.toml", "verifier.toml"],
-        "issue-to-tested-pr": [
-            "adversarial-reviewer.toml",
-            "implementation-owner.toml",
-            "verifier.toml",
+        "documentation-skill": ["documentation-agent.toml"],
+        "ddia-skill": ["ddia-agent.toml"],
+        "software-design-skill": ["software-design-agent.toml"],
+        "independent-diff-review-skill": ["adversarial-reviewer-agent.toml", "verifier-agent.toml"],
+        "issue-to-tested-pr-skill": [
+            "adversarial-reviewer-agent.toml",
+            "implementation-owner-agent.toml",
+            "verifier-agent.toml",
         ],
     },
-    "copilot": {"doc-agent": ["doc-agent.agent.md"]},
+    "copilot": {"documentation-skill": ["documentation-agent.agent.md"]},
+}
+SKILL_ALIASES = {
+    "doc-agent": "documentation-skill",
+    "ddia-specialist": "ddia-skill",
+    "software-design-specialist": "software-design-skill",
+    "book-to-agent": "book-to-agent-skill",
+    "independent-diff-review": "independent-diff-review-skill",
+    "issue-to-tested-pr": "issue-to-tested-pr-skill",
+    "release-and-docs": "release-and-docs-skill",
+    "simplify-or-delete": "simplify-or-delete-skill",
+    "recruiter-followup": "recruiter-followup-skill",
+}
+AGENT_ALIASES = {
+    "codex": {
+        "doc-agent.toml": "documentation-agent.toml",
+        "ddia-specialist.toml": "ddia-agent.toml",
+        "software-design-specialist.toml": "software-design-agent.toml",
+        "adversarial-reviewer.toml": "adversarial-reviewer-agent.toml",
+        "implementation-owner.toml": "implementation-owner-agent.toml",
+        "verifier.toml": "verifier-agent.toml",
+    },
+    "copilot": {"doc-agent.agent.md": "documentation-agent.agent.md"},
 }
 SCHEMA = "agent-toolkit-install/v1"
 
@@ -109,7 +131,11 @@ def inventory(root: Path = ROOT) -> dict[str, str]:
     for path in sorted((root / "skills").iterdir()):
         if path.name in IGNORED:
             continue
-        if not path.is_dir() or NAME.fullmatch(path.name) is None:
+        if (
+            not path.is_dir()
+            or NAME.fullmatch(path.name) is None
+            or not path.name.endswith("-skill")
+        ):
             raise InstallError(f"Invalid skill directory: {path}")
         name, description = skill_metadata(path / "SKILL.md")
         if name != path.name:
@@ -117,19 +143,44 @@ def inventory(root: Path = ROOT) -> dict[str, str]:
         found[name] = description
     if not found:
         raise InstallError("No skills found in this checkout.")
+    for path in (root / "agents").iterdir():
+        if path.name not in IGNORED and (not path.is_dir() or path.name not in AGENTS):
+            raise InstallError(f"Unknown agent host directory: {path}")
     for target, groups in AGENTS.items():
-        for skill, names in groups.items():
+        expected = {name for names in groups.values() for name in names}
+        actual = set()
+        extension = ".toml" if target == "codex" else ".agent.md"
+        for path in sorted((root / "agents" / target).iterdir()):
+            if path.name in IGNORED:
+                continue
+            slug = path.name.removesuffix(extension)
+            if (
+                not path.is_file()
+                or not path.name.endswith(extension)
+                or NAME.fullmatch(slug) is None
+                or not slug.endswith("-agent")
+            ):
+                raise InstallError(f"Agent filename must end with -agent{extension}: {path}")
+            if target == "codex":
+                data = tomllib.loads(path.read_text(encoding="utf-8"))
+                for field in ("name", "description", "developer_instructions"):
+                    if not isinstance(data.get(field), str) or not data[field].strip():
+                        raise InstallError(f"Agent {path} needs {field}.")
+                if data["name"] != slug.replace("-", "_"):
+                    raise InstallError(f"Codex agent name must match its filename: {path}")
+            else:
+                name, _ = skill_metadata(path)
+                if not name.endswith(" Agent"):
+                    raise InstallError(f"Copilot agent display name must end with Agent: {path}")
+            actual.add(path.name)
+        if actual != expected:
+            raise InstallError(
+                f"Agent files and mappings differ for {target}: "
+                f"missing {sorted(expected - actual)}, unmapped {sorted(actual - expected)}"
+            )
+        for skill in groups:
             if skill not in found:
                 raise InstallError(f"Agent mapping names a missing skill: {skill}")
-            for name in names:
-                path = root / "agents" / target / name
-                if target == "codex":
-                    data = tomllib.loads(path.read_text(encoding="utf-8"))
-                    for field in ("name", "description", "developer_instructions"):
-                        if not isinstance(data.get(field), str) or not data[field].strip():
-                            raise InstallError(f"Agent {path} needs {field}.")
-                else:
-                    skill_metadata(path)
     return found
 
 
@@ -212,14 +263,30 @@ def plan_install(
 ) -> list[Entry]:
     """Preflight selected links and legacy migrations without filesystem writes."""
     available = inventory(root)
+    for alias in sorted(set(skills) & SKILL_ALIASES.keys()):
+        print(
+            f"Deprecated skill selector {alias!r}; use {SKILL_ALIASES[alias]!r}.",
+            file=sys.stderr,
+        )
+    skills = sorted({SKILL_ALIASES.get(name, name) for name in skills})
     unknown = sorted(set(skills) - available.keys())
     if unknown:
         raise InstallError(f"Unknown skills: {', '.join(unknown)}")
     candidates = []
-    for name in sorted(set(skills)):
+    for name in skills:
         candidates.append(Entry(f"{target}-skills", name, root / "skills" / name))
         for agent in AGENTS[target].get(name, []):
             candidates.append(Entry(f"{target}-agents", agent, root / "agents" / target / agent))
+            for old, canonical in AGENT_ALIASES[target].items():
+                if canonical == agent and present(paths[f"{target}-agents"] / old):
+                    candidates.append(Entry(f"{target}-agents", old, None))
+        for old, canonical in SKILL_ALIASES.items():
+            if canonical != name:
+                continue
+            if present(paths[f"{target}-skills"] / old):
+                candidates.append(Entry(f"{target}-skills", old, None))
+            if target == "codex" and present(paths["legacy-codex-skills"] / old):
+                candidates.append(Entry("legacy-codex-skills", old, None))
         if target == "codex" and present(paths["legacy-codex-skills"] / name):
             candidates.append(Entry("legacy-codex-skills", name, None))
     changes = []
@@ -510,6 +577,16 @@ def main(argv: list[str] | None = None) -> int:
     undo = commands.add_parser("restore", help="Restore the entries recorded by an installation.")
     undo.add_argument("receipt", type=Path)
     undo.add_argument("--dry-run", action="store_true")
+    project = commands.add_parser(
+        "bootstrap", help="Copy shared project-local skills and agents into an application."
+    )
+    project.add_argument("--project", type=Path, required=True)
+    project.add_argument("--target", choices=(*AGENTS, "both"))
+    project_selection = project.add_mutually_exclusive_group()
+    project_selection.add_argument("--skill", action="append", dest="skills")
+    project_selection.add_argument("--all", action="store_true")
+    project.add_argument("--update", action="store_true")
+    project.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
     try:
         if args.command == "restore":
@@ -526,6 +603,33 @@ def main(argv: list[str] | None = None) -> int:
                 print(
                     f"Package valid: {len(skills)} skills, {counts['codex']} Codex agents, "
                     f"{counts['copilot']} Copilot agent."
+                )
+            elif args.command == "bootstrap":
+                previous_bytecode = sys.dont_write_bytecode
+                try:
+                    sys.dont_write_bytecode = previous_bytecode or args.dry_run
+                    from project_bootstrap import bootstrap
+                finally:
+                    sys.dont_write_bytecode = previous_bytecode
+
+                selected = list(skills) if args.all else args.skills
+                if selected is not None:
+                    for alias in sorted(set(selected) & SKILL_ALIASES.keys()):
+                        print(
+                            f"Deprecated skill selector {alias!r}; use {SKILL_ALIASES[alias]!r}.",
+                            file=sys.stderr,
+                        )
+                    selected = [SKILL_ALIASES.get(name, name) for name in selected]
+                bootstrap(
+                    ROOT,
+                    args.project,
+                    skills,
+                    AGENTS,
+                    IGNORED,
+                    skills=selected,
+                    target=args.target,
+                    update=args.update,
+                    dry_run=args.dry_run,
                 )
             else:
                 home = (args.home or Path.home()).expanduser().resolve()
