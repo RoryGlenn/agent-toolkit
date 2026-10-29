@@ -5,21 +5,17 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import platform
 import re
-import shutil
 import subprocess
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from benchmarks.large_projects.adapters import Command, commands, manifest
-from benchmarks.large_projects.export import export_parent
-from benchmarks.large_projects.finalize import collector_control, finalize
+from benchmarks.large_projects.adapters import Command
 from benchmarks.large_projects.grading import browser_checks, classify, go_checks, python_checks
-from benchmarks.large_projects.isolation import LinuxBoundary
 from benchmarks.large_projects.prepare import CATALOG, git, prepare, test_patch
-from benchmarks.process import bounded_process, sanitized_environment
+from benchmarks.process import sanitized_environment
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -41,8 +37,11 @@ def harness_hashes() -> dict[str, str]:
         *package.glob("*.py"),
         *package.glob("*.json"),
         *package.glob("controls/*"),
+        *package.glob("vendor/*"),
         package.parent / "process.py",
         package.parent / "__main__.py",
+        package.parent / "runtime.py",
+        package.parent / "files.py",
     ]
     return {str(p.relative_to(package.parent)): sha(p) for p in paths if p.is_file()}
 
@@ -95,7 +94,9 @@ def environment(root: Path, toolchains: list[Path], *, network: bool) -> dict[st
     return env
 
 
-def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
+def outcome(
+    command: Command, result: Any, read_text: Callable[[Path], str] | None = None
+) -> tuple[str, dict[str, Any]]:
     """Classify required tests separately from setup and reference-only diagnostics."""
     checks: dict[str, Any] = {}
     combined = result.stdout + result.stderr
@@ -183,7 +184,7 @@ def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
             return "environment_failure", checks
         checks = {name: "fail" if negative else "pass" for negative, _, name in rows}
         if command.expected.keys() == {"tablespace-dependency-locking"}:
-            if not postgres_schedules(command):
+            if not postgres_schedules(command, read_text):
                 return "environment_failure", checks
     elif command.parser == "mocha":
         counts, tests = browser_checks(result.stdout)
@@ -210,7 +211,7 @@ def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
     return classify(result, checks, command.expected), checks
 
 
-def postgres_schedules(command: Command) -> bool:
+def postgres_schedules(command: Command, read_text: Callable[[Path], str] | None = None) -> bool:
     """Require all six real result permutations and the intended semantic mismatches."""
     paths = {}
     for arg in command.argv:
@@ -221,9 +222,13 @@ def postgres_schedules(command: Command) -> bool:
         return False
     actual_path = paths["--outputdir"] / "results/tablespace-dependency-locking.out"
     expected_path = paths["--inputdir"] / "expected/tablespace-dependency-locking.out"
-    if not actual_path.is_file() or not expected_path.is_file():
+    try:
+        actual, expected = (
+            (read_text or Path.read_text)(actual_path),
+            (read_text or Path.read_text)(expected_path),
+        )
+    except (OSError, RuntimeError):
         return False
-    actual, expected = actual_path.read_text(), expected_path.read_text()
     actual_parts = actual.split("starting permutation: ")[1:]
     expected_parts = expected.split("starting permutation: ")[1:]
     if len(actual_parts) != 6 or len(expected_parts) != 6:
@@ -270,159 +275,17 @@ def verify_preparation(case: dict[str, Any], curator: Path) -> None:
 
 
 def qualify(
-    case: dict[str, Any], curator: Path, output: Path, toolchains: list[Path], seconds: int = 7200
+    case: dict[str, Any],
+    curator: Path,
+    output: Path,
+    toolchains: list[Path],
+    seconds: int = 7200,
+    bundle: Path | None = None,
 ) -> dict[str, Any]:
-    """Run both trusted controls; all attempts are retained even when setup fails."""
-    output.mkdir(parents=True, exist_ok=False)
-    started = time.monotonic()
-    command_seconds = 0.0
-    report: dict[str, Any] = {
-        "schema_version": 1,
-        "case_id": case["id"],
-        "platform": platform.platform(),
-        "manifest_sha256": sha(CATALOG),
-        "adapter_contract": manifest(),
-        "control_hashes": {p.name: sha(p) for p in (Path(__file__).parent / "controls").glob("*")},
-        "runner_hashes": RUNNER_HASHES,
-        "source_pins": {key: case[key] for key in ("parent", "fixed", "test_patch_sha256")},
-        "wall_seconds": seconds,
-        "wall_scope": "command-loop budget; source staging and canaries separately bounded",
-        "compiler_workers": 2,
-        "sides": {side: {"status": "not_started", "commands": []} for side in ("parent", "fixed")},
-        "status": "environment_failure",
-        "ready_for_model_comparison": False,
-    }
-    sides = (
-        ("parent", "fixed", "alternative", "partial")
-        if case["id"] == "otel-queue-cancellation"
-        else ("parent", "fixed")
-    )
-    try:
-        verify_preparation(case, curator)
-        for side in sides:
-            records: list[dict[str, Any]] = []
-            report["sides"][side] = {"commands": records, "status": "environment_failure"}
-            root = output / side
-            root.mkdir()
-            for name in ("home", "tmp", "cache", "build"):
-                (root / name).mkdir()
-            source = root / "source"
-            export_parent(
-                {**case, "parent": case["fixed" if side == "fixed" else "parent"]}, curator, source
-            )
-            for name in case["test_paths"]:
-                target = source / name
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(git(curator / "repository", "show", f"{case['fixed']}:{name}"))
-            adapted = finalize(case["id"], source)
-            if side in ("alternative", "partial"):
-                collector_control(source, side)
-                adapted.append(source / "exporter/exporterhelper/internal/queue/cond.go")
-            report["sides"][side]["adapted_test_hashes"] = {
-                str(path.relative_to(source)): sha(path) for path in adapted
-            }
-            boundary = LinuxBoundary(root, toolchains)
-            report["sides"][side]["isolation"] = boundary.preflight(
-                [
-                    curator / "upstream-tests.patch",
-                    curator / "repository/.git/HEAD",
-                    CATALOG,
-                ]
-            )
-            report["sides"][side]["test_hashes"] = {
-                name: sha(source / name) for name in case["test_paths"] if (source / name).is_file()
-            }
-            plan = commands(case["id"], source, root / "build", side)
-            setup_seconds = test_seconds = 0.0
-            for index, command in enumerate(plan):
-                remaining = seconds - command_seconds
-                if remaining <= 0:
-                    raise ValueError("aggregate qualification deadline exhausted")
-                if shutil.disk_usage(output).free < 2 * 1024**3:
-                    raise ValueError("less than 2 GiB free; stopping without deleting evidence")
-                network = command.name.startswith("dependencies") or command.name == "browser"
-                env = environment(root, toolchains, network=network)
-                if command.parser == "postgres" and command.name.startswith("regressions-"):
-                    env["TOOLKIT_SQLSTATE"] = "1"
-                for toolchain in toolchains:
-                    if (toolchain / "share/bison").is_dir():
-                        env["BISON_PKGDATADIR"] = str(toolchain / "share/bison")
-                if command.name.startswith("regressions-") or command.name.startswith("controls-"):
-                    if command.parser == "postgres":
-                        (root / "build" / command.name).mkdir()
-                if command.name == "go-version":
-                    version = bounded_process(["go", "version"], source, env, timeout=10)
-                    if "go1.26.0 " not in version.stdout:
-                        raise ValueError(f"Go 1.26.0 required: {version.stdout} {version.stderr}")
-                if command.name in ("node-version", "npm-version"):
-                    version = bounded_process(command.argv, source, env, timeout=10)
-                    required = "v22.22.1" if command.name == "node-version" else "10.9.4"
-                    if version.stdout.strip() != required:
-                        raise ValueError(f"{command.name} requires {required}: {version.stdout}")
-                result = (
-                    bounded_process(
-                        command.argv, command.cwd, env, timeout=min(command.timeout, remaining)
-                    )
-                    if network
-                    else boundary.execute(
-                        command.argv,
-                        command.cwd,
-                        environment=env,
-                        timeout=min(command.timeout, remaining),
-                    )
-                )
-                command_seconds += result.elapsed_seconds
-                status, checks = outcome(command, result)
-                record = {
-                    **result.to_dict(),
-                    "name": command.name,
-                    "phase": command.phase,
-                    "cwd": str(command.cwd),
-                    "environment": {
-                        key: value for key, value in env.items() if "proxy" not in key.lower()
-                    },
-                    "status": status,
-                    "checks": checks,
-                    "expected": command.expected,
-                }
-                # Proxy values may contain credentials and never enter receipts.
-                write_json(root / f"{index:02d}-{command.name}.json", record)
-                records.append(record)
-                if command.phase == "setup":
-                    setup_seconds += result.elapsed_seconds
-                else:
-                    test_seconds += result.elapsed_seconds
-                if status == "environment_failure":
-                    break
-            boundary.close()
-            report["sides"][side].update(
-                {
-                    "cold_setup_seconds": setup_seconds,
-                    "warm_test_seconds": test_seconds,
-                    "status": "qualified"
-                    if len(records) == len(plan)
-                    and all(r["status"] in ("passed", "qualified") for r in records)
-                    else "not_qualified",
-                }
-            )
-        report["status"] = (
-            "qualified"
-            if all(side["status"] == "qualified" for side in report["sides"].values())
-            else "not_qualified"
-        )
-    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
-        report["error"] = str(exc)
-    finally:
-        if harness_hashes() != RUNNER_HASHES:
-            report.update(
-                {"status": "environment_failure", "error": "runner changed during execution"}
-            )
-        report["elapsed_seconds"] = time.monotonic() - started
-        write_json(output / "qualification.json", report)
-        receipt_paths = [output / "qualification.json", *output.glob("*/*.json")]
-        evidence = {str(p.relative_to(output)): sha(p) for p in receipt_paths}
-        write_json(output / "evidence-sha256.json", evidence)
-    return report
+    """Use the same bounded, sealed evaluator as candidate artifacts."""
+    from benchmarks.large_projects.integration import qualify_integrated
+
+    return qualify_integrated(case, curator, output, toolchains, seconds, bundle)
 
 
 def prepare_set(case_ids: list[str], root: Path) -> list[dict[str, Any]]:

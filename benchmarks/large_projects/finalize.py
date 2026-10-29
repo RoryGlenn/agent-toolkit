@@ -20,7 +20,26 @@ def replace_once(path: Path, old: str, new: str) -> None:
 def finalize(case_id: str, source: Path) -> list[Path]:
     """Remove unnecessary representation checks while keeping deterministic coordination."""
     changed = []
-    if case_id == "otel-queue-cancellation":
+    if case_id == "cpython-import-locks":
+        # Linux returns EROFS (rather than ENOENT) when unlinking a nonexistent
+        # legacy pyc under a readonly source mount. Preserve real cleanup errors;
+        # do not attempt a deletion when that cache file does not exist.
+        path = source / "Lib/test/support/import_helper.py"
+        replace_once(
+            path,
+            "        unlink(source + 'c')\n",
+            "        if os.path.lexists(source + 'c'):\n            unlink(source + 'c')\n",
+        )
+        replace_once(
+            path,
+            "                unlink(importlib.util.cache_from_source(source, optimization=opt))\n",
+            "                cached = importlib.util.cache_from_source("
+            "source, optimization=opt)\n"
+            "                if os.path.lexists(cached):\n"
+            "                    unlink(cached)\n",
+        )
+        changed.append(path)
+    elif case_id == "otel-queue-cancellation":
         path = source / "exporter/exporterhelper/internal/queue/cond_test.go"
         text = path.read_text()
         # The queue-lock-injection test passes on the parent. Existing queue controls

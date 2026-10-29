@@ -5,13 +5,16 @@ from __future__ import annotations
 import hashlib
 import os
 import stat
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 LIMIT = 20_000_000
 
 
-def read_regular(path: Path) -> bytes:
-    """Read a bounded, single-link regular file using no-follow directory descriptors."""
+@contextmanager
+def regular_descriptor(path: Path, *, limit: int = LIMIT) -> Iterator[int]:
+    """Hold no-follow ancestors and require stable bounded single-link ordinary data."""
     absolute = path.absolute()
     descriptor = os.open(absolute.anchor, os.O_RDONLY | os.O_DIRECTORY)
     try:
@@ -26,15 +29,9 @@ def read_regular(path: Path) -> bytes:
         )
         try:
             before = os.fstat(child)
-            if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size > LIMIT:
+            if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size > limit:
                 raise ValueError(f"unsafe file: {path.name}")
-            chunks = []
-            total = 0
-            while chunk := os.read(child, 65536):
-                total += len(chunk)
-                if total > LIMIT:
-                    raise ValueError("file exceeded size limit while reading")
-                chunks.append(chunk)
+            yield child
             after = os.fstat(child)
             if (before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
                 after.st_size,
@@ -42,11 +39,36 @@ def read_regular(path: Path) -> bytes:
                 after.st_ctime_ns,
             ):
                 raise ValueError("file changed while reading")
-            return b"".join(chunks)
         finally:
             os.close(child)
     finally:
         os.close(descriptor)
+
+
+def hash_regular(path: Path, *, limit: int = LIMIT) -> str:
+    """Stream large verified dependency files without allocating their contents."""
+    digest = hashlib.sha256()
+    total = 0
+    with regular_descriptor(path, limit=limit) as descriptor:
+        while chunk := os.read(descriptor, 1024**2):
+            total += len(chunk)
+            if total > limit:
+                raise ValueError("file exceeded size limit while hashing")
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def read_regular(path: Path) -> bytes:
+    """Read a bounded, single-link regular file using no-follow directory descriptors."""
+    with regular_descriptor(path) as descriptor:
+        chunks = []
+        total = 0
+        while chunk := os.read(descriptor, 65536):
+            total += len(chunk)
+            if total > LIMIT:
+                raise ValueError("file exceeded size limit while reading")
+            chunks.append(chunk)
+        return b"".join(chunks)
 
 
 def snapshot(root: Path) -> dict[str, bytes]:

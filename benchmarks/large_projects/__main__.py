@@ -20,6 +20,9 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="operation", required=True)
     sub.add_parser("list")
+    runtime = sub.add_parser("runtime-check")
+    runtime.add_argument("--codex", required=True, type=Path)
+    runtime.add_argument("--output", required=True, type=Path)
     prep = sub.add_parser("prepare")
     prep.add_argument("--case", action="append", choices=[c["id"] for c in cases])
     prep.add_argument("--output", type=Path, required=True)
@@ -29,6 +32,17 @@ def main(argv: list[str] | None = None) -> None:
     run.add_argument("--output", type=Path, required=True)
     run.add_argument("--toolchain", type=Path, action="append", default=[])
     run.add_argument("--seconds", type=int, default=7200)
+    run.add_argument(
+        "--dependencies",
+        type=Path,
+        help="root of separately prefetched per-case dependency bundles",
+    )
+    fetch = sub.add_parser("prefetch")
+    fetch.add_argument("--case", required=True, choices=[c["id"] for c in cases])
+    fetch.add_argument("--curator", type=Path, required=True)
+    fetch.add_argument("--output", type=Path, required=True)
+    fetch.add_argument("--toolchain", type=Path, action="append", default=[])
+    fetch.add_argument("--seconds", type=int, default=1800)
     export = sub.add_parser("export")
     export.add_argument("--case", required=True, choices=[c["id"] for c in cases])
     export.add_argument("--curator", type=Path, required=True)
@@ -41,6 +55,18 @@ def main(argv: list[str] | None = None) -> None:
     try:
         if args.operation == "list":
             print(json.dumps(cases, indent=2))
+        elif args.operation == "runtime-check":
+            from benchmarks.large_projects.qualification import qualify_runtime
+
+            result = qualify_runtime(args.codex.resolve(strict=True), args.output.resolve())
+            print(
+                json.dumps(
+                    {k: v for k, v in result.items() if k not in {"gates", "runner_hashes"}},
+                    indent=2,
+                )
+            )
+            if result["status"] != "passed":
+                raise SystemExit(1)
         elif args.operation == "prepare":
             results = prepare_set(args.case or [c["id"] for c in cases], args.output)
             print(json.dumps(results, indent=2))
@@ -60,11 +86,24 @@ def main(argv: list[str] | None = None) -> None:
                     args.output / case["id"],
                     args.toolchain,
                     args.seconds,
+                    args.dependencies / case["id"] if args.dependencies else None,
                 )
                 results.append(result)
                 print(f"{case['id']}: {result['status']}", flush=True)
             (args.output / "report.json").write_text(json.dumps(results, indent=2) + "\n")
             if any(r["status"] != "qualified" for r in results):
+                raise SystemExit(1)
+        elif args.operation == "prefetch":
+            from benchmarks.large_projects.integration import prefetch
+
+            case = next(c for c in cases if c["id"] == args.case)
+            result = prefetch(case, args.curator, args.output, args.toolchain, args.seconds)
+            print(
+                json.dumps(
+                    {k: v for k, v in result.items() if k not in {"hashes", "commands"}}, indent=2
+                )
+            )
+            if result["status"] != "prefetched":
                 raise SystemExit(1)
         elif args.operation == "export":
             case = next(c for c in cases if c["id"] == args.case)
@@ -79,12 +118,13 @@ def main(argv: list[str] | None = None) -> None:
             root = args.directory.absolute()
             if root.is_symlink() or not (root / "qualification.json").is_file():
                 raise ValueError("clean requires a single qualification directory (no symlinks)")
-            for side in ("parent", "fixed", "alternative", "partial"):
+            sides = ("parent", "fixed", "alternative", "partial")
+            for side in (*sides, *(side + "-actor" for side in sides)):
                 if (root / side).is_symlink():
                     raise ValueError("refusing symlink cleanup ancestor")
             # Keep all JSON receipts. Only known runner-owned bulky children are removed.
-            for side in ("parent", "fixed", "alternative", "partial"):
-                for child in ("source", "build", "cache", "home", "tmp"):
+            for side in (*sides, *(side + "-actor" for side in sides)):
+                for child in ("source", "build", "cache", "home", "tmp", "staging", "workspace"):
                     path = root / side / child
                     if path.is_symlink():
                         raise ValueError("refusing symlink cleanup")

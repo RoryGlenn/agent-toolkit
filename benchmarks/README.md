@@ -261,6 +261,8 @@ review have been calibrated.
 The [curator handoff for issue #5](large_projects/README.md) records four historical
 regressions in VS Code, CPython, OpenTelemetry Collector and PostgreSQL. Model-free
 `python -m benchmarks large` operations prepare sources, run Linux curator qualification,
-inspect receipts and clean bulky artifacts. These cases remain unavailable to comparison
-planning and candidate grading until qualification and actor/evaluator isolation are complete.
+inspect receipts and clean bulky artifacts. The same plan, prepare, run, grade and report operations accept these cases with an explicit
+qualified large-project context. Runtime proof and every selected case must match the current
+harness; missing gates block planning. See the large-project guide for resource limits, sealed
+grading, component scope and current verification. No model comparison is part of qualification.
 The handoff and curator output contain answers; never copy them into a candidate workspace.

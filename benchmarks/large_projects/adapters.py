@@ -112,7 +112,23 @@ def commands(case_id: str, source: Path, state: Path, side: str) -> list[Command
         result += [
             Command("configure", [str(source / "configure"), "--with-pydebug"], state),
             Command("build", ["make", "-j2"], state),
-            Command("frozen", ["make", "-j2", "regen-importlib"], state),
+            Command(
+                "frozen",
+                [
+                    "/usr/bin/python3",
+                    "-c",
+                    "import subprocess,sys; from pathlib import Path; "
+                    "s,b=map(Path,sys.argv[1:]); "
+                    "[subprocess.run([str(b/'Programs/_freeze_module'), n, "
+                    "str(s/'Lib/importlib'/f'{f}.py'), "
+                    "str(b/'Python/frozen_modules'/f'{o}.h')],check=True) "
+                    "for n,f,o in [('importlib._bootstrap','_bootstrap','importlib._bootstrap'),"
+                    "('importlib._bootstrap_external','_bootstrap_external','importlib._bootstrap_external')]]",
+                    str(source),
+                    str(state),
+                ],
+                state,
+            ),
             Command("rebuild", ["make", "-j2"], state),
             Command(
                 "runtime",
@@ -331,7 +347,7 @@ def manifest() -> dict[str, object]:
         "platform": "Linux x86_64 (qualification required)",
         "compiler_workers": 2,
         "repetitions": 3,
-        "candidate_execution": "disabled until fair-grader and adapter qualification is complete",
+        "candidate_execution": "requires current runtime and sealed evaluator qualification",
         "cpython": {
             "build": "fresh debug GIL interpreter; frozen importlib regenerated",
             "regressions": CP_REGRESSIONS,

@@ -11,6 +11,7 @@ import shutil
 import socket
 import stat
 import sys
+import tempfile
 import tomllib
 from collections.abc import Sequence
 from functools import cache
@@ -91,6 +92,10 @@ def harness_fingerprint() -> str:
     if not files:
         raise ValueError("benchmark harness sources are missing")
     files["../install.py"] = digest(Path(install.__file__).resolve())
+    package = HARNESS_ROOT / "large_projects"
+    for path in [*package.glob("*.json"), *package.glob("controls/*"), *package.glob("vendor/*")]:
+        if path.is_file():
+            files[str(path.relative_to(HARNESS_ROOT))] = digest(path)
     return fingerprint(files)
 
 
@@ -279,8 +284,6 @@ def permission_config(workspace: Path, readonly: Sequence[Path], temporary: Path
     permissions = {
         ":root": "deny",
         ":minimal": "read",
-        ":tmpdir": "deny",
-        ":slash_tmp": "deny",
         str(workspace.resolve()): "write",
         str(temporary.resolve()): "write",
     }
@@ -318,9 +321,14 @@ def config_text(
     model: str,
     effort: str,
     budget_units: int | None = None,
+    *,
+    local_network: bool = False,
+    readonly_extra: Sequence[Path] = (),
+    shell_environment: dict[str, str] | None = None,
+    project_guidance: bool = False,
 ) -> str:
     """Generate isolated client configuration, including tree-wide bounded rollout units."""
-    readonly = [actor_home]
+    readonly = [actor_home, *readonly_extra]
     if (client_home / "agents").exists():
         readonly.append(client_home / "agents")
     lines = [
@@ -330,7 +338,7 @@ def config_text(
         'default_permissions = "benchmark"',
         'web_search = "disabled"',
         "allow_login_shell = false",
-        "project_doc_max_bytes = 0",
+        f"project_doc_max_bytes = {32768 if project_guidance else 0}",
         "[skills.bundled]",
         "enabled = false",
         "[shell_environment_policy]",
@@ -339,8 +347,18 @@ def config_text(
     ]
     environment = sanitized_environment(actor_home, temporary)
     environment["GIT_CEILING_DIRECTORIES"] = str(workspace.resolve().parent)
+    environment.update(shell_environment or {})
     lines += [f"{key} = {json.dumps(value)}" for key, value in environment.items()]
     lines += ["[features]"] + [f"{name} = false" for name in DISABLED]
+    if local_network:
+        lines += [
+            "network_proxy = true",
+            "code_mode = true",
+            "code_mode_only = true",
+            "code_mode_host = true",
+            "multi_agent = true",
+            "multi_agent_v2 = true",
+        ]
     if budget_units is not None:
         if budget_units < 2:
             raise ValueError("budget units must be at least two")
@@ -359,7 +377,15 @@ def config_text(
         f"default_subagent_model = {json.dumps(model)}",
         f"default_subagent_reasoning_effort = {json.dumps(effort)}",
     ]
-    lines += [permission_config(workspace, readonly, temporary)]
+    permissions = permission_config(workspace, readonly, temporary)
+    if local_network:
+        permissions = permissions.replace(
+            "[permissions.benchmark.network]\nenabled = false",
+            '[permissions.benchmark.network]\nenabled = true\nmode = "limited"\n'
+            "allow_local_binding = true\n[permissions.benchmark.network.domains]\n"
+            '"localhost" = "allow"\n"127.0.0.1" = "allow"',
+        )
+    lines += [permissions]
     return "\n".join(lines) + "\n"
 
 
@@ -411,6 +437,26 @@ class NativeExecutor:
         """Require positive workspace access plus read/write/alias/network denial evidence."""
         if platform.system() not in {"Darwin", "Linux"}:
             raise ValueError("unsupported native sandbox platform")
+        if not forbidden:
+            raise ValueError("native preflight requires known existing forbidden files")
+        host_targets = []
+        for path in forbidden:
+            metadata = path.lstat()
+            if not stat.S_ISREG(metadata.st_mode):
+                raise ValueError("forbidden preflight target must be a real regular file")
+            host_targets.append(
+                {
+                    "path": str(path.resolve()),
+                    "device": metadata.st_dev,
+                    "inode": metadata.st_ino,
+                    "size": metadata.st_size,
+                }
+            )
+        with tempfile.NamedTemporaryFile(
+            dir=self.actor_home, prefix=".isolation-readonly-", delete=False
+        ) as stream:
+            stream.write(b"known-readonly")
+            readonly_control = Path(stream.name)
         control = self.workspace / ".isolation-control"
         control.write_text("allowed")
         alias = self.workspace / ".isolation-alias"
@@ -426,6 +472,7 @@ root=pathlib.Path({str(self.workspace)!r})
 out['allowed_read']=(root/'.isolation-control').read_text()=='allowed'
 (root/'.isolation-write').write_text('allowed')
 out['allowed_write']=(root/'.isolation-write').read_text()=='allowed'
+out['allowed_readonly_read']=pathlib.Path({str(readonly_control)!r}).read_text()=='known-readonly'
 version=subprocess.run(['git','--version'],capture_output=True,text=True,timeout=5)
 out['allowed_git_version']=version.returncode==0 and version.stdout.startswith('git version ')
 (root/'.isolation-different').write_text('different')
@@ -440,22 +487,20 @@ out['isolated_git_config']=configuration.returncode==0 and not configuration.std
 for index,name in enumerate({paths!r}):
     try:
         pathlib.Path(name).read_bytes()
-    except PermissionError:
-        out['denied_read_'+str(index)]=True
-    except OSError:
-        out['denied_read_'+str(index)]=False
+    except OSError as error:
+        out['denied_read_'+str(index)]=error.errno in (1,2,13)
     else:
         out['denied_read_'+str(index)]=False
 try:
-    pathlib.Path({str(forbidden[0].parent / ".forbidden-write")!r}).write_text('bad')
-except PermissionError:
-    out['denied_write']=True
+    pathlib.Path({str(readonly_control)!r}).write_text('bad')
+except OSError as error:
+    out['denied_write']=error.errno in (1,13,30)
 else:
     out['denied_write']=False
 try:
     (root/'.isolation-hardlink').hardlink_to({str(forbidden[0].resolve())!r})
-except PermissionError:
-    out['denied_hardlink']=True
+except OSError as error:
+    out['denied_hardlink']=error.errno in (1,2,13)
 else:
     out['denied_hardlink']=False
 try:
@@ -475,13 +520,31 @@ print(json.dumps(out))
             if result.returncode != 0:
                 raise ValueError(f"native sandbox preflight failed: {result.stderr[-2000:]}")
             evidence = json.loads(result.stdout)
-            expected = 8 + len(paths)
+            expected = 9 + len(paths)
             if len(evidence) != expected or not all(value is True for value in evidence.values()):
                 raise ValueError(f"isolation canaries failed: {evidence}")
+            for path, expected_target in zip(forbidden, host_targets, strict=True):
+                metadata = path.lstat()
+                if (metadata.st_dev, metadata.st_ino, metadata.st_size) != (
+                    expected_target["device"],
+                    expected_target["inode"],
+                    expected_target["size"],
+                ):
+                    raise ValueError("host-positive preflight target changed during the probe")
+            if readonly_control.read_text() != "known-readonly":
+                raise ValueError("native command overwrote protected source data")
             self.verified = True
-            return [{"checks": evidence, "execution": result.to_dict()}]
+            return [
+                {
+                    "checks": evidence,
+                    "host_positive_targets": host_targets,
+                    "denial_modes": "permission denied or mount-hidden known existing target",
+                    "execution": result.to_dict(),
+                }
+            ]
         finally:
             listener.close()
+            readonly_control.unlink(missing_ok=True)
             for path in (
                 control,
                 alias,
