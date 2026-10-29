@@ -134,6 +134,7 @@ def outcome(command: Command, result: Any) -> tuple[str, dict[str, Any]]:
                 return "environment_failure", checks
         if (
             known_deadlock
+            and checks.get("TestCondCancellationNotification") == "fail"
             and "panic: deadlock: all goroutines in bubble are blocked" not in combined
         ):
             return "environment_failure", checks
