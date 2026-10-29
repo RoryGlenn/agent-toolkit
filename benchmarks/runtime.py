@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import platform
 import re
 import shutil
 import socket
+import stat
 import sys
 import tomllib
 from collections.abc import Sequence
@@ -15,6 +17,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
+import install
 from benchmarks.cases import REPOSITORY
 from benchmarks.process import Execution, bounded_process, sanitized_environment
 
@@ -22,17 +25,17 @@ HARNESS_ROOT = Path(__file__).resolve().parent
 
 ARMS = ("baseline", "source-matched", "toolkit")
 PROFILES = ("downloaded", "reference-complete")
-SKILLS = (
-    "ddia-specialist",
-    "software-design-specialist",
-    "doc-agent",
-    "issue-to-tested-pr",
-    "independent-diff-review",
-    "release-and-docs",
-    "simplify-or-delete",
-    "book-to-agent",
-    "recruiter-followup",
-)
+SOURCE_LIBRARIES = {
+    "ddia-skill": "ddia-specialist",
+    "software-design-skill": "software-design-specialist",
+}
+
+
+def skill_names() -> tuple[str, ...]:
+    """Use the installer's validated canonical inventory for all staged skills."""
+    return tuple(install.inventory(REPOSITORY))
+
+
 DISABLED = (
     "apps",
     "plugins",
@@ -87,6 +90,7 @@ def harness_fingerprint() -> str:
     }
     if not files:
         raise ValueError("benchmark harness sources are missing")
+    files["../install.py"] = digest(Path(install.__file__).resolve())
     return fingerprint(files)
 
 
@@ -145,7 +149,7 @@ def resource_manifest(profile: str, manifest: Path | None = None) -> dict[str, P
     resources: dict[str, Path] = {}
     for path in sorted((REPOSITORY / "books").glob("*.epub")):
         resources[f"books/{path.name}"] = path
-    for skill in SKILLS:
+    for skill in skill_names():
         directory = REPOSITORY / "skills" / skill
         for kind in ("references", "scripts", "assets"):
             for path in sorted((directory / kind).rglob("*")):
@@ -164,7 +168,7 @@ def resource_manifest(profile: str, manifest: Path | None = None) -> dict[str, P
                 or ".." in target.parts
                 or len(target.parts) < 4
                 or target.parts[:2] != (".local", "share")
-                or target.parts[2] not in {"ddia-specialist", "software-design-specialist"}
+                or target.parts[2] not in set(SOURCE_LIBRARIES.values())
                 or any("eval" in part.lower() or "rubric" in part.lower() for part in target.parts)
                 or target.name in {"AGENTS.md", "SKILL.md"}
             ):
@@ -177,12 +181,12 @@ def resource_manifest(profile: str, manifest: Path | None = None) -> dict[str, P
             resources[str(target)] = source
         required = {
             f".local/share/{skill}/{name}"
-            for skill in SKILLS[:2]
+            for skill in SOURCE_LIBRARIES.values()
             for name in ("source.epub", "index.json")
         }
         if not required <= resources.keys():
             raise ValueError(f"incomplete references: {sorted(required - resources.keys())}")
-        for skill in SKILLS[:2]:
+        for skill in SOURCE_LIBRARIES.values():
             prefix = f".local/share/{skill}"
             index = json.loads(resources[f"{prefix}/index.json"].read_text())
             if index.get("source_sha256") != digest(resources[f"{prefix}/source.epub"]):
@@ -227,7 +231,7 @@ def stage_arm(
             if digest(destination) != source_hashes[target]:
                 raise ValueError("source changed during staging")
     if arm == "toolkit":
-        for skill in SKILLS:
+        for skill in skill_names():
             source = REPOSITORY / "skills" / skill / "SKILL.md"
             skill_target = actor_home / ".agents" / "skills" / skill / "SKILL.md"
             skill_target.parent.mkdir(parents=True, exist_ok=True)
@@ -496,12 +500,152 @@ def resolve_codex(path: str = "codex") -> Path:
     return Path(found).resolve()
 
 
-def observe_trace(text: str) -> dict[str, Any]:
-    """Extract only observable events; discovery and claimed usage never prove dispatch."""
+def session_projection(path: Path) -> dict[str, Any]:
+    """Read bounded rollout metadata, excluding identities, instructions and inherited turns."""
+    descriptor = os.open(path.anchor, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        for part in path.parts[1:-1]:
+            child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=descriptor)
+            os.close(descriptor)
+            descriptor = child
+        file_descriptor = os.open(
+            path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=descriptor
+        )
+        try:
+            information = os.fstat(file_descriptor)
+            if not stat.S_ISREG(information.st_mode) or information.st_nlink != 1:
+                raise ValueError("nonregular session metadata")
+            stream = os.fdopen(file_descriptor, "rb")
+        except BaseException:
+            os.close(file_descriptor)
+            raise
+        with stream:
+            line = stream.readline(1_000_001)
+            if len(line) > 1_000_000:
+                raise ValueError("session header exceeds limit")
+            event = json.loads(line)
+            if event.get("type") != "session_meta" or not isinstance(event.get("payload"), dict):
+                raise ValueError("session header missing")
+            payload = event["payload"]
+            source = payload.get("source")
+            subagent = source.get("subagent") if isinstance(source, dict) else None
+            spawn = subagent.get("thread_spawn") if isinstance(subagent, dict) else None
+            result = {
+                "thread_id": payload.get("id"),
+                "parent_thread_id": None,
+                "agent_role": None,
+                "model": None,
+                "effort": None,
+            }
+            if not isinstance(spawn, dict):
+                return result
+            result["parent_thread_id"] = spawn.get("parent_thread_id")
+            result["agent_role"] = spawn.get("agent_role")
+            if not isinstance(result["parent_thread_id"], str) or (
+                result["agent_role"] is not None and not isinstance(result["agent_role"], str)
+            ):
+                raise ValueError("invalid child thread metadata")
+            if payload.get("agent_role") not in {None, result["agent_role"]}:
+                raise ValueError("conflicting session role metadata")
+            # Codex defines this as the first ordinal in the child's own projected history.
+            # Earlier turn_context records may describe the parent's different model/effort.
+            start = payload.get("subagent_history_start_ordinal")
+            if type(start) is not int or start < 1:
+                return result
+            total = len(line)
+            for ordinal in range(1, 4096):
+                line = stream.readline(1_000_001)
+                if not line:
+                    break
+                total += len(line)
+                if len(line) > 1_000_000 or total > 16_000_000:
+                    break
+                if ordinal < start:
+                    continue
+                event = json.loads(line)
+                if event.get("type") == "turn_context" and isinstance(event.get("payload"), dict):
+                    for key in ("model", "effort"):
+                        value = event["payload"].get(key)
+                        if isinstance(value, str):
+                            result[key] = value
+                    break
+            return result
+    finally:
+        os.close(descriptor)
+
+
+def observe_run_sessions(client_home: Path | None, root_thread_id: str | None) -> dict[str, Any]:
+    """Observe only descendants of stdout's root in this invocation's isolated session tree."""
+    result: dict[str, Any] = {
+        "root_thread_id": root_thread_id,
+        "observations": [],
+        "status": "unavailable",
+        "headers_inspected": 0,
+        "warnings": [],
+        "scope": "this run's client-home/sessions only; no global session search",
+    }
+    if client_home is None or root_thread_id is None:
+        return result
+    if client_home.is_symlink() or (client_home / "sessions").is_symlink():
+        result["warnings"].append("session directory alias rejected")
+        return result
+    sessions = client_home.resolve() / "sessions"
+    if not sessions.is_dir():
+        return result
+    records: dict[str, dict[str, Any]] = {}
+    conflicts: set[str] = set()
+    for index, path in enumerate(sorted(sessions.rglob("*.jsonl"))):
+        if index >= 256:
+            result["warnings"].append("session file inspection limit reached")
+            break
+        try:
+            record = session_projection(path)
+            result["headers_inspected"] += 1
+            identifier = record["thread_id"]
+            if not isinstance(identifier, str):
+                raise ValueError("session thread identity missing")
+            record["evidence"] = "local session_meta.source.subagent.thread_spawn"
+            record["session_file"] = str(path.relative_to(sessions))
+            if identifier in records:
+                conflicts.add(identifier)
+                result["warnings"].append("duplicate session thread identity")
+            records[identifier] = record
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            result["warnings"].append("unreadable or unsupported session metadata")
+    known = {root_thread_id}
+    observations = []
+    while True:
+        added = []
+        for identifier, record in records.items():
+            if (
+                identifier not in known
+                and identifier not in conflicts
+                and record["parent_thread_id"] in known
+                and (record["agent_role"] is None or bool(record["agent_role"]))
+            ):
+                added.append(record)
+        if not added:
+            break
+        observations.extend(added)
+        known.update(record["thread_id"] for record in added)
+    result["observations"] = observations
+    result["status"] = (
+        "partial"
+        if result["warnings"]
+        else "observed"
+        if root_thread_id in records or observations
+        else "unavailable"
+    )
+    return result
+
+
+def observe_trace(text: str, client_home: Path | None = None) -> dict[str, Any]:
+    """Extract actual events and parent-bound local session metadata, never catalog claims."""
     events: list[dict[str, Any]] = []
     usage: dict[str, Any] | None = None
     dispatch: list[dict[str, Any]] = []
     source_calls: list[dict[str, Any]] = []
+    root_thread_id: str | None = None
     for line in text.splitlines():
         try:
             event = json.loads(line)
@@ -510,6 +654,10 @@ def observe_trace(text: str) -> dict[str, Any]:
         if not isinstance(event, dict):
             continue
         events.append(event)
+        if event.get("type") == "thread.started" and root_thread_id is None:
+            identifier = event.get("thread_id")
+            if isinstance(identifier, str):
+                root_thread_id = identifier
         if event.get("type") == "turn.completed" and isinstance(event.get("usage"), dict):
             usage = event["usage"]
         item = event.get("item", {})
@@ -530,12 +678,26 @@ def observe_trace(text: str) -> dict[str, Any]:
                 source_calls.append(
                     {"command": command, "evidence": "successful command, not proof of reading"}
                 )
+    session_evidence = observe_run_sessions(client_home, root_thread_id)
+    observations = list(session_evidence["observations"])
+    known = {record["thread_id"] for record in observations}
+    for event in dispatch:
+        receivers = event.get("receiver_thread_ids")
+        if (
+            not isinstance(receivers, list)
+            or not receivers
+            or not all(isinstance(receiver, str) for receiver in receivers)
+            or not set(receivers) <= known
+        ):
+            observations.append({"evidence": "stdout spawn event", "event": event})
     return {
         "event_count": len(events),
         "reported_root_usage": usage,
         "aggregate_tree_tokens": None,
         "cost": None,
-        "role_dispatch_observed": dispatch,
+        "role_dispatch_observed": observations,
+        "stdout_role_dispatch_events": dispatch,
+        "session_dispatch_evidence": session_evidence,
         "source_access_observed": source_calls,
         "accounting_note": "Root turn usage is not assumed to include children; unknown is null.",
     }

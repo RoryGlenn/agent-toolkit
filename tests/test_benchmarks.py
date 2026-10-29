@@ -260,9 +260,7 @@ class BenchmarkAccountingTests(unittest.TestCase):
             report([first, first])
 
     def test_trace_discovery_is_not_usage_and_unknown_is_not_zero(self) -> None:
-        output = observe_trace(
-            json.dumps({"type": "agent_message", "text": "I used ddia_specialist"})
-        )
+        output = observe_trace(json.dumps({"type": "agent_message", "text": "I used ddia_agent"}))
         self.assertEqual(output["role_dispatch_observed"], [])
         self.assertEqual(output["source_access_observed"], [])
         self.assertIsNone(output["aggregate_tree_tokens"])

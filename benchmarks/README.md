@@ -120,6 +120,14 @@ is an operator action after evidence is retained where desired.
   does not prescribe a specialist. Copies are ordinary independent files, not links into
   the repository or personal installation.
 
+The benchmark stages the validated canonical inventory into an isolated **user layout**
+(`actor-home/.agents/skills` and `client-home/agents`). It does not run project bootstrap or
+compare bootstrap layouts. Skill/role names follow the repository naming authority: for
+example `ddia-skill` / `ddia_agent`, `software-design-skill` / `software_design_agent`, and
+`documentation-skill` / `documentation_agent`. Optional source libraries remain distinct:
+`ddia-skill` reads `.local/share/ddia-specialist`, and `software-design-skill` reads
+`.local/share/software-design-specialist`, matching the retrieval helpers' defaults.
+
 `--profile downloaded` uses only repository books and resource files. It explicitly reports
 missing software-design source/index and DDIA extracted-index/private-study material.
 It never falls back to the user's existing library. `--profile reference-complete` requires
@@ -155,9 +163,13 @@ parent values and records the original toolkit fingerprints. Generic children ha
 defaults. The separate `--mode shipped` preserves shipped role model selections and is never
 pooled with controlled runs. Legacy role sandbox fields are removed in both modes so parent
 permissions remain authoritative. The actor cannot write parent roles, skills or config.
-A discovered role/skill is not evidence it ran. Reports record explicit spawn events and
-successful source-access command observations when the CLI exposes them, with the limits of
-that observation. Source-access command completion is not proof of understanding or reading.
+A discovered role/skill is not evidence it ran. Reports record explicit spawn events and successful source-access commands when exposed.
+If stdout omits dispatch, the runner inspects only this run's `client-home/sessions` headers,
+binding `source.subagent.thread_spawn.parent_thread_id` descendants to stdout's root thread.
+It records actual `agent_role` values, not catalog entries. It extracts model/effort only from
+the child's own turn context after its inherited-history boundary; unavailable fields remain
+null. It never searches global sessions or copies profile/identity/instruction fields into
+these diagnostics. Unreadable or incomplete metadata is disclosed. Source-access command completion is not proof of understanding or reading.
 
 One external wall deadline bounds the parent process group and its ordinary children.
 The optional native `features.rollout_budget` requests a shared weighted budget across

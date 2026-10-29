@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Design Skill"
+  short_description: "Improve module boundaries and maintenance complexity"
+  default_prompt: "Use $software-design-skill to assess the module boundaries and API contracts in this change."

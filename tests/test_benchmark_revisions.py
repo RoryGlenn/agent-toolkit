@@ -31,7 +31,7 @@ from benchmarks.cases import ROOT, example, get_case, materialize
 from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot
 from benchmarks.oracles import Oracle, identical_retry
 from benchmarks.process import Execution, TrustedControlExecutor
-from benchmarks.runtime import ARMS, HARNESS_ROOT, REPOSITORY, SKILLS, resolve_codex
+from benchmarks.runtime import ARMS, HARNESS_ROOT, REPOSITORY, resolve_codex, skill_names
 
 
 class OracleRegressionTests(unittest.TestCase):
@@ -408,7 +408,7 @@ class CampaignRegressionTests(unittest.TestCase):
                 shutil.copytree(REPOSITORY / name, repository / name)
             with patch("benchmarks.runtime.REPOSITORY", repository):
                 plan = self.plan(["toolkit"])
-                skill = repository / "skills/ddia-specialist/SKILL.md"
+                skill = repository / "skills/ddia-skill/SKILL.md"
                 skill.write_text(skill.read_text() + "\nChanged after planning.\n")
                 with self.assertRaisesRegex(ValueError, "toolkit changed"):
                     prepare(plan, plan["entries"][0], root / "attempt")
@@ -504,7 +504,7 @@ class CampaignRegressionTests(unittest.TestCase):
             self.assertIn("unexpected grader error", result["error"])
 
     def test_all_nine_skills_are_staged(self) -> None:
-        self.assertEqual(len(SKILLS), 9)
+        self.assertEqual(len(skill_names()), 9)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve() / "attempt"
             plan = self.plan(["toolkit"])

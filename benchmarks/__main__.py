@@ -423,7 +423,7 @@ def run_attempt(
         result["execution"] = execution.to_dict()
         (root / "trace.jsonl").write_text(execution.stdout)
         (root / "stderr.txt").write_text(execution.stderr)
-        result.update(observe_trace(execution.stdout))
+        result.update(observe_trace(execution.stdout, root / "client-home"))
         result["budget_accounting"] = {
             "limit_weighted_units": plan["budget_units"],
             "scope": "requested native tree budget; external wall deadline verified",
