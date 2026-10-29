@@ -1,0 +1,51 @@
+// Independent evaluator control: one notification channel per waiter.
+// This deliberately has no shared channel, waiting counter, or buffer capacity.
+package queue
+
+import (
+    "context"
+    "sync"
+)
+
+type notificationWaiter struct {
+    ctx context.Context
+    ready chan struct{}
+}
+
+type cond struct {
+    L sync.Locker
+    waiters []*notificationWaiter
+}
+
+func newCond(lock sync.Locker) *cond { return &cond{L: lock} }
+
+func (c *cond) Signal() {
+    for len(c.waiters) > 0 {
+        waiter := c.waiters[0]
+        c.waiters = c.waiters[1:]
+        if waiter.ctx.Err() == nil {
+            close(waiter.ready)
+            return
+        }
+    }
+}
+
+func (c *cond) Wait(ctx context.Context) error {
+    waiter := &notificationWaiter{ctx: ctx, ready: make(chan struct{})}
+    c.waiters = append(c.waiters, waiter)
+    c.L.Unlock()
+    var err error
+    select {
+    case <-waiter.ready:
+    case <-ctx.Done():
+        err = ctx.Err()
+    }
+    c.L.Lock()
+    for i, pending := range c.waiters {
+        if pending == waiter {
+            c.waiters = append(c.waiters[:i], c.waiters[i+1:]...)
+            break
+        }
+    }
+    return err
+}

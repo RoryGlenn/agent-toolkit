@@ -259,5 +259,8 @@ review have been calibrated.
 ## Large-project work
 
 The [curator handoff for issue #5](large_projects/README.md) records four historical
-regressions in VS Code, CPython, OpenTelemetry Collector and PostgreSQL. It is not wired into
-the comparison CLI and contains answers; never copy it into a candidate workspace.
+regressions in VS Code, CPython, OpenTelemetry Collector and PostgreSQL. Model-free
+`python -m benchmarks large` operations prepare sources, run Linux curator qualification,
+inspect receipts and clean bulky artifacts. These cases remain unavailable to comparison
+planning and candidate grading until qualification and actor/evaluator isolation are complete.
+The handoff and curator output contain answers; never copy them into a candidate workspace.

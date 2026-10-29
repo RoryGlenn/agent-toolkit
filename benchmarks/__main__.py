@@ -7,6 +7,7 @@ import json
 import random
 import re
 import shutil
+import sys
 import tempfile
 import time
 import uuid
@@ -703,10 +704,16 @@ def add_plan_options(parser: argparse.ArgumentParser) -> None:
 
 
 def main() -> None:
-    """Dispatch the small benchmark workflow."""
+    """Dispatch the benchmark workflow, including model-free large-project controls."""
+    if len(sys.argv) > 1 and sys.argv[1] == "large":
+        from benchmarks.large_projects.__main__ import main as large_main
+
+        large_main(sys.argv[2:])
+        return
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list")
+    sub.add_parser("large", help="model-free large-project controls (large --help)")
     show = sub.add_parser("show")
     show.add_argument("case")
     validate = sub.add_parser("validate")
