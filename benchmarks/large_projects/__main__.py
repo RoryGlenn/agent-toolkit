@@ -95,7 +95,7 @@ def main(argv: list[str] | None = None) -> None:
                 )
                 results.append(result)
                 print(f"{case['id']}: {result['status']}", flush=True)
-                if result["status"] == "cancelled":
+                if result["status"] == "cancelled" or result.get("operator_cancelled"):
                     attempted = {item["case_id"] for item in results}
                     results.extend(
                         {
@@ -110,7 +110,7 @@ def main(argv: list[str] | None = None) -> None:
                     )
                     break
             (args.output / "report.json").write_text(json.dumps(results, indent=2) + "\n")
-            if any(r["status"] == "cancelled" for r in results):
+            if any(r["status"] == "cancelled" or r.get("operator_cancelled") for r in results):
                 raise SystemExit(130)
             if any(r["status"] != "qualified" for r in results):
                 raise SystemExit(1)

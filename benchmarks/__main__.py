@@ -856,10 +856,13 @@ def main() -> None:
                     f"{entry['case_id']} {entry['arm']} #{entry['attempt']}: {result['status']}",
                     flush=True,
                 )
-                if result["status"] == "cancelled":
+                if result["status"] == "cancelled" or result.get("operator_cancelled"):
                     break
             write_json(arguments.output / "report.json", report(campaign_results(arguments.output)))
-            if any(result["status"] == "cancelled" for result in results):
+            if any(
+                result["status"] == "cancelled" or result.get("operator_cancelled")
+                for result in results
+            ):
                 raise SystemExit(130)
         elif arguments.command == "grade":
             if arguments.curator:

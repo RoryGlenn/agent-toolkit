@@ -24,6 +24,7 @@ from benchmarks.large_projects.artifacts import (
     tree_hashes,
 )
 from benchmarks.large_projects.candidate import grade_record, load_context, validate_context
+from benchmarks.large_projects.deadline import supervise
 from benchmarks.large_projects.grading import candidate_compile_failure
 from benchmarks.large_projects.integration import (
     case_at,
@@ -340,6 +341,45 @@ class PipelineDataTests(unittest.TestCase):
             self.assertEqual(call.call_count, 1)
             rows = json.loads((root / "report.json").read_text())
             self.assertEqual([row["status"] for row in rows], ["cancelled", "not_started"])
+
+    def test_cancellation_survives_cleanup_failure_and_stops_the_set(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch("benchmarks.large_projects.deadline.multiprocessing.get_context") as context:
+                process = context.return_value.Process.return_value
+                process.join.side_effect = KeyboardInterrupt
+                process.is_alive.return_value = False
+                with patch(
+                    "benchmarks.large_projects.deadline.cleanup_owned",
+                    return_value={
+                        "complete": False,
+                        "errors": ["runtime unavailable"],
+                        "removed": [],
+                    },
+                ):
+                    result = supervise(root / "attempt", 10, lambda _d, _o: {})
+            self.assertEqual(result["status"], "harness_error")
+            self.assertTrue(result["operator_cancelled"])
+            with patch(
+                "benchmarks.large_projects.__main__.qualify",
+                return_value={**result, "case_id": "cpython-import-locks"},
+            ) as qualify:
+                with self.assertRaises(SystemExit) as stopped:
+                    large_main(
+                        [
+                            "qualify",
+                            "--case",
+                            "cpython-import-locks",
+                            "--case",
+                            "otel-queue-cancellation",
+                            "--prepared",
+                            str(root),
+                            "--output",
+                            str(root / "set"),
+                        ]
+                    )
+            self.assertEqual(stopped.exception.code, 130)
+            self.assertEqual(qualify.call_count, 1)
 
     def test_missing_runtime_gates_block_planning(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

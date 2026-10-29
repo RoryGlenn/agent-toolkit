@@ -109,6 +109,7 @@ def supervise(
         result.update(
             {
                 "owner": owner,
+                "operator_cancelled": cancelled or bool(result.get("operator_cancelled")),
                 "staging_inclusive_seconds": seconds,
                 "active_elapsed_seconds": active_elapsed,
                 "cleanup": cleanup,
