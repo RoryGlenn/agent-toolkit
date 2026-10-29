@@ -23,7 +23,12 @@ from benchmarks.large_projects.artifacts import (
     scope_contract,
     tree_hashes,
 )
-from benchmarks.large_projects.candidate import grade_record, load_context, validate_context
+from benchmarks.large_projects.candidate import (
+    actor_environment,
+    grade_record,
+    load_context,
+    validate_context,
+)
 from benchmarks.large_projects.deadline import supervise
 from benchmarks.large_projects.grading import candidate_compile_failure
 from benchmarks.large_projects.integration import (
@@ -47,10 +52,26 @@ from benchmarks.large_projects.resources import (
 )
 from benchmarks.large_projects.runner import harness_hashes
 from benchmarks.process import Execution, bounded_process
+from benchmarks.runtime import stage_runtime
 
 
 class PipelineDataTests(unittest.TestCase):
     """Archive data and incomplete checks cannot become authoritative passing evidence."""
+
+    def test_actor_keeps_canonical_runtime_and_private_bison_data(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            stage = Path(directory)
+            (stage / "actor-home").mkdir()
+            stage_runtime(stage / "actor-home")
+            tools = stage / "tools"
+            (tools / "bin").mkdir(parents=True)
+            (tools / "share/bison").mkdir(parents=True)
+            env = actor_environment(stage, [tools])
+            python = shutil.which("python", path=env["PATH"])
+            self.assertIsNotNone(python)
+            self.assertEqual(Path(python or "").resolve(), Path(sys.executable).resolve())
+            self.assertEqual(env["BISON_PKGDATADIR"], str(tools / "share/bison"))
+            self.assertEqual(env["GOPROXY"], "off")
 
     def test_explicit_preinstalled_browser_never_uses_a_download_cache(self) -> None:
         mode = {"mode": "preinstalled"}

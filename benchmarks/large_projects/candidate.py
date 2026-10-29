@@ -30,6 +30,17 @@ from benchmarks.large_projects.runner import environment, harness_hashes, verify
 from benchmarks.runtime import NativeExecutor, config_text, digest, fingerprint, observe_trace
 
 
+def actor_environment(stage: Path, tools: list[Path]) -> dict[str, str]:
+    """Expose the same usable private tools to every arm, including canonical runtime links."""
+    env = environment(stage / "workspace/.benchmark-state", tools, network=False)
+    env.update(HOME=str(stage / "actor-home"), TMPDIR=str(stage / "private-tmp"))
+    env["PATH"] = str(stage / "actor-home/bin") + ":" + env["PATH"]
+    for toolchain in tools:
+        if (toolchain / "share/bison").is_dir():
+            env["BISON_PKGDATADIR"] = str(toolchain / "share/bison")
+    return env
+
+
 def load_context(path: Path, cases: list[str]) -> dict[str, Any]:
     """Bind plans to qualified current adapters and explicit, verified dependency inputs."""
     context: dict[str, Any] = json.loads(read_regular(path))
@@ -260,8 +271,7 @@ def run_attempt(
         result["dependencies"] = seed_bundle(case, bundle, stage)
         if (stage / "cache").exists():
             shutil.copytree(stage / "cache", state / "cache", dirs_exist_ok=True, symlinks=True)
-        env = environment(state, tools, network=False)
-        env.update(HOME=str(stage / "actor-home"), TMPDIR=str(stage / "private-tmp"))
+        env = actor_environment(stage, tools)
         if result["dependencies"].get("browser"):
             browser = result["dependencies"]["browser"]
             env["TOOLKIT_CHROMIUM_EXECUTABLE"] = browser["executable"]
