@@ -275,6 +275,23 @@ git diff --check
 
 The tests cover selected and full installs, both host layouts, conflicts, dry runs, legacy migration, backup/restore, failure rollback, source validation, custom homes, and the docs environment checker. The docs skill also contains [behavior evaluation cases](skills/doc-agent/evals/README.md) and [optional site tooling](skills/doc-agent/tooling/README.md). Those tools have their own prerequisites; passing the installer tests does not establish live host loading, browser accessibility, or documentation quality.
 
+## Development benchmark
+
+The [public development benchmark](benchmarks/README.md) supplies twelve original RecordBatch
+cases for the three specialists and their integrated workflow. It includes executable objective
+oracles, reference/wrong controls, isolated Codex CLI runs, three comparison arms, and paired
+reports that retain failures and unresolved human review. Difficulty is provisional; no live
+performance improvement is claimed by its deterministic checks.
+
+```bash
+uv run python -m benchmarks list
+uv run python -m benchmarks validate
+```
+
+See the benchmark guide before a model run: explicit source profiles, signed-in CLI credential
+selection, native isolation canaries and bounded budgets are required. CI runs only trusted
+repository controls and the existing checks, with no model credentials or paid calls.
+
 ## Sources and ownership
 
 This toolkit is the maintained source for the collected skills and agent definitions. Original repositories and installations are retained until deliberately migrated; no source repository, published history, or old installer manifest is changed by this package.

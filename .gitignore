@@ -7,3 +7,6 @@ __pycache__/
 node_modules/
 playwright-report/
 test-results/
+
+# Local benchmark runs can contain private reference material and model traces.
+.benchmark-runs/
