@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Skill"
+  short_description: "Documentation that builds understanding and confidence"
+  default_prompt: "Use $documentation-skill to improve this documentation for its intended reader, preserving accurate behavior and including only the detail they need to succeed."

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Recruiter Follow-up"
-  short_description: "Screen leads and verify replies across channels"
-  default_prompt: "Use $recruiter-followup to check which worthwhile recruiter conversations need a response."
-policy:
-  allow_implicit_invocation: true

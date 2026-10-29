@@ -16,7 +16,7 @@ import install
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "ddia_book", ROOT / "skills/ddia-specialist/scripts/book.py"
+    "ddia_book", ROOT / "skills/ddia-skill/scripts/book.py"
 )
 assert SPEC is not None and SPEC.loader is not None
 book = importlib.util.module_from_spec(SPEC)
@@ -113,13 +113,13 @@ class BookTests(unittest.TestCase):
         """The specialist's role and skill install together and restore cleanly."""
         home = self.base / "host"
         with contextlib.redirect_stdout(io.StringIO()):
-            receipt = install.install(ROOT, "codex", ["ddia-specialist"], home, home / ".codex")
+            receipt = install.install(ROOT, "codex", ["ddia-skill"], home, home / ".codex")
         assert receipt is not None
-        role = home / ".codex/agents/ddia-specialist.toml"
-        skill = home / ".agents/skills/ddia-specialist"
+        role = home / ".codex/agents/ddia-agent.toml"
+        skill = home / ".agents/skills/ddia-skill"
         self.assertFalse(role.is_symlink())
-        self.assertTrue(role.samefile(ROOT / "agents/codex/ddia-specialist.toml"))
-        self.assertEqual(skill.resolve(), ROOT / "skills/ddia-specialist")
+        self.assertTrue(role.samefile(ROOT / "agents/codex/ddia-agent.toml"))
+        self.assertEqual(skill.resolve(), ROOT / "skills/ddia-skill")
         self.assertTrue((skill / "scripts/book.py").is_file())
         with contextlib.redirect_stdout(io.StringIO()):
             install.restore(receipt)

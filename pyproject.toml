@@ -13,7 +13,7 @@ package = false
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-extend-exclude = ["skills/doc-agent/evals/draft/roster.py"]
+extend-exclude = ["skills/documentation-skill/evals/draft/roster.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
@@ -21,4 +21,4 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["install.py", "skills/doc-agent/scripts/check_environment.py", "skills/ddia-specialist/scripts/book.py", "skills/software-design-specialist/scripts/book.py"]
+files = ["install.py", "project_bootstrap.py", "skills/documentation-skill/scripts/check_environment.py", "skills/ddia-skill/scripts/book.py", "skills/software-design-skill/scripts/book.py"]
