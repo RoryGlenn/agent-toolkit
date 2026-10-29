@@ -17,13 +17,19 @@ from benchmarks.large_projects.adapters import CP_CONTROLS, GO_CONTROLS, GO_REGR
 from benchmarks.large_projects.export import export_parent
 from benchmarks.large_projects.grading import classify, go_checks, python_checks
 from benchmarks.large_projects.isolation import LinuxBoundary
-from benchmarks.large_projects.runner import outcome, prepare_set, verify_preparation
+from benchmarks.large_projects.runner import environment, outcome, prepare_set, verify_preparation
 from benchmarks.process import Execution
 from tests.test_large_project_handoff import CuratorPreparationTests
 
 
 class ClassificationTests(unittest.TestCase):
     """Setup problems and missing/skip results must never become valid controls."""
+
+    def test_closed_commands_use_short_private_tmpdir(self) -> None:
+        """Deep configurable workspace paths cannot make server Unix sockets too long."""
+        root = Path("/arbitrary") / ("deep-output-" * 20)
+        self.assertEqual(environment(root, [], network=False)["TMPDIR"], "/tmp")
+        self.assertEqual(environment(root, [], network=True)["TMPDIR"], str(root / "tmp"))
 
     def test_strict_negative_and_positive_controls(self) -> None:
         """Only an observed expected test failure qualifies a negative control."""

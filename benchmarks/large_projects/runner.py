@@ -89,6 +89,9 @@ def environment(root: Path, toolchains: list[Path], *, network: bool) -> dict[st
                 env[key] = os.environ[key]
     else:
         env.update({"GOPROXY": "off", "GOSUMDB": "off", "npm_config_offline": "true"})
+        # This is a private tmpfs in each command namespace. Host output paths can
+        # exceed the Unix socket limit when PostgreSQL appends its socket name.
+        env["TMPDIR"] = "/tmp"
     return env
 
 
