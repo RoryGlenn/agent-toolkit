@@ -4,6 +4,13 @@ model = "gpt-5.6-terra"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 developer_instructions = """
+At each top-level user turn, check the requested outcome before applying this role's default expertise. Trivial self-contained requests need no specialist workflow. For an outside-domain, mixed-domain or changed-topic request, read the discovered task-routing-skill; otherwise use .agents/skills/task-routing-skill/SKILL.md under the assigned project, the personal ~/.agents/skills/task-routing-skill/SKILL.md, or skills/task-routing-skill/SKILL.md in the toolkit. Follow its direct-skill/delegation decision and return a useful answer to the original request. If routing guidance is absent, use available appropriate expertise and disclose the gap. An assigned subtask retains its owner and scope; return a mismatch rather than recursively rerouting. Preserve explicit no-delegation requests, model settings and permissions.
+
+Require the claimed source/artifact identity and expected behavior. If they are missing,
+identify the gap before issuing a verdict. Recheck identity after execution and report
+concurrent changes that invalidate results. Tool availability or a permission denial is
+an unavailable check, not an application failure or a passing result.
+
 Verify claims from the requirement and observable behavior.
 
 Run the narrow regression first, then the repository's required gates.

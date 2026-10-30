@@ -27,9 +27,18 @@ DEFAULT_SKILLS = (
     "release-and-docs-skill",
     "simplify-or-delete-skill",
 )
+DDIA_WORKFLOWS = ("assess", "design", "review", "validate", "migrate", "operate", "explain")
+ROUTING_SKILL = "task-routing-skill"
+SKILL_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    skill: (ROUTING_SKILL,) for skill in DEFAULT_SKILLS
+}
+SKILL_DEPENDENCIES.update(
+    {f"ddia-{mode}-skill": ("ddia-skill", ROUTING_SKILL) for mode in DDIA_WORKFLOWS}
+)
 HOST_DIRECTORIES = {"codex": ".codex/agents", "copilot": ".github/agents"}
 INHERITED_SETTINGS = {"model", "model_reasoning_effort", "sandbox_mode"}
 ROUTES = {
+    ROUTING_SKILL: "Outside-domain, mixed-domain and changed-topic task routing",
     "documentation-skill": "Documentation, explanations, and reader task success",
     "ddia-skill": "Consequential data architecture, transactions, retries, and recovery",
     "software-design-skill": "Consequential module boundaries, APIs, and maintenance complexity",
@@ -37,9 +46,53 @@ ROUTES = {
     "issue-to-tested-pr-skill": "Accepted nontrivial implementation, fixes, and refactoring",
     "release-and-docs-skill": "Release, package, and documentation verification",
     "simplify-or-delete-skill": "Evidence-backed reduction of unnecessary complexity",
-    "book-to-agent-skill": "Create or improve a skill or agent grounded in a supplied book",
-    "recruiter-followup-skill": "Requested recruiter triage and follow-up",
 }
+ROUTES.update(
+    {
+        f"ddia-{mode}-skill": purpose
+        for mode, purpose in zip(
+            DDIA_WORKFLOWS,
+            (
+                "Assess whether a proposed data mechanism is necessary",
+                "Design data architecture from workload and invariants",
+                "Review consequential data-system changes and generated rules",
+                "Validate data invariants under concurrency and failures",
+                "Migrate schemas, data, and derived state compatibly",
+                "Operate data systems, overload response, and recovery",
+                "Explain DDIA concepts through the current project",
+            ),
+            strict=True,
+        )
+    }
+)
+
+
+def resolve_skills(skills: list[str], available: dict[str, str]) -> list[str]:
+    """Include shared resources required by selected, independently callable skills.
+
+    Parameters
+    ----------
+    skills : list of str
+        Canonical names requested by the caller.
+    available : dict of str to str
+        Validated package inventory.
+
+    Returns
+    -------
+    list of str
+        Sorted dependency closure; unknown and missing dependencies are rejected.
+    """
+    selected = set(skills)
+    pending = list(selected)
+    while pending:
+        name = pending.pop()
+        if name not in available:
+            raise BootstrapError(f"Unknown or missing required skill: {name}")
+        for dependency in SKILL_DEPENDENCIES.get(name, ()):
+            if dependency not in selected:
+                selected.add(dependency)
+                pending.append(dependency)
+    return sorted(selected)
 
 
 class BootstrapError(ValueError):
@@ -115,6 +168,36 @@ def instruction_block(skills: list[str]) -> bytes:
     for skill in skills:
         purpose = ROUTES.get(skill, "Use when the skill's stated task applies")
         lines.append(f"- {purpose}: [{skill}](.agents/skills/{skill}/SKILL.md).")
+    if ROUTING_SKILL in skills:
+        lines.extend(
+            [
+                "",
+                "At each user turn, route by the current requested outcome, not the selected",
+                "agent's default persona. For outside-domain, mixed-domain or changed-topic work,",
+                "read .agents/skills/task-routing-skill/SKILL.md. Use only installed capabilities:",
+                "simple questions can load the relevant skill directly; consequential bounded",
+                "analysis can consult an available specialist. Keep one owner, preserve explicit",
+                "no-delegation and edit constraints, and report unavailable capabilities honestly.",
+                "An assigned subtask returns to its owner rather than recursively rerouting.",
+                "Trivial requests need no routing workflow. "
+                "Delegation does not change the UI picker.",
+            ]
+        )
+    if "ddia-skill" in skills:
+        lines.extend(
+            [
+                "",
+                "During project design or consequential changes to data ownership, schemas,",
+                "transactions, replication, messaging, processing, or recovery, use ddia-skill",
+                "to identify applicable invariants and the simplest sufficient design.",
+                "Its references/workflows provide assess, design, review, validate, migrate,",
+                "operate, and explain procedures; load only the relevant procedure and topics.",
+                "Record agreed data contracts and decision evidence in existing project docs,",
+                "using its assets only when useful. Changes to prose or UI alone need no DDIA",
+                "review. Advice is not a mandatory gate; executable checks enforce explicitly",
+                "agreed requirements. The project owner retains implementation authority.",
+            ]
+        )
     lines.extend(
         [
             "",
@@ -130,8 +213,8 @@ def instruction_block(skills: list[str]) -> bytes:
             "",
             "Name future reusable instruction packages <task-or-domain>-skill, matching their",
             "directory and SKILL.md name; display names end in Skill. Name Codex definitions",
-            "<role-or-domain>-agent.toml with matching snake_case ..._agent identifiers, and",
-            "Copilot definitions <role-or-domain>-agent.agent.md with display names ending Agent.",
+            "<role-or-domain>-agent.toml with matching snake_case ..._agent identifiers.",
+            "Named roles use only Codex TOML; other hosts can use portable skills directly.",
             "Specialist describes expertise, not an artifact type. Keep host-required SKILL.md",
             "and skill UI metadata agents/openai.yaml filenames unchanged.",
             BLOCK_END.decode(),
@@ -396,8 +479,11 @@ def bootstrap(
     )
     if update and previous is None:
         raise BootstrapError("--update requires an existing project toolkit manifest.")
-    selected = sorted(
-        set(skills if skills is not None else (previous["skills"] if previous else DEFAULT_SKILLS))
+    selected = resolve_skills(
+        list(
+            skills if skills is not None else (previous["skills"] if previous else DEFAULT_SKILLS)
+        ),
+        available,
     )
     hosts = (
         sorted(HOST_DIRECTORIES if target == "both" else [target])
@@ -408,7 +494,10 @@ def bootstrap(
         raise BootstrapError(f"Unknown or empty skill selection: {selected}")
     if not hosts or any(host not in HOST_DIRECTORIES for host in hosts):
         raise BootstrapError(f"Unknown host selection: {hosts}")
-    if previous and (selected != previous["skills"] or hosts != previous["hosts"]):
+    # Version one stores the full selection, not requested roots. Preserve every old
+    # package while permitting only newly required dependencies during explicit update.
+    expected_selection = resolve_skills(previous["skills"], available) if previous else selected
+    if previous and (selected != expected_selection or hosts != previous["hosts"]):
         raise BootstrapError(
             "Changing project skills or hosts is not supported by this manifest version. "
             "Keep the recorded selection; manage a deliberate reconfiguration through project Git."

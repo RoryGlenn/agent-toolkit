@@ -23,6 +23,13 @@ AGENTS = {
     "codex": {
         "documentation-skill": ["documentation-agent.toml"],
         "ddia-skill": ["ddia-agent.toml"],
+        "ddia-assess-skill": ["ddia-agent.toml"],
+        "ddia-design-skill": ["ddia-agent.toml"],
+        "ddia-review-skill": ["ddia-agent.toml"],
+        "ddia-validate-skill": ["ddia-agent.toml"],
+        "ddia-migrate-skill": ["ddia-agent.toml"],
+        "ddia-operate-skill": ["ddia-agent.toml"],
+        "ddia-explain-skill": ["ddia-agent.toml"],
         "software-design-skill": ["software-design-agent.toml"],
         "independent-diff-review-skill": ["adversarial-reviewer-agent.toml", "verifier-agent.toml"],
         "issue-to-tested-pr-skill": [
@@ -31,18 +38,16 @@ AGENTS = {
             "verifier-agent.toml",
         ],
     },
-    "copilot": {"documentation-skill": ["documentation-agent.agent.md"]},
+    "copilot": {},
 }
 SKILL_ALIASES = {
     "doc-agent": "documentation-skill",
     "ddia-specialist": "ddia-skill",
     "software-design-specialist": "software-design-skill",
-    "book-to-agent": "book-to-agent-skill",
     "independent-diff-review": "independent-diff-review-skill",
     "issue-to-tested-pr": "issue-to-tested-pr-skill",
     "release-and-docs": "release-and-docs-skill",
     "simplify-or-delete": "simplify-or-delete-skill",
-    "recruiter-followup": "recruiter-followup-skill",
 }
 AGENT_ALIASES = {
     "codex": {
@@ -53,7 +58,7 @@ AGENT_ALIASES = {
         "implementation-owner.toml": "implementation-owner-agent.toml",
         "verifier.toml": "verifier-agent.toml",
     },
-    "copilot": {"doc-agent.agent.md": "documentation-agent.agent.md"},
+    "copilot": {},
 }
 SCHEMA = "agent-toolkit-install/v1"
 
@@ -149,8 +154,15 @@ def inventory(root: Path = ROOT) -> dict[str, str]:
     for target, groups in AGENTS.items():
         expected = {name for names in groups.values() for name in names}
         actual = set()
-        extension = ".toml" if target == "codex" else ".agent.md"
-        for path in sorted((root / "agents" / target).iterdir()):
+        directory = root / "agents" / target
+        if target == "copilot":
+            if any(path.name not in IGNORED for path in directory.glob("*")):
+                raise InstallError(
+                    "Only Codex agent definitions are shipped; Copilot installs skills only."
+                )
+            continue
+        extension = ".toml"
+        for path in sorted(directory.glob("*")):
             if path.name in IGNORED:
                 continue
             slug = path.name.removesuffix(extension)
@@ -161,17 +173,12 @@ def inventory(root: Path = ROOT) -> dict[str, str]:
                 or not slug.endswith("-agent")
             ):
                 raise InstallError(f"Agent filename must end with -agent{extension}: {path}")
-            if target == "codex":
-                data = tomllib.loads(path.read_text(encoding="utf-8"))
-                for field in ("name", "description", "developer_instructions"):
-                    if not isinstance(data.get(field), str) or not data[field].strip():
-                        raise InstallError(f"Agent {path} needs {field}.")
-                if data["name"] != slug.replace("-", "_"):
-                    raise InstallError(f"Codex agent name must match its filename: {path}")
-            else:
-                name, _ = skill_metadata(path)
-                if not name.endswith(" Agent"):
-                    raise InstallError(f"Copilot agent display name must end with Agent: {path}")
+            data = tomllib.loads(path.read_text(encoding="utf-8"))
+            for field in ("name", "description", "developer_instructions"):
+                if not isinstance(data.get(field), str) or not data[field].strip():
+                    raise InstallError(f"Agent {path} needs {field}.")
+            if data["name"] != slug.replace("-", "_"):
+                raise InstallError(f"Codex agent name must match its filename: {path}")
             actual.add(path.name)
         if actual != expected:
             raise InstallError(
@@ -201,10 +208,7 @@ def print_catalog(root: Path, skills: dict[str, str]) -> None:
             names = []
             for filename in groups.get(skill, []):
                 path = root / "agents" / host / filename
-                if host == "codex":
-                    name = tomllib.loads(path.read_text(encoding="utf-8"))["name"]
-                else:
-                    name, _ = skill_metadata(path)
+                name = tomllib.loads(path.read_text(encoding="utf-8"))["name"]
                 names.append(name)
             print(f"  {host.title()} roles: {', '.join(names) or 'none (skill only)'}")
         print()
@@ -272,6 +276,12 @@ def plan_install(
     unknown = sorted(set(skills) - available.keys())
     if unknown:
         raise InstallError(f"Unknown skills: {', '.join(unknown)}")
+    from project_bootstrap import BootstrapError, resolve_skills
+
+    try:
+        skills = resolve_skills(skills, available)
+    except BootstrapError as error:
+        raise InstallError(str(error)) from error
     candidates = []
     for name in skills:
         candidates.append(Entry(f"{target}-skills", name, root / "skills" / name))
@@ -455,6 +465,61 @@ def install(
     return receipt
 
 
+def check_restore_dependents(
+    source_root: Path,
+    paths: dict[str, Path],
+    operations: list[tuple[Path, Path | None, Path | None]],
+) -> None:
+    """Refuse to remove resources still needed by surviving installed skills.
+
+    Parameters
+    ----------
+    source_root : Path
+        Canonical source recorded by this receipt; only its managed links are consumers.
+    paths : dict of str to Path
+        Current host directories derived from the restoration receipt.
+    operations : list of tuple
+        Fully validated destinations, current sources and optional backups. No source
+        tree or other receipt is read, so dangling-link cleanup remains possible.
+    """
+    from project_bootstrap import SKILL_DEPENDENCIES
+
+    # A backup restores the prior entry rather than deleting the capability. Preserve
+    # existing role refresh/symlink migration rollback semantics; this guard prevents
+    # removal, not compatibility claims about the restored historical version.
+    changing = {
+        destination
+        for destination, source, backup in operations
+        if source is not None and backup is None
+    }
+    restored = {destination for destination, _, _ in operations}
+    for host, associations in AGENTS.items():
+        skill_directory, role_directory = paths[f"{host}-skills"], paths[f"{host}-agents"]
+        if not any(path.parent in (skill_directory, role_directory) for path in changing):
+            continue
+        for skill in sorted(set(SKILL_DEPENDENCIES) | set(associations)):
+            dependent = skill_directory / skill
+            if dependent in restored or not linked_to(dependent, source_root / "skills" / skill):
+                continue
+            dependencies: set[str] = set()
+            pending = list(SKILL_DEPENDENCIES.get(skill, ()))
+            while pending:
+                dependency = pending.pop()
+                if dependency in dependencies:
+                    continue
+                dependencies.add(dependency)
+                pending.extend(SKILL_DEPENDENCIES.get(dependency, ()))
+            required = {skill_directory / name for name in dependencies}
+            required.update(role_directory / name for name in associations.get(skill, ()))
+            affected = required & changing
+            if affected:
+                names = ", ".join(path.name for path in sorted(affected))
+                raise InstallError(
+                    f"Restore would remove shared dependencies ({names}) still used by "
+                    f"{dependent}. Restore dependent installations first."
+                )
+
+
 def restore(receipt: Path, *, dry_run: bool = False) -> None:
     """Restore a completed installation if all managed destinations still match.
 
@@ -519,6 +584,7 @@ def restore(receipt: Path, *, dry_run: bool = False) -> None:
             raise InstallError(f"Required backup is missing: {backup}")
         operations.append((destination, source, backup))
     validate_layout(Path(data["source"]), {area: paths[area] for area in areas}, storage)
+    check_restore_dependents(Path(data["source"]), paths, operations)
     for destination, _, backup in operations:
         print(f"{destination}: {'restore backup' if backup else 'remove toolkit link'}")
     if dry_run:
@@ -602,7 +668,7 @@ def main(argv: list[str] | None = None) -> int:
                 }
                 print(
                     f"Package valid: {len(skills)} skills, {counts['codex']} Codex agents, "
-                    f"{counts['copilot']} Copilot agent."
+                    f"{counts['copilot']} Copilot agents."
                 )
             elif args.command == "bootstrap":
                 previous_bytecode = sys.dont_write_bytecode

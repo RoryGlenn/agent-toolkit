@@ -5,11 +5,18 @@ description: Audit a repository, workflow, agent system, or architecture for unn
 
 # Simplify or Delete Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Reduce permanent maintenance cost without removing behavior that users or safety boundaries actually need.
 
 ## Principle
 
-AI makes additions cheap and ownership expensive. Treat every component as guilty of cost until its current value and evidence justify keeping it.
+AI makes additions cheap and ownership expensive. Investigate each component's maintenance
+cost and current value without treating unfamiliarity or missing usage data as proof that
+it is unnecessary. A necessary boundary can be worth its cost.
 
 ## Inputs
 
@@ -44,7 +51,11 @@ Identify:
 - connectors, adapters, and fallback paths;
 - abandoned features and permanently blocked work.
 
-For each component, record owner, consumers, runtime or cognitive cost, failure surface, and current evidence of use.
+For each component, record owner, consumers, runtime or cognitive cost, failure surface,
+and current evidence of use. Separate measured use, static dependencies and assumptions;
+rare recovery paths and retained identity may matter even when recent traffic is low.
+When evidence is missing, choose a targeted next check instead of inventing savings or
+classifying the component as unused.
 
 ### 3. Classify
 

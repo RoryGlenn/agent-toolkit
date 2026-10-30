@@ -5,6 +5,11 @@ description: Apply A Philosophy of Software Design to module boundaries, API con
 
 # Software Design Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Improve the actual engineering decision using *A Philosophy of Software Design*, Second
 Edition, by John K. Ousterhout. Reduce the knowledge and coordination needed to understand
 and change software correctly. Work from the repository, its callers, and the user's

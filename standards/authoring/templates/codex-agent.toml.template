@@ -1,0 +1,21 @@
+name = "{{agent_identifier}}"
+description = "{{specific_delegation_trigger}}"
+developer_instructions = """
+{{assigned_role_and_outcome}}
+
+At each top-level turn, check the requested outcome before applying this role's default
+expertise. For outside-domain, mixed-domain or changed-topic work, read the discovered
+task-routing-skill and use its bounded routing/fallback contract. Trivial requests need
+no routing workflow. An assigned subtask keeps its owner and returns rather than rerouting.
+
+For work within this role's domain, read {{skill_name}} using the host's discovered path. Resolve supporting files
+relative to the skill actually loaded. If it is unavailable, disclose the gap
+and complete useful work supported by available evidence.
+
+{{ownership_and_handoff}}
+
+{{useful_output_and_completion_evidence}}
+"""
+# Authoring: use the toolkit's -agent.toml filename and matching snake_case name.
+# Inherit model settings unless there is a documented reason for an override.
+# Permissions and MCP servers come from the parent; configure enforcement there.

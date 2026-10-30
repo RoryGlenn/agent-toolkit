@@ -88,10 +88,11 @@ class ProjectBootstrapTests(unittest.TestCase):
                 "issue-to-tested-pr-skill",
                 "release-and-docs-skill",
                 "simplify-or-delete-skill",
+                "task-routing-skill",
             },
         )
         self.assertEqual(len(list((self.app / ".codex/agents").iterdir())), 6)
-        self.assertEqual(len(list((self.app / ".github/agents").iterdir())), 1)
+        self.assertFalse((self.app / ".github/agents").exists())
         self.assertFalse((self.app / "books").exists())
         self.assertFalse(list(self.app.rglob("*.epub")))
         for path in self.app.rglob("*"):
@@ -100,8 +101,7 @@ class ProjectBootstrapTests(unittest.TestCase):
                 self.assertEqual(path.stat().st_nlink, 1)
         instructions = (self.app / "AGENTS.md").read_text()
         self.assertIn(".agents/skills/issue-to-tested-pr-skill/SKILL.md", instructions)
-        self.assertNotIn("recruiter-followup-skill", instructions)
-        self.assertNotIn("book-to-agent-skill", instructions)
+        self.assertNotIn("ddia-assess-skill", instructions)
         self.assertNotIn("Toolkit contributions", instructions)
         manifest = self.manifest()
         self.assertEqual(manifest["hosts"], ["codex", "copilot"])
@@ -138,7 +138,7 @@ class ProjectBootstrapTests(unittest.TestCase):
         """Explicit selection creates only its wrappers and becomes the repeat-command default."""
         self.apply(skills=["documentation-skill"], target="copilot")
         self.assertFalse((self.app / ".codex").exists())
-        self.assertEqual(len(list((self.app / ".agents/skills").iterdir())), 1)
+        self.assertEqual(len(list((self.app / ".agents/skills").iterdir())), 2)
         instructions = (self.app / "AGENTS.md").read_text()
         self.assertNotIn("ddia-skill", instructions)
         before = self.snapshot()
@@ -148,8 +148,8 @@ class ProjectBootstrapTests(unittest.TestCase):
             self.apply(target="both", update=True)
         self.assertEqual(self.snapshot(), before)
 
-    def test_explicit_nonengineering_skills_and_cli_defaults(self) -> None:
-        """The CLI supports opt-in tasks while a skill-only selection creates no host wrappers."""
+    def test_explicit_skill_only_selection_and_cli_defaults(self) -> None:
+        """An explicit skill-only CLI selection creates its routes without host wrappers."""
         result = subprocess.run(
             [
                 sys.executable,
@@ -158,9 +158,9 @@ class ProjectBootstrapTests(unittest.TestCase):
                 "--project",
                 str(self.app),
                 "--skill",
-                "book-to-agent-skill",
+                "release-and-docs-skill",
                 "--skill",
-                "recruiter-followup-skill",
+                "simplify-or-delete-skill",
             ],
             capture_output=True,
             text=True,
@@ -169,9 +169,10 @@ class ProjectBootstrapTests(unittest.TestCase):
         self.assertFalse((self.app / ".codex").exists())
         self.assertFalse((self.app / ".github").exists())
         self.assertEqual(
-            self.manifest()["skills"], ["book-to-agent-skill", "recruiter-followup-skill"]
+            self.manifest()["skills"],
+            ["release-and-docs-skill", "simplify-or-delete-skill", "task-routing-skill"],
         )
-        self.assertIn("book-to-agent-skill", (self.app / "AGENTS.md").read_text())
+        self.assertIn("release-and-docs-skill", (self.app / "AGENTS.md").read_text())
 
     def test_relocated_project_runs_its_helper_after_source_removal(self) -> None:
         """A project clone/copy can use its files without the toolkit checkout or original path."""
@@ -205,7 +206,7 @@ class ProjectBootstrapTests(unittest.TestCase):
         )
         self.assertEqual(executed.returncode, 0, executed.stderr)
         self.assertEqual(executed.stdout, "portable helper\n")
-        self.assertTrue((moved / ".github/agents/documentation-agent.agent.md").is_file())
+        self.assertFalse((moved / ".github/agents").exists())
         self.assertNotIn(str(self.source), (moved / project.MANIFEST).read_text())
 
     def test_dry_run_absent_target_and_unchanged_repeat_have_no_writes(self) -> None:
@@ -343,7 +344,7 @@ class ProjectBootstrapTests(unittest.TestCase):
 
     def test_removed_owned_agents_update_without_touching_unrelated_roles(self) -> None:
         """Old ownership remains valid when the new source removes an associated role."""
-        for host, extension in (("codex", ".toml"), ("copilot", ".agent.md")):
+        for host, extension in (("codex", ".toml"),):
             with self.subTest(host=host):
                 self.app = self.base / f"removed-role-{host}"
                 self.apply(skills=["documentation-skill"], target=host)
@@ -375,7 +376,7 @@ class ProjectBootstrapTests(unittest.TestCase):
 
     def test_renamed_owned_agents_replace_only_the_previous_owned_role(self) -> None:
         """A canonical role rename removes the old file and installs the new source definition."""
-        for host, extension in (("codex", ".toml"), ("copilot", ".agent.md")):
+        for host, extension in (("codex", ".toml"),):
             with self.subTest(host=host):
                 self.app = self.base / f"renamed-role-{host}"
                 self.apply(skills=["documentation-skill"], target=host)

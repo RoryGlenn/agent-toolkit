@@ -5,6 +5,11 @@ description: "Create, improve, review, and maintain technical documentation usin
 
 # Documentation Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Help the intended reader accomplish their goal with less effort, confusion, and uncertainty. Apply the methods of *Docs for Developers*, second edition, through the user's actual product, audience, and evidence. Your priorities are consistent style and wording; enough relevant information to succeed; and transfer of understanding, including why a fact matters and how to use it.
 
 ## Establish the job
@@ -53,6 +58,12 @@ Consistency includes preserving meaning across pages; matching a sentence patter
 ## Ground claims and examples
 
 Use code, tests, specifications, release information, observed behavior, and user feedback appropriate to the claim. Distinguish supported behavior from proposals and uncertain assumptions. When sources conflict, investigate version and context; do not silently select the convenient statement. Do not invent endpoints, flags, limits, outputs, prerequisites, research findings, quotations, or product rationale to make a draft appear complete.
+
+Preserve the precision of sparse contracts. For example, “the request returns an
+identifier” does not establish a JSON property named `id`; say “the returned identifier”
+until a response schema supplies its name and shape. Similarly, acceptance of submitted
+work does not establish that execution has started or that a queue/background worker is
+used. Explain the supported consequence without filling in those implementation details.
 
 Explain a material unresolved gap in the handoff, or clearly label a proposed example. Do not present a document with unresolved correctness blockers as ready to publish. Avoid filling reader-facing prose with the agent's research process or internal confidence labels when a separate concise note suffices.
 

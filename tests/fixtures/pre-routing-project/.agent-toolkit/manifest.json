@@ -1,0 +1,20 @@
+{
+  "agents_block_sha256": "a37e6b34ab265972d6fec4970abedda7ea1da753b0918691168e958d59d10612",
+  "files": {
+    ".agents/skills/release-and-docs-skill/SKILL.md": "52c3aef49176f068b3f5d2fd6bbd35657f50f11900218b0fced1491981aa9441",
+    ".agents/skills/release-and-docs-skill/evals/evals.json": "b83303b5f1b5d2673714c26ff2daa6cd463a857a5c5447606f4af3c7e17f989f"
+  },
+  "hosts": [
+    "codex",
+    "copilot"
+  ],
+  "schema": "agent-toolkit-project/v1",
+  "skills": [
+    "release-and-docs-skill"
+  ],
+  "source": {
+    "commit": null,
+    "content_sha256": "cfd68ad51ab5110660bb0b3edaa18b6297c712f69023866edc7ce858dcb37842",
+    "dirty": null
+  }
+}

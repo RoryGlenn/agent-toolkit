@@ -1,0 +1,409 @@
+{
+  "schema": "agent-toolkit-authoring/v1",
+  "standard_version": "1.1.0-proposed",
+  "artifacts": [
+    {
+      "path": "agents/codex/adversarial-reviewer-agent.toml",
+      "basis": "Codex role schema S06 and existing independent review responsibility.",
+      "evidence": [
+        "skills/independent-diff-review-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "7318cdb29d3e4932b870053e2fc6ed8fb2ba070ccbe2bef268409b010e7ea050"
+    },
+    {
+      "path": "agents/codex/ddia-agent.toml",
+      "basis": "Codex role schema S06 and ddia-skill delegation wrapper.",
+      "evidence": [
+        "skills/ddia-skill/SKILL.md",
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "dc45edadd59d19f978928abd9aee74fc7ddb6a317f8085da0f7e1f7c4eb3f538"
+    },
+    {
+      "path": "agents/codex/documentation-agent.toml",
+      "basis": "Codex role schema S06 and documentation-skill delegation wrapper.",
+      "evidence": [
+        "skills/documentation-skill/SKILL.md",
+        "skills/documentation-skill/evals/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+    },
+    {
+      "path": "agents/codex/implementation-owner-agent.toml",
+      "basis": "Codex role schema S06 and existing single-writer implementation responsibility.",
+      "evidence": [
+        "skills/issue-to-tested-pr-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "922010ffcb32091f8c1f3f91b49f06eea32d694b7350a49ad6f2286950b7ddc6"
+    },
+    {
+      "path": "agents/codex/software-design-agent.toml",
+      "basis": "Codex role schema S06 and software-design-skill delegation wrapper.",
+      "evidence": [
+        "skills/software-design-skill/SKILL.md",
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Execute final-snapshot software-design starting-role and documentation-to-design cases; current root-profile observations for other domains do not establish this path or editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "f4541a0559aea670fa55ce7bc7c2dafc6a4ac84802abc21ed67c37e3e00a786e"
+    },
+    {
+      "path": "agents/codex/verifier-agent.toml",
+      "basis": "Codex role schema S06 and existing independent verification responsibility.",
+      "evidence": [
+        "skills/issue-to-tested-pr-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "fa9f3615306b784e071dca0785f84f99e395e53410bc7239bbe908f8a09e840a"
+    },
+    {
+      "path": "skills/ddia-assess-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill assess procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/assess.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "6e68360c2e067f0193d65b7a87b9625d5ea7fcaab9579849ea6e4999717756f1"
+    },
+    {
+      "path": "skills/ddia-design-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill design procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/design.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "8e3e34fe0e351ffee0c292f4ccb9217fabc34acc1a721c8bcffbe7db9756c9c5"
+    },
+    {
+      "path": "skills/ddia-explain-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill explain procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/explain.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "9bfee8bce34bd746ad1ca9fd2acbd7e8e9d8c9663d15dcc12e166925590a181f"
+    },
+    {
+      "path": "skills/ddia-migrate-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill migrate procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/migrate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "b0f8077a47fc4901e8c8b2c609e74e5c5801948bcfbd7f634d1ddb492e7c3cdd"
+    },
+    {
+      "path": "skills/ddia-operate-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill operate procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/operate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "38e176029708ca9dbcf9e19763a8099d2cfca2f3d3ff3678f0fffe1027a64992"
+    },
+    {
+      "path": "skills/ddia-review-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill review procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/review.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "f1d7fd26e08baf211158c189f9e4a4d5e4d2f0dcf67c05cbf8652f28ba049dac"
+    },
+    {
+      "path": "skills/ddia-skill/SKILL.md",
+      "basis": "DDIA Second Edition synthesis, local source retrieval, and data-system decision workflow.",
+      "evidence": [
+        "tests/test_ddia_book.py",
+        "benchmarks/README.md",
+        "benchmarks/cases.py",
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/README.md",
+        "skills/ddia-skill/evals/cases.json",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/ddia-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "bc1c5f3fb907173206360537892d90fda1116091e48f743364962b55ef12d013"
+    },
+    {
+      "path": "skills/ddia-validate-skill/SKILL.md",
+      "basis": "DDIA Second Edition and shared ddia-skill validate procedure.",
+      "evidence": [
+        "tests/test_ddia_suite.py",
+        "skills/ddia-skill/evals/cases.json",
+        "skills/ddia-skill/references/workflows/validate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "d8cf529b70bc9161e8238ec23aa88fc9c528784626d9dbf1e56c8c499c9b6aa8"
+    },
+    {
+      "path": "skills/documentation-skill/SKILL.md",
+      "basis": "Docs for Developers synthesis and reader task success.",
+      "evidence": [
+        "skills/documentation-skill/evals/README.md",
+        "tests/test_environment.py",
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/documentation-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "94b7bcbb5755db1199d61580f20e0ab3602f054bc7f866e76fd21c803deb2bf0"
+    },
+    {
+      "path": "skills/independent-diff-review-skill/SKILL.md",
+      "basis": "Existing independent engineering review workflow and caller ownership boundaries.",
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/independent-diff-review-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "d3b22697c802b4b10af4173ab0d57088107e2eacb5eee30500e50ad690351f99"
+    },
+    {
+      "path": "skills/issue-to-tested-pr-skill/SKILL.md",
+      "basis": "Existing one-writer implementation, review, verification, and PR workflow.",
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/issue-to-tested-pr-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "8a4c94f77ced91f1b9cfe45de1a8b6535c85930ef1c65fbd4b9fc64f06885cb5"
+    },
+    {
+      "path": "skills/release-and-docs-skill/SKILL.md",
+      "basis": "Existing release and reader-facing package verification workflow.",
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/release-and-docs-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "533e30cc3c30abcce294fb0fb5f73692b8168b481990c60b5187b59e22f7980b"
+    },
+    {
+      "path": "skills/simplify-or-delete-skill/SKILL.md",
+      "basis": "Existing outcome-focused complexity reduction workflow.",
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/simplify-or-delete-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "e17d3a9f815484a912f18b269c1400195d72efdcb822b27661e8f94c899a42d9"
+    },
+    {
+      "path": "skills/software-design-skill/SKILL.md",
+      "basis": "A Philosophy of Software Design Second Edition synthesis and source retrieval.",
+      "evidence": [
+        "tests/test_software_design_book.py",
+        "benchmarks/README.md",
+        "benchmarks/cases.py",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/software-design-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json",
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Execute final-snapshot software-design starting-role and documentation-to-design cases; current root-profile observations for other domains do not establish this path or editor selection.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "dcd947d581971024c3870d1d78a95b8fced1c2a587451eeda44fe4425f34c264"
+    },
+    {
+      "path": "skills/task-routing-skill/SKILL.md",
+      "basis": "Shared domain-routing contract using existing skill and host delegation mechanisms.",
+      "evidence": [
+        "skills/task-routing-skill/evals/cases.json",
+        "tests/test_routing.py",
+        "standards/authoring/reviews/routing.md",
+        "standards/authoring/reviews/routing-observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Resolve the observed partial missing-skill capability-discovery/disclosure and protocol-qualification gap; repeat final-snapshot failure, subtask, software-design and topic-change cases before reliability claims.",
+      "review_record": "standards/authoring/reviews/routing.md",
+      "reviewed_sha256": "cac5c86f197b564060cd7b21ae3d43eac1089ebe335eb43a832fd57f013fbff8"
+    }
+  ]
+}

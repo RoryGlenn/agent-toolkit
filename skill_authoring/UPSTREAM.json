@@ -1,0 +1,131 @@
+{
+  "schema": "agent-toolkit-upstream/v1",
+  "reviewed": "2026-10-29",
+  "format": {
+    "repository": "agentskills/agentskills",
+    "revision": "69ef37e9424c0a7ea9dd2293b559e43ec8176379",
+    "url": "https://agentskills.io/specification"
+  },
+  "files": [
+    {
+      "path": "skill_authoring/upstream/openai/LICENSE",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "LICENSE",
+      "git_blob_sha": "4606e72e042564097e8780d66c1d4dcb611869bd",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/openai/SKILL.md",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+      "git_blob_sha": "490ccc6c3e0015eb982bb5c108c2df083be2c6c2",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/init_skill.py",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "codex-rs/skills/src/assets/samples/skill-creator/scripts/init_skill.py",
+      "git_blob_sha": "2ed2fa3125c720fcce60a29f3dd82d04b14d9fa0",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/generate_openai_yaml.py",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "codex-rs/skills/src/assets/samples/skill-creator/scripts/generate_openai_yaml.py",
+      "git_blob_sha": "870eefcea9bd0184806b8eb305526e883d2f7241",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/quick_validate.py",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "codex-rs/skills/src/assets/samples/skill-creator/scripts/quick_validate.py",
+      "git_blob_sha": "e27023ece4bd259ef36560e19995eec7b6a345bf",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/SKILL.md",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/SKILL.md",
+      "git_blob_sha": "65b3a402dbd09b8e83f9d637c6b553875189085c",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/LICENSE.txt",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/LICENSE.txt",
+      "git_blob_sha": "4f881c52d1f72f4cfb720e339e2d35c3058d01a9",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/grader.md",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/agents/grader.md",
+      "git_blob_sha": "558ab05c0a9a8bb062ef4c51823d4d76c3acf7c4",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/comparator.md",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/agents/comparator.md",
+      "git_blob_sha": "80e00eb45db3ee53a132fc2ba97fd59a7339e563",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/analyzer.md",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/agents/analyzer.md",
+      "git_blob_sha": "14e41d6068635f4dd3fb878fd1626312395dda63",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/references/schemas.md",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/references/schemas.md",
+      "git_blob_sha": "b6eeaa2d4a34c1653069585c6c5603da39a5bdbe",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/scripts/aggregate_benchmark.py",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/scripts/aggregate_benchmark.py",
+      "git_blob_sha": "3e66e8c105be9bab9f0e9c61f0d1482619401580",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/eval-viewer/generate_review.py",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/eval-viewer/generate_review.py",
+      "git_blob_sha": "7fa5978631fed1ed545591dbb2b0eb21ce3f3d08",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/eval-viewer/viewer.html",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "source_path": "skills/skill-creator/eval-viewer/viewer.html",
+      "git_blob_sha": "6d8e96348a02e66c3363d2ff3b3ae58ac11e6382",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "skill_authoring/upstream/openai/NOTICE",
+      "repository": "openai/codex",
+      "revision": "55c099a142eb302188fee00ab9e9062f2db1c359",
+      "source_path": "NOTICE",
+      "git_blob_sha": "2805899d56d0332d175cfc613c67d45d6f006db7",
+      "license": "Apache-2.0"
+    }
+  ]
+}

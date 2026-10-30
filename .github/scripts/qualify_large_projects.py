@@ -169,6 +169,7 @@ def main() -> int:
         "status": "in_progress",
         "per_case_seconds": 1800,
     }
+    run.save(run.evidence / "provenance.json", provenance)
     try:
         if platform.system() != "Linux" or platform.machine() != "x86_64":
             raise ValueError("qualification requires Linux x86_64")
@@ -187,6 +188,7 @@ def main() -> int:
 
         provenance["runner_hashes"] = harness_hashes()
         provenance["resource_image"] = IMAGE
+        run.save(run.evidence / "provenance.json", provenance)
         run.run("apt-update", ["sudo", "-n", "apt-get", "update"])
         run.run("apt-install", ["sudo", "-n", "apt-get", "install", "-y", *PACKAGES])
         run.run("docker-info", ["docker", "info", "--format", "{{.CgroupVersion}} {{.OSType}}"])
@@ -216,6 +218,7 @@ def main() -> int:
                 ("bubblewrap", ["bwrap", "--version"]),
             )
         }
+        run.save(run.evidence / "provenance.json", provenance)
         cli = [sys.executable, "-m", "benchmarks", "large"]
         prepared, dependencies = root / "prepared", root / "dependencies"
         run.run("prepare", [*cli, "prepare", "--output", str(prepared)])

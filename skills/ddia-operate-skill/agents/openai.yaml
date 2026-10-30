@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Operate Skill"
+  short_description: "DDIA operate: evidence and engineering decisions"
+  default_prompt: "Use $ddia-operate-skill for this data-system task."

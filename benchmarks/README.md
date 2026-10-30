@@ -115,7 +115,7 @@ is an operator action after evidence is retained where desired.
 - **baseline:** stock generic Codex capabilities, no toolkit instructions or book resources.
 - **source-matched:** the same original books, retrieval scripts and reference/assets files
   staged for the toolkit arm, with no skill entrypoints or custom role instructions.
-- **toolkit:** copies of all nine real toolkit skills and the six
+- **toolkit:** copies of all skills in the current toolkit inventory and the six
   shipped Codex roles, with evaluation directories excluded. Routing is natural; the prompt
   does not prescribe a specialist. Copies are ordinary independent files, not links into
   the repository or personal installation.

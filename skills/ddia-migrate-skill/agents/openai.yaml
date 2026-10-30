@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Migrate Skill"
+  short_description: "DDIA migrate: evidence and engineering decisions"
+  default_prompt: "Use $ddia-migrate-skill for this data-system task."

@@ -88,7 +88,7 @@ class InstallerTests(unittest.TestCase):
         }
         self.assertEqual(set(entries), set(skills))
         self.assertEqual(
-            entries["book-to-agent-skill"],
+            entries["release-and-docs-skill"],
             ["  Codex roles: none (skill only)", "  Copilot roles: none (skill only)"],
         )
         self.assertEqual(
@@ -97,7 +97,7 @@ class InstallerTests(unittest.TestCase):
         )
         self.assertEqual(
             entries["documentation-skill"],
-            ["  Codex roles: documentation_agent", "  Copilot roles: Documentation Agent"],
+            ["  Codex roles: documentation_agent", "  Copilot roles: none (skill only)"],
         )
         self.assertEqual(
             entries["independent-diff-review-skill"],
@@ -115,25 +115,20 @@ class InstallerTests(unittest.TestCase):
             ],
         )
 
-    def test_list_uses_copilot_display_metadata(self) -> None:
-        """Copilot display names retain spaces and the explicit Agent suffix."""
-        copilot_role = self.root / "agents/copilot/documentation-agent.agent.md"
-        copilot_role.write_text(
-            copilot_role.read_text().replace(
-                "name: Documentation Agent", 'name: "Documentation Guide Agent"'
-            )
-        )
+    def test_copilot_catalog_contains_skills_without_agent_definitions(self) -> None:
+        """A skill-only target does not require a source role directory."""
+        self.assertEqual(install.AGENTS["copilot"], {})
+        self.assertFalse((self.root / "agents/copilot").exists())
         output = self.list_catalog()
         self.assertIn("  Codex roles: documentation_agent\n", output)
-        self.assertIn("  Copilot roles: Documentation Guide Agent\n", output)
-        self.assertNotIn("  Copilot roles: Documentation Agent\n", output)
+        self.assertNotIn("Copilot roles: Documentation Agent", output)
 
     def test_skill_name_requires_type_suffix(self) -> None:
         """Matching frontmatter and directory cannot introduce an ambiguous skill name."""
-        path = self.root / "skills/recruiter-followup-skill"
-        path.rename(path.with_name("recruiter-followup"))
-        path = path.with_name("recruiter-followup") / "SKILL.md"
-        path.write_text(path.read_text().replace("recruiter-followup-skill", "recruiter-followup"))
+        path = self.root / "skills/simplify-or-delete-skill"
+        path.rename(path.with_name("simplify-or-delete"))
+        path = path.with_name("simplify-or-delete") / "SKILL.md"
+        path.write_text(path.read_text().replace("simplify-or-delete-skill", "simplify-or-delete"))
         with self.assertRaisesRegex(install.InstallError, "Invalid skill directory"):
             self.apply()
         self.assertFalse(self.home.exists())
@@ -172,16 +167,12 @@ class InstallerTests(unittest.TestCase):
         with self.assertRaisesRegex(install.InstallError, "unmapped.*extra-agent"):
             install.inventory(self.root)
 
-    def test_copilot_filename_and_display_name_require_agent_suffix(self) -> None:
-        """The required host extension does not replace the toolkit's explicit type suffix."""
+    def test_copilot_role_files_are_rejected_as_unshipped_format(self) -> None:
+        """The package cannot silently reintroduce a second agent-definition format."""
         path = self.root / "agents/copilot/documentation-agent.agent.md"
-        original = path.read_text()
-        path.write_text(original.replace("name: Documentation Agent", "name: Documentation"))
-        with self.assertRaisesRegex(install.InstallError, "display name must end"):
-            install.inventory(self.root)
-        path.write_text(original)
-        path.rename(path.with_name("documentation.agent.md"))
-        with self.assertRaisesRegex(install.InstallError, "filename must end"):
+        path.parent.mkdir()
+        path.write_text("---\nname: Documentation Agent\ndescription: Legacy fixture\n---\n")
+        with self.assertRaisesRegex(install.InstallError, "Only Codex"):
             install.inventory(self.root)
 
     def seed_old_documentation_install(self, target: str = "codex") -> list[Path]:
@@ -194,9 +185,15 @@ class InstallerTests(unittest.TestCase):
         extension = ".toml" if target == "codex" else ".agent.md"
         agent_source = previous / "agents" / f"doc-agent{extension}"
         agent_source.parent.mkdir()
-        shutil.copyfile(
-            self.root / "agents" / target / f"documentation-agent{extension}", agent_source
-        )
+        if target == "codex":
+            shutil.copyfile(self.root / "agents/codex/documentation-agent.toml", agent_source)
+        else:
+            fixture = json.loads(
+                (ROOT / "tests/fixtures/pre-routing-copilot-project.json").read_text()
+            )
+            agent_source.write_text(
+                fixture["files"][".github/agents/documentation-agent.agent.md"]["text"]
+            )
         agent_source.write_text(
             agent_source.read_text()
             .replace("documentation-skill", "doc-agent")
@@ -244,7 +241,7 @@ class InstallerTests(unittest.TestCase):
         )
         self.assertEqual(
             [path.name for path in (self.home / ".agents/skills").iterdir()],
-            ["documentation-skill"],
+            ["documentation-skill", "task-routing-skill"],
         )
         self.assertEqual(
             [path.name for path in (self.codex / "agents").iterdir()],
@@ -258,12 +255,16 @@ class InstallerTests(unittest.TestCase):
                 old = self.seed_old_documentation_install(target)
                 identities = [path.lstat().st_ino for path in old]
                 paths = install.locations(self.home, self.codex)
-                unselected = paths[f"{target}-skills"] / "recruiter-followup"
+                unselected = paths[f"{target}-skills"] / "unselected-custom-skill"
                 unselected.mkdir()
                 (unselected / "custom.md").write_text("preserve unselected")
                 receipt = self.apply(target=target, backup_existing=True)
                 assert receipt is not None
-                self.assertTrue(all(not install.present(path) for path in old))
+                retired = old if target == "codex" else old[:1]
+                self.assertTrue(all(not install.present(path) for path in retired))
+                if target == "copilot":
+                    self.assertTrue(old[1].is_symlink())
+                    self.assertEqual(old[1].lstat().st_ino, identities[1])
                 skill = paths[f"{target}-skills"] / "documentation-skill"
                 self.assertTrue(skill.is_symlink())
                 self.assertEqual((unselected / "custom.md").read_text(), "preserve unselected")
@@ -321,7 +322,10 @@ class InstallerTests(unittest.TestCase):
             receipt = self.apply(list(install.SKILL_ALIASES), backup_existing=True)
         assert receipt is not None
         self.assertTrue(all(not install.present(path) for path in old))
-        self.assertEqual(len(list(paths["codex-skills"].iterdir())), 9)
+        self.assertEqual(
+            {path.name for path in paths["codex-skills"].iterdir()},
+            set(install.SKILL_ALIASES.values()) | {"task-routing-skill"},
+        )
         self.assertEqual(len(list(paths["codex-agents"].iterdir())), 6)
         self.assertTrue(
             all(path.name.endswith("-skill") for path in paths["codex-skills"].iterdir())
@@ -365,32 +369,36 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(role.samefile(self.root / "agents/codex/documentation-agent.toml"))
         with os.fdopen(os.open(role, os.O_RDONLY | os.O_NOFOLLOW)) as handle:
             self.assertIn('name = "documentation_agent"', handle.read())
-        self.assertFalse((self.home / ".agents/skills/recruiter-followup-skill").exists())
+        self.assertFalse((self.home / ".agents/skills/release-and-docs-skill").exists())
         (self.root / "skills/documentation-skill/local-example.md").write_text("new content")
         self.assertEqual((skill / "local-example.md").read_text(), "new content")
 
     def test_all_skills_and_associated_agents_for_both_hosts(self) -> None:
-        """Each host receives all nine skills and only its supported wrappers."""
+        """Each host receives the authoritative skill inventory and supported wrappers."""
         skills = list(install.inventory(self.root))
         self.apply(skills)
         self.apply(skills, target="copilot")
-        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 9)
+        self.assertEqual(
+            {path.name for path in (self.home / ".agents/skills").iterdir()}, set(skills)
+        )
         self.assertEqual(len(list((self.codex / "agents").iterdir())), 6)
-        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 9)
-        self.assertEqual(len(list((self.home / ".copilot/agents").iterdir())), 1)
+        self.assertEqual(
+            {path.name for path in (self.home / ".copilot/skills").iterdir()}, set(skills)
+        )
+        self.assertFalse((self.home / ".copilot/agents").exists())
 
-    def test_book_workflow_install_preserves_roles_and_restores_independently(self) -> None:
-        """The coordinating skill installs alone without changing existing specialists."""
+    def test_skill_only_install_preserves_roles_and_restores_independently(self) -> None:
+        """A skill-only workflow installs without changing existing specialists."""
         self.apply(["ddia-skill", "software-design-skill"])
         roles = {
             path.name: (path.stat().st_ino, path.read_bytes())
             for path in (self.codex / "agents").iterdir()
         }
-        receipt = self.apply(["book-to-agent-skill"])
+        receipt = self.apply(["release-and-docs-skill"])
         assert receipt is not None
-        skill = self.home / ".agents/skills/book-to-agent-skill"
-        self.assertEqual(skill.resolve(), self.root / "skills/book-to-agent-skill")
-        self.assertIsNone(self.apply(["book-to-agent-skill"]))
+        skill = self.home / ".agents/skills/release-and-docs-skill"
+        self.assertEqual(skill.resolve(), self.root / "skills/release-and-docs-skill")
+        self.assertIsNone(self.apply(["release-and-docs-skill"]))
         self.assertEqual(
             {
                 path.name: (path.stat().st_ino, path.read_bytes())
@@ -745,7 +753,7 @@ class InstallerTests(unittest.TestCase):
         assert receipt is not None
         entries = json.loads(receipt.read_text())["entries"]
         destinations = [(entry["area"], entry["name"]) for entry in entries]
-        self.assertEqual(len(destinations), 5)
+        self.assertEqual(len(destinations), 6)
         self.assertEqual(len(destinations), len(set(destinations)))
         self.assertIsNone(self.apply(selected))
         install.restore(receipt)
