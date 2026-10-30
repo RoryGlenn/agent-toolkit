@@ -370,13 +370,17 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((skill / "local-example.md").read_text(), "new content")
 
     def test_all_skills_and_associated_agents_for_both_hosts(self) -> None:
-        """Each host receives all nine skills and only its supported wrappers."""
+        """Each host receives the authoritative skill inventory and supported wrappers."""
         skills = list(install.inventory(self.root))
         self.apply(skills)
         self.apply(skills, target="copilot")
-        self.assertEqual(len(list((self.home / ".agents/skills").iterdir())), 9)
+        self.assertEqual(
+            {path.name for path in (self.home / ".agents/skills").iterdir()}, set(skills)
+        )
         self.assertEqual(len(list((self.codex / "agents").iterdir())), 6)
-        self.assertEqual(len(list((self.home / ".copilot/skills").iterdir())), 9)
+        self.assertEqual(
+            {path.name for path in (self.home / ".copilot/skills").iterdir()}, set(skills)
+        )
         self.assertEqual(len(list((self.home / ".copilot/agents").iterdir())), 1)
 
     def test_book_workflow_install_preserves_roles_and_restores_independently(self) -> None:

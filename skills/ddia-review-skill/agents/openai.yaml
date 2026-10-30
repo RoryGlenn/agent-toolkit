@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Review Skill"
+  short_description: "DDIA review: evidence and engineering decisions"
+  default_prompt: "Use $ddia-review-skill for this data-system task."

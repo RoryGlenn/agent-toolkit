@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Validate Skill"
+  short_description: "DDIA validate: evidence and engineering decisions"
+  default_prompt: "Use $ddia-validate-skill for this data-system task."

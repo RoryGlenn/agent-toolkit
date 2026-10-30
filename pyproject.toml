@@ -21,4 +21,4 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["benchmarks", "install.py", "project_bootstrap.py", "skills/documentation-skill/scripts/check_environment.py", "skills/ddia-skill/scripts/book.py", "skills/software-design-skill/scripts/book.py"]
+files = ["benchmarks", "install.py", "project_bootstrap.py", "skills/documentation-skill/scripts/check_environment.py", "skills/ddia-skill/scripts/book.py", "skills/ddia-skill/scripts/guide.py", "skills/ddia-skill/evals/evaluate.py", "skills/ddia-skill/scripts/experiments.py", "skills/software-design-skill/scripts/book.py"]
