@@ -7,16 +7,18 @@ import json
 import random
 import re
 import shutil
+import sys
 import tempfile
 import time
 import uuid
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 from benchmarks.cases import CASES, REPOSITORY, SEQUEL, get_case, materialize
 from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot
 from benchmarks.oracles import Oracle, artifact_hashes
-from benchmarks.process import TrustedControlExecutor, bounded_process
+from benchmarks.process import Execution, TrustedControlExecutor, bounded_process
 from benchmarks.runtime import (
     ARMS,
     PROFILES,
@@ -53,6 +55,7 @@ def make_plan(
     source_manifest: Path | None,
     phase: int = 1,
     parent_result: Path | None = None,
+    large_context: Path | None = None,
 ) -> dict[str, Any]:
     """Predeclare all attempts so failures and unfavorable outcomes cannot disappear."""
     if seconds < 1 or seconds > 7200 or attempts not in range(1, 5):
@@ -63,13 +66,22 @@ def make_plan(
         raise ValueError("phase 2 requires only design-hard and --parent-result")
     if phase == 1 and parent_result is not None:
         raise ValueError("parent-result belongs only to the fresh-maintainer sequel")
+    context = None
+    if large_context:
+        from benchmarks.large_projects.candidate import load_context
+
+        if phase != 1 or budget_units is None or budget_units < 2:
+            raise ValueError("large projects require phase 1 and an explicit descendant budget")
+        context = load_context(large_context, cases)
     sources = resource_manifest(profile, source_manifest)
     source_hash = fingerprint({name: digest(path) for name, path in sources.items()})
     package_hash = fingerprint(toolkit_manifest())
     entries = []
     rng = random.Random(20261028)
     for case_id in cases:
-        case = get_case(case_id)
+        from benchmarks.large_projects.integration import case_fingerprint
+
+        case_hash = case_fingerprint(case_id) if large_context else get_case(case_id).fingerprint
         for attempt in range(1, attempts + 1):
             order = list(dict.fromkeys(arms))
             rng.shuffle(order)
@@ -79,7 +91,7 @@ def make_plan(
                 entries.append(
                     {
                         "case_id": case_id,
-                        "case_fingerprint": case.fingerprint,
+                        "case_fingerprint": case_hash,
                         "phase": phase,
                         "arm": arm,
                         "attempt": attempt,
@@ -87,7 +99,9 @@ def make_plan(
                 )
     return {
         "version": 1,
-        "suite": "public-development-v1",
+        "suite": "large-project-v1" if large_context else "public-development-v1",
+        "large_context": context,
+        "execution_profile_fingerprint": fingerprint(context) if context else None,
         "plan_id": str(uuid.uuid4()),
         "model": model,
         "effort": effort,
@@ -156,7 +170,14 @@ def verify_plan(plan: dict[str, Any]) -> None:
     if harness_fingerprint() != plan["harness_fingerprint"]:
         raise ValueError("benchmark harness changed since planning")
     for entry in plan["entries"]:
-        if get_case(entry["case_id"]).fingerprint != entry["case_fingerprint"]:
+        from benchmarks.large_projects.integration import case_fingerprint
+
+        expected_case = (
+            case_fingerprint(entry["case_id"])
+            if plan.get("large_context")
+            else get_case(entry["case_id"]).fingerprint
+        )
+        if expected_case != entry["case_fingerprint"]:
             raise ValueError("case changed since planning; create a new plan")
     manifest = Path(plan["source_manifest"]) if plan["source_manifest"] else None
     sources = resource_manifest(plan["resource_profile"], manifest)
@@ -199,7 +220,17 @@ def prepare(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str
         copy_project(artifact, workspace)
         (workspace / "TASK.md").write_text(SEQUEL)
     else:
-        materialize(workspace, get_case(entry["case_id"]))
+        if plan.get("large_context"):
+            from benchmarks.large_projects.export import export_parent
+            from benchmarks.large_projects.integration import case_at
+
+            export_parent(
+                case_at(entry["case_id"]),
+                Path(plan["large_context"]["prepared"]) / entry["case_id"],
+                workspace,
+            )
+        else:
+            materialize(workspace, get_case(entry["case_id"]))
     metadata = stage_arm(
         actor_home,
         client_home,
@@ -227,6 +258,11 @@ def prepare(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str
         plan["model"],
         plan["effort"],
         plan["budget_units"],
+        local_network=bool(plan.get("large_context")),
+        readonly_extra=[Path(p) for p in plan.get("large_context", {}).get("toolchains", [])]
+        if plan.get("large_context")
+        else (),
+        project_guidance=bool(plan.get("large_context")),
     )
     (client_home / "config.toml").write_text(config)
     prompt = (
@@ -245,6 +281,7 @@ def prepare(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str
     (root / "prompt.txt").write_text(prompt)
     (root / "outside-canary.txt").write_text("controller-private")
     result = {
+        "suite": plan["suite"],
         **entry,
         **metadata,
         "run_id": str(uuid.uuid4()),
@@ -256,6 +293,7 @@ def prepare(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str
         "attempt_cap": plan["attempt_cap"],
         "toolkit_package_fingerprint": plan["toolkit_package_fingerprint"],
         "harness_fingerprint": plan["harness_fingerprint"],
+        "execution_profile_fingerprint": plan.get("execution_profile_fingerprint"),
         "config_fingerprint": fingerprint(config),
         "prompt_fingerprint": fingerprint(prompt),
         "status": "prepared",
@@ -294,10 +332,12 @@ def preflight(executor: NativeExecutor, root: Path) -> list[dict[str, Any]]:
     return executor.preflight(forbidden)
 
 
-def verify_prompt_surface(executor: NativeExecutor, root: Path) -> dict[str, Any]:
+def verify_prompt_surface(
+    executor: NativeExecutor, root: Path, run: Callable[..., Execution] = bounded_process
+) -> dict[str, Any]:
     """Inspect actual initial prompt discovery, preserving evidence and failing on contamination."""
     command = [str(executor.codex), "debug", "prompt-input", "Read TASK.md."]
-    result = bounded_process(command, executor.workspace, executor.environment, timeout=60)
+    result = run(command, executor.workspace, executor.environment, timeout=60)
     (root / "prompt-surface.json").write_text(result.stdout)
     if result.returncode != 0:
         raise ValueError(f"prompt surface inspection failed: {result.stderr[-2000:]}")
@@ -366,6 +406,10 @@ def run_attempt(
     plan: dict[str, Any], entry: dict[str, Any], root: Path, codex: Path, auth_source: Path | None
 ) -> dict[str, Any]:
     """Run exactly one planned attempt; retain setup errors, timeouts, and all grading evidence."""
+    if plan.get("large_context"):
+        from benchmarks.large_projects.candidate import run_attempt as run_large
+
+        return run_large(plan, entry, root, codex, auth_source)
     result: dict[str, Any] = {
         **entry,
         "run_id": str(uuid.uuid4()),
@@ -576,7 +620,14 @@ def campaign_results(root: Path) -> list[dict[str, Any]]:
             if result.get(field) != expected.get(field):
                 raise ValueError(f"result differs from scheduled {field}")
         if "artifact_hashes" in result:
-            if artifact_hashes(directory / "artifact") != result["artifact_hashes"]:
+            from benchmarks.large_projects.artifacts import tree_hashes
+
+            actual_hashes = (
+                tree_hashes(directory / "artifact")
+                if plan.get("large_context")
+                else artifact_hashes(directory / "artifact")
+            )
+            if actual_hashes != result["artifact_hashes"]:
                 raise ValueError("frozen result artifact changed")
         if "grade" in result:
             evidence_path = directory / "grade-evidence.json"
@@ -612,6 +663,7 @@ def report(results: list[dict[str, Any]]) -> dict[str, Any]:
         "attempt_cap",
         "sequel_fingerprint",
         "parent_artifact_fingerprint",
+        "execution_profile_fingerprint",
     )
     groups: dict[str, dict[str, Any]] = {}
     seen: set[str] = set()
@@ -687,7 +739,11 @@ def report(results: list[dict[str, Any]]) -> dict[str, Any]:
 
 def add_plan_options(parser: argparse.ArgumentParser) -> None:
     """Add explicit comparison controls to planning commands."""
-    parser.add_argument("--case", action="append", choices=[case.id for case in CASES])
+    from benchmarks.large_projects.prepare import CATALOG
+
+    large_ids = [c["id"] for c in json.loads(CATALOG.read_text())["cases"]]
+    parser.add_argument("--case", action="append", choices=[case.id for case in CASES] + large_ids)
+    parser.add_argument("--large-context", type=Path)
     parser.add_argument("--arm", action="append", choices=ARMS)
     parser.add_argument("--model", required=True)
     parser.add_argument("--effort", default="high")
@@ -703,10 +759,16 @@ def add_plan_options(parser: argparse.ArgumentParser) -> None:
 
 
 def main() -> None:
-    """Dispatch the small benchmark workflow."""
+    """Dispatch the benchmark workflow, including model-free large-project controls."""
+    if len(sys.argv) > 1 and sys.argv[1] == "large":
+        from benchmarks.large_projects.__main__ import main as large_main
+
+        large_main(sys.argv[2:])
+        return
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list")
+    sub.add_parser("large", help="model-free large-project controls (large --help)")
     show = sub.add_parser("show")
     show.add_argument("case")
     validate = sub.add_parser("validate")
@@ -727,6 +789,10 @@ def main() -> None:
     grade_parser.add_argument("--phase", type=int, choices=(1, 2), default=1)
     grade_parser.add_argument("--output", type=Path, required=True)
     grade_parser.add_argument("--codex", default="codex")
+    grade_parser.add_argument("--curator", type=Path)
+    grade_parser.add_argument("--dependencies", type=Path)
+    grade_parser.add_argument("--toolchain", type=Path, action="append", default=[])
+    grade_parser.add_argument("--seconds", type=int, default=3600)
     report_parser = sub.add_parser("report")
     report_parser.add_argument("results", type=Path)
     report_parser.add_argument("--output", type=Path)
@@ -764,6 +830,7 @@ def main() -> None:
                 arguments.source_manifest,
                 arguments.phase,
                 arguments.parent_result,
+                arguments.large_context,
             )
             if arguments.output.exists():
                 raise ValueError("refusing to overwrite an existing plan")
@@ -789,8 +856,31 @@ def main() -> None:
                     f"{entry['case_id']} {entry['arm']} #{entry['attempt']}: {result['status']}",
                     flush=True,
                 )
+                if result["status"] == "cancelled" or result.get("operator_cancelled"):
+                    break
             write_json(arguments.output / "report.json", report(campaign_results(arguments.output)))
+            if any(
+                result["status"] == "cancelled" or result.get("operator_cancelled")
+                for result in results
+            ):
+                raise SystemExit(130)
         elif arguments.command == "grade":
+            if arguments.curator:
+                from benchmarks.large_projects.candidate import grade_artifact
+
+                grade_result = grade_artifact(
+                    arguments.case,
+                    arguments.artifact.resolve(),
+                    arguments.curator.resolve(),
+                    arguments.output.resolve(),
+                    [p.resolve() for p in arguments.toolchain],
+                    arguments.dependencies,
+                    arguments.seconds,
+                )
+                print(grade_result["status"])
+                if grade_result["status"] != "needs_review":
+                    raise SystemExit(1)
+                return
             artifact_hashes(arguments.artifact)
             root = arguments.output.resolve()
             root.mkdir(parents=True, exist_ok=False)

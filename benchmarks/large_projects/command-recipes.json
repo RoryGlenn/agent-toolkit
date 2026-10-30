@@ -1,0 +1,1173 @@
+{
+  "schema_version": 1,
+  "kind": "Historical command recipes; not an executable plan or Linux validation.",
+  "placeholders": {
+    "{corpus}": "Original curator workspace root; paths are descriptive and must be mapped to new workspace layout.",
+    "{openssl_prefix}": "Existing OpenSSL prefix selected for the target platform.",
+    "{node_bin}": "Pinned Node 22.22.1 bin directory.",
+    "{readline_prefix}": "Existing optional readline prefix on the qualification platform; adapt discovery on Linux.",
+    "{xz_prefix}": "Existing optional xz prefix on the qualification platform; adapt discovery on Linux.",
+    "{zstd_prefix}": "Existing optional zstd prefix on the qualification platform; adapt discovery on Linux."
+  },
+  "cases": [
+    {
+      "id": "vscode-snippet-selections",
+      "commands": [
+        {
+          "phase": "npm-ci-root",
+          "argv": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 11.084
+        },
+        {
+          "phase": "npm-ci-build",
+          "argv": [
+            "npm",
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "cwd": "{corpus}/validation/vscode/build",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 2.23
+        },
+        {
+          "phase": "browser-download",
+          "argv": [
+            "node",
+            "node_modules/@playwright/test/cli.js",
+            "install",
+            "chromium"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 8.183
+        },
+        {
+          "phase": "parent-typecheck",
+          "argv": [
+            "npm",
+            "run",
+            "compile-check-ts-native"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 14.785
+        },
+        {
+          "phase": "parent-transpile",
+          "argv": [
+            "npm",
+            "run",
+            "transpile-client"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 5.52
+        },
+        {
+          "phase": "parent-snippet-suites",
+          "argv": [
+            "node",
+            "test/unit/browser/index.js",
+            "--browser",
+            "chromium",
+            "--run",
+            "src/vs/editor/contrib/snippet/test/browser/snippetSession.test.ts",
+            "--run",
+            "src/vs/editor/contrib/snippet/test/browser/snippetController2.test.ts"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 3.967
+        },
+        {
+          "phase": "fixed-typecheck",
+          "argv": [
+            "npm",
+            "run",
+            "compile-check-ts-native"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 14.671
+        },
+        {
+          "phase": "fixed-transpile",
+          "argv": [
+            "npm",
+            "run",
+            "transpile-client"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 5.92
+        },
+        {
+          "phase": "fixed-snippet-suites",
+          "argv": [
+            "node",
+            "test/unit/browser/index.js",
+            "--browser",
+            "chromium",
+            "--run",
+            "src/vs/editor/contrib/snippet/test/browser/snippetSession.test.ts",
+            "--run",
+            "src/vs/editor/contrib/snippet/test/browser/snippetController2.test.ts"
+          ],
+          "cwd": "{corpus}/validation/vscode",
+          "environment": {
+            "LANG": "C.UTF-8",
+            "PATH": "{node_bin}:<target platform tool paths>",
+            "npm_config_cache": "{corpus}/evidence/vscode/npm-cache",
+            "npm_config_userconfig": "/dev/null",
+            "npm_config_audit": "false",
+            "npm_config_fund": "false",
+            "npm_config_jobs": "2",
+            "npm_config_devdir": "{corpus}/evidence/vscode/node-gyp",
+            "XDG_CACHE_HOME": "{corpus}/evidence/vscode/cache",
+            "PLAYWRIGHT_BROWSERS_PATH": "{corpus}/evidence/vscode/playwright",
+            "ELECTRON_CACHE": "{corpus}/evidence/vscode/electron-cache",
+            "GOMAXPROCS": "2",
+            "CI": "true"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.388
+        }
+      ]
+    },
+    {
+      "id": "cpython-import-locks",
+      "commands": [
+        {
+          "phase": "configure-debug",
+          "argv": [
+            "./configure",
+            "--with-pydebug",
+            "--with-openssl={openssl_prefix}",
+            "--prefix={corpus}/validation/cpython/private-prefix"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {
+            "PKG_CONFIG_PATH": "{openssl_prefix}/lib/pkgconfig:{readline_prefix}/lib/pkgconfig:{xz_prefix}/lib/pkgconfig:{zstd_prefix}/lib/pkgconfig"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 71.689
+        },
+        {
+          "phase": "parent-debug-build",
+          "argv": [
+            "make",
+            "-s",
+            "-j2"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 0,
+          "observed_seconds": 69.671
+        },
+        {
+          "phase": "parent-behavioral-regressions",
+          "argv": [
+            "./python.exe",
+            "-m",
+            "unittest",
+            "-v",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_parent_lock_not_held_while_submodule_executes",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_concurrent_first_imports_of_sibling_packages",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_concurrent_first_imports_of_nested_packages"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 1,
+          "observed_seconds": 0.335
+        },
+        {
+          "phase": "parent-original-threaded-controls",
+          "argv": [
+            "./python.exe",
+            "-m",
+            "unittest",
+            "-v",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_parallel_module_init",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_parallel_meta_path",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_parallel_path_hooks",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_import_hangers",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_circular_imports",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_side_effect_import",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_concurrent_futures_circular_import",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_multiprocessing_pool_circular_import",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_import_failure_race_condition",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_hierarchical_import_deadlock",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_cross_package_circular_import"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 0,
+          "observed_seconds": 2.311
+        },
+        {
+          "phase": "fixed-debug-rebuild",
+          "argv": [
+            "make",
+            "-j2"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 0,
+          "observed_seconds": 2.767
+        },
+        {
+          "phase": "fixed-behavioral-regressions",
+          "argv": [
+            "./python.exe",
+            "-m",
+            "unittest",
+            "-v",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_parent_lock_not_held_while_submodule_executes",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_concurrent_first_imports_of_sibling_packages",
+            "test.test_importlib.test_threaded_import.ThreadedImportTests.test_concurrent_first_imports_of_nested_packages"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 0,
+          "observed_seconds": 0.201
+        },
+        {
+          "phase": "fixed-nearby-suites",
+          "argv": [
+            "./python.exe",
+            "-m",
+            "test",
+            "-v",
+            "--timeout",
+            "90",
+            "test_importlib",
+            "test_import",
+            "test_threading",
+            "test_runpy",
+            "test_pkgutil",
+            "test_zipimport",
+            "test_lazy_import"
+          ],
+          "cwd": "{corpus}/validation/cpython/worktree",
+          "environment": {},
+          "observed_exit": 0,
+          "observed_seconds": 40.401
+        }
+      ]
+    },
+    {
+      "id": "otel-queue-cancellation",
+      "commands": [
+        {
+          "phase": "prefetch",
+          "argv": [
+            "go",
+            "version"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 6.105
+        },
+        {
+          "phase": "prefetch",
+          "argv": [
+            "go",
+            "mod",
+            "download",
+            "-json"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 3.08
+        },
+        {
+          "phase": "parent-controls",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=120s",
+            "-run=^(TestMemoryQueue|TestMemoryQueueBlockingCancelled|TestMemoryQueueDrainWhenShutdown|TestAsyncMemoryQueueBlockingCancelled|TestPersistentQueue_FullCapacity|TestPersistentQueue_Shutdown)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 25.668
+        },
+        {
+          "phase": "parent-oracle-1",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 0.816
+        },
+        {
+          "phase": "parent-oracle-2",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 0.77
+        },
+        {
+          "phase": "parent-oracle-3",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 0.777
+        },
+        {
+          "phase": "fixed-oracle-1",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 6.674
+        },
+        {
+          "phase": "fixed-oracle-2",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.74
+        },
+        {
+          "phase": "fixed-oracle-3",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^(TestCondSignalDoesNotBlockBehindCanceledWaiters|TestCondSignalAccounting|TestCondCancellationNotification|TestBlockedOfferCancellationDoesNotConsumeCapacityNotification)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.789
+        },
+        {
+          "phase": "fixed-controls",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=120s",
+            "-run=^(TestMemoryQueue|TestMemoryQueueBlockingCancelled|TestMemoryQueueDrainWhenShutdown|TestAsyncMemoryQueueBlockingCancelled|TestPersistentQueue_FullCapacity|TestPersistentQueue_Shutdown)$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 2.777
+        },
+        {
+          "phase": "fixed-queue-suite",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=240s",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 67.429
+        },
+        {
+          "phase": "parent-individual-1",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondSignalDoesNotBlockBehindCanceledWaiters$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 3.207
+        },
+        {
+          "phase": "parent-individual-2",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondSignalAccounting$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.754
+        },
+        {
+          "phase": "parent-individual-3",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondCancellationNotification$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 0.709
+        },
+        {
+          "phase": "parent-individual-4",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestBlockedOfferCancellationDoesNotConsumeCapacityNotification$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/parent/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.737
+        },
+        {
+          "phase": "fixed-individual-1",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondSignalDoesNotBlockBehindCanceledWaiters$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.93
+        },
+        {
+          "phase": "fixed-individual-2",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondSignalAccounting$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.779
+        },
+        {
+          "phase": "fixed-individual-3",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestCondCancellationNotification$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.761
+        },
+        {
+          "phase": "fixed-individual-4",
+          "argv": [
+            "go",
+            "test",
+            "-race",
+            "-p=2",
+            "-count=1",
+            "-timeout=45s",
+            "-run=^TestBlockedOfferCancellationDoesNotConsumeCapacityNotification$",
+            "./internal/queue"
+          ],
+          "cwd": "{corpus}/validation/otel-collector/worktrees/fixed/exporter/exporterhelper",
+          "environment": {
+            "GOTOOLCHAIN": "go1.26.0",
+            "GOCACHE": "{corpus}/validation/otel-collector/cache/gocache",
+            "GOMODCACHE": "{corpus}/validation/otel-collector/cache/gomodcache",
+            "GOPATH": "{corpus}/validation/otel-collector/cache/gopath",
+            "GOMAXPROCS": "2",
+            "GOFLAGS": "-mod=readonly",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "GOWORK": "off"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.771
+        }
+      ]
+    },
+    {
+      "id": "postgres-tablespace-locking",
+      "commands": [
+        {
+          "phase": "parent-configure",
+          "argv": [
+            "{corpus}/validation/postgres/worktrees/parent/configure",
+            "--prefix={corpus}/validation/postgres/install/parent",
+            "--enable-cassert",
+            "--enable-debug",
+            "--without-icu",
+            "--without-readline",
+            "--without-zlib"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 24.431
+        },
+        {
+          "phase": "parent-build",
+          "argv": [
+            "make",
+            "-j2"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 94.177
+        },
+        {
+          "phase": "parent-install",
+          "argv": [
+            "make",
+            "-j2",
+            "install"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 3.107
+        },
+        {
+          "phase": "parent-controls",
+          "argv": [
+            "{corpus}/validation/postgres/build/parent/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143551.918912Z-parent-controls/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/parent/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143551.918912Z-parent-controls/output",
+            "--bindir={corpus}/validation/postgres/install/parent/bin",
+            "--dlpath={corpus}/validation/postgres/build/parent/src/test/regress",
+            "--no-locale",
+            "ddl-dependency-locking",
+            "drop-owned-grant",
+            "alter-domain-validate"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 2.214
+        },
+        {
+          "phase": "parent-oracle-1",
+          "argv": [
+            "{corpus}/validation/postgres/build/parent/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143554.241219Z-parent-oracle-1/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/parent/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143554.241219Z-parent-oracle-1/output",
+            "--bindir={corpus}/validation/postgres/install/parent/bin",
+            "--dlpath={corpus}/validation/postgres/build/parent/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 1.066
+        },
+        {
+          "phase": "parent-oracle-2",
+          "argv": [
+            "{corpus}/validation/postgres/build/parent/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143555.413633Z-parent-oracle-2/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/parent/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143555.413633Z-parent-oracle-2/output",
+            "--bindir={corpus}/validation/postgres/install/parent/bin",
+            "--dlpath={corpus}/validation/postgres/build/parent/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 1.097
+        },
+        {
+          "phase": "parent-oracle-3",
+          "argv": [
+            "{corpus}/validation/postgres/build/parent/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143556.621411Z-parent-oracle-3/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/parent/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143556.621411Z-parent-oracle-3/output",
+            "--bindir={corpus}/validation/postgres/install/parent/bin",
+            "--dlpath={corpus}/validation/postgres/build/parent/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/parent/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 1,
+          "observed_seconds": 1.04
+        },
+        {
+          "phase": "fixed-configure",
+          "argv": [
+            "{corpus}/validation/postgres/worktrees/fixed/configure",
+            "--prefix={corpus}/validation/postgres/install/fixed",
+            "--enable-cassert",
+            "--enable-debug",
+            "--without-icu",
+            "--without-readline",
+            "--without-zlib"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 25.345
+        },
+        {
+          "phase": "fixed-build",
+          "argv": [
+            "make",
+            "-j2"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 92.349
+        },
+        {
+          "phase": "fixed-install",
+          "argv": [
+            "make",
+            "-j2",
+            "install"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 3.16
+        },
+        {
+          "phase": "fixed-controls",
+          "argv": [
+            "{corpus}/validation/postgres/build/fixed/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143759.483833Z-fixed-controls/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/fixed/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143759.483833Z-fixed-controls/output",
+            "--bindir={corpus}/validation/postgres/install/fixed/bin",
+            "--dlpath={corpus}/validation/postgres/build/fixed/src/test/regress",
+            "--no-locale",
+            "ddl-dependency-locking",
+            "drop-owned-grant",
+            "alter-domain-validate"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 2.158
+        },
+        {
+          "phase": "fixed-oracle-1",
+          "argv": [
+            "{corpus}/validation/postgres/build/fixed/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143801.749008Z-fixed-oracle-1/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/fixed/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143801.749008Z-fixed-oracle-1/output",
+            "--bindir={corpus}/validation/postgres/install/fixed/bin",
+            "--dlpath={corpus}/validation/postgres/build/fixed/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.145
+        },
+        {
+          "phase": "fixed-oracle-2",
+          "argv": [
+            "{corpus}/validation/postgres/build/fixed/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143803.001484Z-fixed-oracle-2/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/fixed/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143803.001484Z-fixed-oracle-2/output",
+            "--bindir={corpus}/validation/postgres/install/fixed/bin",
+            "--dlpath={corpus}/validation/postgres/build/fixed/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.132
+        },
+        {
+          "phase": "fixed-oracle-3",
+          "argv": [
+            "{corpus}/validation/postgres/build/fixed/src/test/isolation/pg_isolation_regress",
+            "--temp-instance={corpus}/evidence/postgres/runs/20261029T143804.238410Z-fixed-oracle-3/instance",
+            "--inputdir={corpus}/validation/postgres/worktrees/fixed/src/test/isolation",
+            "--outputdir={corpus}/evidence/postgres/runs/20261029T143804.238410Z-fixed-oracle-3/output",
+            "--bindir={corpus}/validation/postgres/install/fixed/bin",
+            "--dlpath={corpus}/validation/postgres/build/fixed/src/test/regress",
+            "--no-locale",
+            "tablespace-dependency-locking"
+          ],
+          "cwd": "{corpus}/validation/postgres/build/fixed/src/test/isolation",
+          "environment": {
+            "LC_ALL": "C",
+            "LANG": "C",
+            "PG_TEST_TIMEOUT_DEFAULT": "30"
+          },
+          "observed_exit": 0,
+          "observed_seconds": 1.121
+        }
+      ]
+    }
+  ]
+}

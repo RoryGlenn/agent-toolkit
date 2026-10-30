@@ -6,10 +6,11 @@ import json
 import re
 import shutil
 import sqlite3
+import sys
 import tempfile
 import time
 import unittest
-from contextlib import closing
+from contextlib import ExitStack, closing
 from pathlib import Path
 from unittest.mock import patch
 
@@ -31,7 +32,16 @@ from benchmarks.cases import ROOT, example, get_case, materialize
 from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot
 from benchmarks.oracles import Oracle, identical_retry
 from benchmarks.process import Execution, TrustedControlExecutor
-from benchmarks.runtime import ARMS, HARNESS_ROOT, REPOSITORY, resolve_codex, skill_names
+from benchmarks.runtime import (
+    ARMS,
+    HARNESS_ROOT,
+    REPOSITORY,
+    NativeExecutor,
+    config_text,
+    resolve_codex,
+    skill_names,
+    stage_runtime,
+)
 
 
 class OracleRegressionTests(unittest.TestCase):
@@ -239,6 +249,81 @@ class OracleRegressionTests(unittest.TestCase):
             for target in (root / "alias/protected", root / "linked"):
                 with self.subTest(target=target), self.assertRaises((OSError, ValueError)):
                     read_regular(target)
+
+    @unittest.skipUnless(shutil.which("codex"), "native Codex CLI not installed")
+    def test_native_global_temp_denial_preserves_explicit_narrow_grants(self) -> None:
+        with ExitStack() as stack:
+            root = Path(stack.enter_context(tempfile.TemporaryDirectory())).resolve()
+            scratch = [
+                Path(stack.enter_context(tempfile.TemporaryDirectory(dir=parent))).resolve()
+                for parent in ("/tmp", "/var/tmp")
+            ]
+            home, client = root / "home", root / "client"
+            workspace, temporary = scratch[0] / "workspace", scratch[1] / "private"
+            readonly = [directory / "readonly" for directory in scratch]
+            for path in (home, client, workspace, temporary, *readonly):
+                path.mkdir()
+            stage_runtime(home)
+            for path in readonly:
+                (path / "role.toml").write_text("known-readonly")
+            forbidden = root / "protected"
+            forbidden.write_text("known-protected")
+            targets = [directory / "outside" for directory in scratch]
+            for path in targets:
+                path.write_text("known-outside")
+            # Exercise both lexical macOS aliases and their canonical /private paths.
+            aliases = [
+                Path(parent) / directory.name / "outside"
+                for parent, directory in zip(("/tmp", "/var/tmp"), scratch, strict=True)
+            ]
+            denied = [str(path) for pair in zip(targets, aliases, strict=True) for path in pair]
+            created = [str(directory / "new-sibling") for directory in scratch]
+            (client / "config.toml").write_text(
+                config_text(
+                    workspace, home, client, temporary, "unused", "low", readonly_extra=readonly
+                )
+            )
+            executor = NativeExecutor(resolve_codex(), client, home, temporary, workspace)
+            self.assertTrue(all(executor.preflight([forbidden])[0]["checks"].values()))
+            script = f"""import json, pathlib, tempfile
+out={{}}
+for index,name in enumerate({denied!r}):
+    path=pathlib.Path(name)
+    for operation in ('read', 'write'):
+        try:
+            path.read_bytes() if operation=='read' else path.write_text('changed-by-actor')
+        except OSError as error:
+            out[f'{{operation}}_{{index}}']=error.errno in (1,2,13,30)
+        else:
+            out[f'{{operation}}_{{index}}']=False
+for index,name in enumerate({created!r}):
+    try:
+        pathlib.Path(name).write_text('new-outside')
+    except OSError as error:
+        out['create_'+str(index)]=error.errno in (1,2,13,30)
+    else:
+        out['create_'+str(index)]=False
+for index,name in enumerate({[str(path / "role.toml") for path in readonly]!r}):
+    out['readonly_'+str(index)]=pathlib.Path(name).read_text()=='known-readonly'
+with tempfile.NamedTemporaryFile(mode='w+', dir={str(temporary)!r}) as stream:
+    stream.write('private'); stream.seek(0)
+    out['private_temp']=stream.read()=='private'
+path=pathlib.Path({str(workspace / "created")!r})
+path.write_text('workspace')
+out['workspace']=path.read_text()=='workspace'
+print(json.dumps(out))
+"""
+            result = executor.execute(
+                [str(Path(sys.executable).resolve()), "-I", "-B", "-c", script], workspace
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            checks = json.loads(result.stdout)
+            self.assertTrue(all(checks.values()), checks)
+            self.assertTrue(all(path.read_text() == "known-outside" for path in targets))
+            self.assertTrue(all(not Path(path).exists() for path in created))
+            self.assertTrue(
+                all((path / "role.toml").read_text() == "known-readonly" for path in readonly)
+            )
 
     @unittest.skipUnless(shutil.which("codex"), "native Codex CLI not installed")
     def test_native_git_inside_repository_stops_parent_discovery(self) -> None:

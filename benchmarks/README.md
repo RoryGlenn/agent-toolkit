@@ -255,3 +255,14 @@ score. Use a bounded pilot to inspect model/tool compatibility, native routing/s
 observability, task validity and failure rates before a larger run. Preserve failed attempts
 when changing the next plan, and label results exploratory until difficulty and independent
 review have been calibrated.
+
+## Large-project work
+
+The [curator handoff for issue #5](large_projects/README.md) records four historical
+regressions in VS Code, CPython, OpenTelemetry Collector and PostgreSQL. Model-free
+`python -m benchmarks large` operations prepare sources, run Linux curator qualification,
+inspect receipts and clean bulky artifacts. The same plan, prepare, run, grade and report operations accept these cases with an explicit
+qualified large-project context. Runtime proof and every selected case must match the current
+harness; missing gates block planning. See the large-project guide for resource limits, sealed
+grading, component scope and current verification. No model comparison is part of qualification.
+The handoff and curator output contain answers; never copy them into a candidate workspace.

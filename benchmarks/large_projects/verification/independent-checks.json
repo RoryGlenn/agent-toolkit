@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "verified_code_revision": "4fa5d4ec123f5c42194a2f3bdb02cc4b9236872d",
+  "review": {
+    "independent_agent": true,
+    "read_only": true,
+    "unresolved_new_findings": []
+  },
+  "verification": {
+    "fresh_source_copy": true,
+    "large_project_tests_passed": 33,
+    "full_tests_run": 179,
+    "full_test_errors": 2,
+    "errors_reproduced_on_unmodified_starting_commit": true,
+    "other_repository_gates": "passed",
+    "sanitized_command_rows_checked_against_raw_receipts": 112,
+    "actual_behavior_replays": [
+      "cpython parent/fixed",
+      "collector parent/fixed/alternative/partial",
+      "postgres parent/fixed"
+    ],
+    "postgres_repeated_schedules_and_server_cleanup_verified": true
+  },
+  "external_artifact_hashes": [
+    {
+      "name": "final2-gates.json",
+      "sha256": "58a56ea71acc347b7ef5d7dad456a0679ee75295aff40ab0246554c7fd71a84c",
+      "bytes": 1860
+    },
+    {
+      "name": "final2-closed-tmp-replay.json",
+      "sha256": "ae32b5b36a3f5908a3e113e38b3e16d6447863e13f0ada7b9590ecc14103088d",
+      "bytes": 189094
+    },
+    {
+      "name": "final-retained-regrading.json",
+      "sha256": "c54953f698ba91d42b21dbefc5bc109b11906e4864f8868e5bede73e850427bf",
+      "bytes": 35600
+    },
+    {
+      "name": "postgres-parent-behavior-replay.json",
+      "sha256": "395119739326287735f0e5eb658f37e4fb3d09475805cc055e7ded79c30a3eb5",
+      "bytes": 28494
+    },
+    {
+      "name": "postgres-final-verification.json",
+      "sha256": "4f5cb4f591e982c5c25fee032083d63980e20838d8065e2650feeb12313a7c51",
+      "bytes": 31528
+    },
+    {
+      "name": "summary-claims-check.json",
+      "sha256": "31abb71e309f0b0049b34554e3ddb9607b5e91f6fbce756d48292fdf69347e91",
+      "bytes": 331
+    },
+    {
+      "name": "baseline-native-tests.log",
+      "sha256": "90a8a4c52993d890454e429c056c59e88720d611c203a3b7fc51d115fd96d139",
+      "bytes": 3467
+    }
+  ],
+  "external_artifacts_bundled": false,
+  "integrity_note": "Hashes identify retained external verifier records, not independently authenticated evidence. Re-run the documented checks.",
+  "issue_5_complete": false,
+  "comparison_study_run": false
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import resource
 import signal
 import subprocess
 import tempfile
@@ -69,6 +70,8 @@ def bounded_process(
     stdin: str = "",
     timeout: float = 30,
     max_output: int = 8_000_000,
+    stdout_path: Path | None = None,
+    enforce_output_files: bool = False,
 ) -> Execution:
     """Run with a shared wall deadline, bounded captured output, and process-group cleanup.
 
@@ -92,9 +95,16 @@ def bounded_process(
     started = time.monotonic()
     timed_out = False
     output_limited = False
+
+    def bound_capture_files() -> None:
+        # Only opted-in controller clients (Docker) use this; candidate build files
+        # have their own cell quotas. A fast producer cannot fill a host output file
+        # between polling intervals.
+        resource.setrlimit(resource.RLIMIT_FSIZE, (max_output, max_output))
+
     with (
         tempfile.TemporaryFile() as input_file,
-        tempfile.TemporaryFile() as output_file,
+        stdout_path.open("x+b") if stdout_path else tempfile.TemporaryFile() as output_file,
         tempfile.TemporaryFile() as error_file,
     ):
         input_file.write(stdin.encode())
@@ -107,6 +117,7 @@ def bounded_process(
             stdout=output_file,
             stderr=error_file,
             start_new_session=True,
+            preexec_fn=bound_capture_files if enforce_output_files else None,
         )
         try:
             while process.poll() is None:
@@ -125,12 +136,16 @@ def bounded_process(
             except ProcessLookupError:
                 pass
             process.wait(timeout=5)
+        output_limited = output_limited or (
+            os.fstat(output_file.fileno()).st_size > max_output
+            or os.fstat(error_file.fileno()).st_size > max_output
+        )
         output_file.seek(0)
         error_file.seek(0)
         return Execution(
             list(argv),
             process.returncode,
-            output_file.read(max_output).decode(errors="replace"),
+            "" if stdout_path else output_file.read(max_output).decode(errors="replace"),
             error_file.read(max_output).decode(errors="replace"),
             time.monotonic() - started,
             timed_out,
