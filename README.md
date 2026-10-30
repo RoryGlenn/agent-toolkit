@@ -444,6 +444,18 @@ Restore first checks every managed destination. It refuses to overwrite a link o
 
 ## Maintain the collection
 
+Use the [shared agent and skill authoring standard](standards/authoring/README.md) for
+current and future packages. It includes reusable skill and host-role templates, a primary
+research ledger, a review worksheet, and an adoption inventory covering all shipped skills
+and roles. It is community-aligned and proposed; no external endorsement or universal
+performance improvement is claimed. The authoring check validates structure and evidence
+locations, while behavioral confidence requires inspecting actual task results.
+
+The [standalone authoring package](skill_authoring/README.md) uses the open Agent Skills
+format, OpenAI's actual Codex initializer, and Anthropic's paired evaluation/reporting
+workflow with a Codex adapter. Upstream revisions, licenses, and exact source hashes are
+included. This package does not load or reuse the toolkit's custom skills, roles, or benchmarks.
+
 Edit `skills/<name>/` and `agents/<host>/` here. Skill symlinks expose source changes immediately. Codex role hard links share in-place edits, but an editor/Git operation that replaces a source file atomically leaves the installed role on the old inode. Re-run the selected installation to check it; if it reports a conflict, use `--backup-existing` to preserve the old role before refreshing it. Restoration also refuses a role whose canonical source inode changed. Start a fresh host session when it caches instructions. Re-run the installer after adding a skill or moving the checkout. It is safe to repeat an unchanged installation.
 
 Codex role hard links require the toolkit and Codex agent directory to be on the same filesystem. Cross-volume installation fails explicitly and rolls back; place the checkout and Codex home on the same volume. The installer does not silently fall back to a role symlink that the runtime cannot load.
@@ -469,6 +481,7 @@ uv run python -m unittest discover -s tests -v
 uv run ruff check .
 uv run ruff format --check .
 uv run mypy
+uv run python authoring.py check
 python3 install.py check
 git diff --check
 ```

@@ -10,3 +10,4 @@ test-results/
 
 # Local benchmark runs can contain private reference material and model traces.
 .benchmark-runs/
+.skill-evals/
