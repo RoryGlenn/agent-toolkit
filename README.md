@@ -158,8 +158,26 @@ actual role names from their definitions.
 | Skill | Use it for | Codex roles installed | Copilot roles installed |
 | --- | --- | --- | --- |
 | [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) | [Documentation Agent](agents/copilot/documentation-agent.agent.md) |
-| [ddia-skill](skills/ddia-skill/SKILL.md) | Data architecture, transactions, replication, and recovery, using DDIA Second Edition. | [ddia_agent](agents/codex/ddia-agent.toml) | None |
+| [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) | None |
 | [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) | None |
+
+### DDIA workflow skills
+
+These discoverable entry points share `ddia-skill`; selecting any one includes the shared
+package automatically in personal installations and portable project copies. Codex installs
+one `ddia_agent` role, even when several workflow skills are selected. Copilot receives skills
+without a named DDIA role. The default `ddia-skill` already contains all procedures/references;
+select these optional entry points when separate workflow discovery is useful.
+
+| Skill | Outcome |
+| --- | --- |
+| [ddia-assess-skill](skills/ddia-assess-skill/SKILL.md) | Decide whether a mechanism is necessary. |
+| [ddia-design-skill](skills/ddia-design-skill/SKILL.md) | Compare architectures from workload and invariants. |
+| [ddia-review-skill](skills/ddia-review-skill/SKILL.md) | Review consequential data changes and generated rules. |
+| [ddia-validate-skill](skills/ddia-validate-skill/SKILL.md) | Construct falsifiable concurrency/failure experiments. |
+| [ddia-migrate-skill](skills/ddia-migrate-skill/SKILL.md) | Plan compatible evolution, backfill and cutover. |
+| [ddia-operate-skill](skills/ddia-operate-skill/SKILL.md) | Assess capacity, overload, restore and reconciliation. |
+| [ddia-explain-skill](skills/ddia-explain-skill/SKILL.md) | Explain concepts through concrete decisions and examples. |
 
 ### Workflow and task skills
 
@@ -240,46 +258,77 @@ To test an installation without affecting your normal setup, supply `--home /pat
 
 ## DDIA skill and agent
 
-Install with `python3 install.py install --target codex --skill ddia-skill`.
-In a fresh session, invoke `$ddia-skill`, or ask the parent to delegate to
-`ddia_agent`. If a host/session cannot dispatch custom roles, use the skill directly
-or ask a standard agent to read `~/.agents/skills/ddia-skill/SKILL.md` before its task. The role inherits the calling model and reasoning settings.
-Consultation and review return advice to the existing writer; implementation requires
-explicit sole ownership. Its description enables relevance-based selection without
-changing global `AGENTS.md` or adding a mandatory review step to every task.
+Install the shared suite with `python3 install.py install --target codex --skill ddia-skill`.
+For a separate workflow entry point, select `--skill ddia-migrate-skill` (or another DDIA
+workflow); the installer includes its required shared skill. Bootstrap has the same dependency
+closure. The selection manifest records both so copied projects remain portable.
+
+In a fresh session invoke `$ddia-skill`, a selected `$ddia-<mode>-skill`, or delegate a
+consequential task to `ddia_agent`. The role inherits caller model/reasoning/permissions.
+If named-role dispatch is unavailable, use the skill directly or assign a standard worker
+that reads it; disclose the fallback. Consultation/review supports the existing writer;
+implementation requires explicit sole ownership.
+
+The portable package includes [topic routes](skills/ddia-skill/references/routing.md),
+70 concept clusters across all 14 substantive second-edition chapters, seven procedures,
+and optional data-contract/decision/handoff assets. Each cluster has applicability, an applied
+procedure, qualifications, incorrect/sufficient examples, falsification and exact source
+locators. The [coverage ledger](skills/ddia-skill/references/coverage.json) records authored
+guidance separately from bounded experiments and measured agent behavior. The fixed number
+of clusters is an organization choice, not a completeness or competence score.
 
 Examples:
 
-- “Use $ddia-skill to assess the simplest sufficient data design for this service.”
-- “Ask ddia_agent to review the transaction boundaries in this diff for reachable races.”
-- “Use $ddia-skill to trace commit, retry, acknowledgment, and replay behavior in this consumer.”
+- “Use $ddia-assess-skill to decide whether this job needs durable orchestration.”
+- “Ask ddia_agent to review transaction boundaries and recognize correct protections.”
+- “Use $ddia-migrate-skill to plan a compatible event-schema rollout and replay.”
+- “Use $ddia-skill to compare filtered vector retrieval against an exact baseline.”
+
+Resolve helper paths relative to the skill actually loaded:
+
+```bash
+python3 /resolved/ddia-skill/scripts/guide.py route 'offline edits and conflicting writes'
+python3 /resolved/ddia-skill/scripts/guide.py topics --chapter 12
+python3 /resolved/ddia-skill/scripts/guide.py concept write-skew
+python3 /resolved/ddia-skill/scripts/guide.py check
+python3 /resolved/ddia-skill/scripts/experiments.py all
+```
 
 The [DDIA Second Edition EPUB](books/designing-data-intensive-applications-2nd-edition.epub)
-is included under `books/`. The extracted index, chapter syntheses, and validation evidence
-remain in the personal reference library at `~/.local/share/ddia-specialist/`.
-To initialize source retrieval from the repository root:
+is included under `books/`. Original source retrieval remains an optional personal library
+at `~/.local/share/ddia-specialist/`; it is not copied by project bootstrap. Original practical
+references work without it, but an agent must disclose missing original-source evidence.
+From the repository root after a personal install:
 
 ```bash
 python3 ~/.agents/skills/ddia-skill/scripts/book.py init --epub books/designing-data-intensive-applications-2nd-edition.epub
 python3 ~/.agents/skills/ddia-skill/scripts/book.py verify
-python3 ~/.agents/skills/ddia-skill/scripts/book.py search 'write skew' --chapter 8
+python3 ~/.agents/skills/ddia-skill/scripts/book.py search 'dedupe' --chapter 8
 python3 ~/.agents/skills/ddia-skill/scripts/book.py read --ref 'OEBPS/ch08.html#sec_transactions_write_skew'
+python3 ~/.agents/skills/ddia-skill/scripts/book.py neighbors --ref 'OEBPS/ch08.html#sec_transactions_write_skew'
 ```
 
-The importer targets this second-edition EPUB layout and refuses a different or incomplete
-existing index. Initialization creates a stable local source copy and index; it does not
-create chapter syntheses or claim that a model read the book. The personal `notes.md`,
-`chapters/`, and `coverage.json` record the substantive reading done for this installation.
-If those notes are absent, retrieve original sections directly. Search uses all query words;
-shorten or vary terms when no result matches. Section reads print continuation offsets.
-Text extraction preserves code whitespace and explicit exponent/subscript markers; inspect
-original diagram assets when their visual content affects a decision.
+The importer targets this second-edition EPUB layout and refuses conflicting/incomplete
+existing state. Search ranks partial and alias matches; results and neighboring headings are
+navigation, not sufficient claim evidence. Read original arguments/qualifications before
+attribution. Reads print explicit continuation offsets. Inspect original figures/tables when
+layout affects interpretation; text extraction does not interpret images. Source integrity
+and resolving anchors do not by themselves establish semantic fidelity or comprehension.
 
-Personal validation evidence is at `~/.local/share/ddia-specialist/evaluation/`.
-Unit tests validate retrieval/integrity and reversible installation. The separate behavioral
-comparison uses simulated project tasks and executable SQLite fixtures; it does not establish
-improvement across production projects. Derived references and personal evaluation artifacts
-are not included in this repository.
+Project bootstrap routes consequential design and data changes to relevant procedures,
+without imposing a specialist panel on unrelated edits or global mandatory architecture gates.
+Use existing project documentation to record agreed invariants and handoffs. Executable tests,
+not Markdown authority, enforce explicitly agreed requirements.
+
+[DDIA evaluation instructions](skills/ddia-skill/evals/README.md) provide seventeen public
+constructed reasoning cases, eight bounded counterexample experiments and a three-arm
+baseline/current/redesigned comparison planner with frozen resources, repeated trials and
+independent semantic scoring. It does not launch models or enforce isolation/budgets. Real
+SQLite experiments and deterministic models are labeled separately from live distributed
+systems. Authored coverage and fixture success do not establish production correctness or
+specialist superiority. The earlier local four-task comparison tied both arms at 32/32 and
+showed traceability, not a correctness improvement; personal evidence remains in
+`~/.local/share/ddia-specialist/evaluation/`.
 
 ## Software design skill and agent
 

@@ -42,6 +42,12 @@ Use no more than three active engineering lanes. Prefer the Codex Worktree mode 
 
 Do not treat an issue checklist, generated prose, or an earlier agent summary as proof.
 
+For consequential data changes, consult installed DDIA guidance when available: define authority,
+business invariants and data boundaries before implementation; carry the relevant requirements
+and falsification checks into the writer handoff. Revisit these when schemas, transaction scope,
+replication, message effects, processing or recovery change. Routine unrelated edits need no DDIA
+step. Project requirements remain authoritative; recommendations are not automatic merge gates.
+
 ### 2. Inspect and reproduce
 
 Before editing:

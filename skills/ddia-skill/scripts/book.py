@@ -19,6 +19,22 @@ from typing import Any
 DEFAULT_DATA = Path.home() / ".local/share/ddia-specialist"
 SCHEMA = "ddia-local-reference/v1"
 BLOCKS = {"p", "pre", "table", "dt", "dd", "figcaption"}
+ALIASES = {
+    "dedupe": "deduplication duplicate exactly once",
+    "dedup": "deduplication duplicate exactly once",
+    "idempotency": "idempotence duplicate request identity",
+    "split brain": "leader failover fencing",
+    "stale reads": "replication lag read writes",
+    "hotspot": "hot spots skew",
+    "backfill": "reprocessing migration derived data",
+    "cdc": "change data capture",
+    "2pc": "two phase commit",
+    "2pl": "two phase locking",
+    "ssi": "serializable snapshot isolation",
+    "ann": "approximate nearest neighbor",
+    "slo": "service level objective",
+}
+STOP_WORDS = {"a", "an", "and", "for", "how", "in", "is", "of", "the", "to", "with"}
 
 
 def local_tag(element: ET.Element) -> str:
@@ -188,21 +204,42 @@ def load(data: Path) -> dict[str, Any]:
 
 
 def search(corpus: dict[str, Any], query: str, chapter: int | None, limit: int) -> list[Any]:
-    """Rank fragments containing all query tokens, preferring heading matches."""
-    terms = set(re.findall(r"\w+", query.casefold()))
+    """Rank partial and alias matches, favoring original terms and exact headings.
+
+    Search is an orientation aid, not evidence that a fragment supports a claim.
+    Retrieve the full source section and relevant qualifications before attribution.
+    """
+    normalized = " ".join(re.findall(r"\w+", query.casefold()))
+    terms = set(normalized.split()) - STOP_WORDS
     if not terms:
         raise ValueError("Search needs at least one word")
+    expanded = set(terms)
+    for phrase, expansion in ALIASES.items():
+        if re.search(r"(?<!\w)" + re.escape(phrase) + r"(?!\w)", normalized):
+            expanded.update(expansion.split())
+    sections = [s for s in corpus["sections"] if chapter is None or s["chapter"] == chapter]
+    documents = [
+        set(re.findall(r"\w+", (s["title"] + " " + s["text"]).casefold())) for s in sections
+    ]
+    frequency = {term: sum(term in tokens for tokens in documents) for term in expanded}
     matches = []
-    for section in corpus["sections"]:
-        if chapter is not None and section["chapter"] != chapter:
-            continue
+    for section, document in zip(sections, documents, strict=True):
         text = section["text"]
         tokens = re.findall(r"\w+", (section["title"] + " " + text).casefold())
-        if not terms.issubset(tokens):
+        matched = expanded & document
+        if not matched:
             continue
-        score = sum(min(tokens.count(term), 8) for term in terms) / math.sqrt(len(tokens) + 1)
-        score += 2 * sum(term in section["title"].casefold() for term in terms)
-        positions = [text.casefold().find(term) for term in terms]
+        score = sum(
+            math.log(1 + (len(sections) + 1) / (frequency[term] + 1))
+            * (2 if term in terms else 0.5)
+            * min(tokens.count(term), 3)
+            / (1 + len(tokens) / 300)
+            for term in matched
+        )
+        score += 6 * len(terms & document) / len(terms)
+        score += 4 * sum(term in section["title"].casefold().split() for term in terms)
+        score += 8 * (normalized in section["title"].casefold())
+        positions = [text.casefold().find(term) for term in matched]
         start = max(0, min((p for p in positions if p >= 0), default=0) - 90)
         matches.append(
             (
@@ -212,10 +249,24 @@ def search(corpus: dict[str, Any], query: str, chapter: int | None, limit: int) 
                     "title": section["title"],
                     "chapter": section["chapter"],
                     "excerpt": text[start : start + 600],
+                    "matched_terms": sorted(matched),
                 },
             )
         )
     return [entry for _, entry in sorted(matches, key=lambda item: item[0], reverse=True)[:limit]]
+
+
+def neighbors(corpus: dict[str, Any], reference: str) -> list[dict[str, Any]]:
+    """Return nearby source locators so callers can inspect surrounding qualifications."""
+    unique = list({section["ref"]: section for section in corpus["sections"]}.values())
+    for index, section in enumerate(unique):
+        if section["ref"] == reference:
+            return [
+                {key: entry[key] for key in ("ref", "title", "chapter")}
+                for entry in unique[max(0, index - 2) : index + 3]
+                if entry["chapter"] == section["chapter"]
+            ]
+    raise ValueError(f"Source reference not indexed: {reference}")
 
 
 def read_section(data: Path, reference: str, offset: int, limit: int) -> None:
@@ -256,6 +307,8 @@ def main() -> int:
     read.add_argument("--ref", required=True)
     read.add_argument("--offset", type=int, default=0)
     read.add_argument("--words", type=int, default=1800)
+    context = commands.add_parser("neighbors", help="Locate surrounding source qualifications.")
+    context.add_argument("--ref", required=True)
     commands.add_parser("verify")
     args = parser.parse_args()
     try:
@@ -285,6 +338,8 @@ def main() -> int:
                     indent=2,
                 )
             )
+        elif args.command == "neighbors":
+            print(json.dumps(neighbors(corpus, args.ref), ensure_ascii=False, indent=2))
         elif args.command == "read":
             if args.offset < 0 or not 1 <= args.words <= 10000:
                 raise ValueError("Offset must be nonnegative; words must be 1..10000")

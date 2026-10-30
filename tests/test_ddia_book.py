@@ -82,6 +82,26 @@ class BookTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             book.read_section(self.data, "OEBPS/ch08.html#skew", 10000, 10)
 
+    def test_ranked_search_supports_aliases_partial_matches_and_source_neighbors(self) -> None:
+        """Useful source navigation survives vocabulary mismatch without fabricated anchors."""
+        corpus = book.load(self.data)
+        matches = book.search(corpus, "snapshot isolation consequences", 8, 3)
+        self.assertEqual(matches[0]["ref"], "OEBPS/ch08.html#skew")
+        corpus["sections"].append(
+            {
+                "chapter": 8,
+                "ref": "OEBPS/ch08.html#dedup",
+                "title": "Duplicate effects",
+                "text": "Deduplication and request identity protect replay.",
+            }
+        )
+        self.assertEqual(book.search(corpus, "dedupe", 8, 1)[0]["ref"], "OEBPS/ch08.html#dedup")
+        nearby = book.neighbors(corpus, "OEBPS/ch08.html#skew")
+        self.assertTrue(all(item["chapter"] == 8 for item in nearby))
+        self.assertIn("OEBPS/ch08.html#child", {item["ref"] for item in nearby})
+        with self.assertRaisesRegex(ValueError, "not indexed"):
+            book.neighbors(corpus, "OEBPS/ch08.html#missing")
+
     def test_source_change_is_rejected(self) -> None:
         """A changed local EPUB cannot silently reuse stale references."""
         with (self.data / "source.epub").open("ab") as handle:

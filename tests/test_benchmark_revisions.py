@@ -503,13 +503,19 @@ class CampaignRegressionTests(unittest.TestCase):
             self.assertTrue((attempt / "result.sha256").is_file())
             self.assertIn("unexpected grader error", result["error"])
 
-    def test_all_nine_skills_are_staged(self) -> None:
-        self.assertEqual(len(skill_names()), 9)
+    def test_all_inventory_skills_are_staged(self) -> None:
+        expected = set(skill_names())
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve() / "attempt"
             plan = self.plan(["toolkit"])
             prepare(plan, plan["entries"][0], root)
-            self.assertEqual(len(list((root / "actor-home/.agents/skills").glob("*/SKILL.md"))), 9)
+            self.assertEqual(
+                {
+                    path.parent.name
+                    for path in (root / "actor-home/.agents/skills").glob("*/SKILL.md")
+                },
+                expected,
+            )
 
 
 if __name__ == "__main__":

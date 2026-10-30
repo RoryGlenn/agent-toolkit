@@ -33,7 +33,6 @@ class CanonicalStagingTests(unittest.TestCase):
             self.assertEqual(set(skill_names()), set(install.inventory(REPOSITORY)))
             staged = {path.parent.name for path in (home / ".agents/skills").glob("*/SKILL.md")}
             self.assertEqual(staged, set(skill_names()))
-            self.assertEqual(len(staged), 9)
             role_names = {
                 tomllib.loads(path.read_text())["name"]
                 for path in (client / "agents").glob("*.toml")
