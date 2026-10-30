@@ -1,6 +1,6 @@
 {
   "schema": "agent-toolkit-authoring/v1",
-  "standard_version": "1.0.0-proposed",
+  "standard_version": "1.1.0-proposed",
   "artifacts": [
     {
       "path": "agents/codex/adversarial-reviewer-agent.toml",

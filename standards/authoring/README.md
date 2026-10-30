@@ -1,10 +1,13 @@
 # Agent and skill authoring standard
 
-Version: **1.0.0-proposed**. Evidence reviewed: **2026-10-29**.
+Version: **1.1.0-proposed**. Evidence reviewed: **2026-10-29**.
 
 This is the toolkit's shared authoring contract for current and future skills and agents.
-It combines the open Agent Skills format, maintainer guidance from supported hosts, and
-empirical evaluation research. It is **community-aligned, not externally approved**.
+It adopts the open Agent Skills format, OpenAI's native Codex scaffolding, and Anthropic's
+evaluation workflow through the [standalone authoring package](../../skill_authoring/README.md).
+Pinned upstream code, licenses, and source hashes are included. No existing custom toolkit
+skill, role, or evaluation implementation is used by that package.
+It is **community-aligned, not externally approved**.
 No standards body, vendor, or research author has endorsed this particular template.
 See [research and limitations](research.md) for the basis of each recommendation.
 
@@ -16,12 +19,15 @@ It does not add a runtime agent, mandatory specialist consultation, or another i
 
 | Need | Starting point | Add only when useful |
 | --- | --- | --- |
-| Reusable task expertise | [Skill template](templates/SKILL.md.template) | References, scripts, or assets |
+| Reusable task expertise | OpenAI's native initializer through `python -m skill_authoring scaffold` | References, scripts, or assets |
 | A separate delegation identity | [Codex role](templates/codex-agent.toml.template) or [Copilot role](templates/copilot-agent.agent.md.template) | Host-specific capabilities justified by the job |
 | Representative behavior checks | [Evaluation template](templates/evals.json.template) | Fixtures, objective oracles, and comparisons |
 | Book-derived specialist | Skill plus the book profile below | Source retrieval and a coverage map |
 
-Copy a template into the repository's existing `skills/` or `agents/<host>/` layout,
+Use the [native scaffolding and evaluation workflow](../../skill_authoring/README.md).
+The [blank skill template](templates/SKILL.md.template) is an extraction from the pinned
+OpenAI initializer, with only placeholder delimiters changed. Its TODOs must be completed.
+For optional role definitions, copy a host template into `agents/<host>/`,
 replace its `{{placeholders}}`, and remove sections that do not help the actual task.
 Templates are authoring assets; they are not discoverable skills or installed agents.
 The [README naming convention](../../README.md#naming-convention-skills-and-agents)
@@ -67,7 +73,7 @@ A coverage map should connect source topics to applicable decisions and represen
 checks. Original prose need not be copied into the skill. Full source study can support
 a compact operational entrypoint; indexing alone does not establish that study occurred.
 
-Use the existing [book-to-agent workflow](../../skills/book-to-agent-skill/SKILL.md).
+Apply these source-study requirements directly when authoring a book-based skill.
 Verify changing product guarantees against the relevant current implementation or official
 documentation. A missing personal book library limits attribution; it need not prevent
 useful advice from the available synthesis. Do not claim the source was consulted when it
@@ -114,9 +120,9 @@ conditions, use fresh contexts, repeat before drawing reliability conclusions, a
 held-out work separate from cases used to revise the skill. If source access or tools differ
 between arms, describe the intervention as a package comparison, not a prompt-only effect.
 
-Reuse the [existing benchmark](../../benchmarks/README.md) for relevant specialists. It
-provides development fixtures, not production or held-out performance evidence. Do not run
-paid or externally mutating evaluations solely because a new template exists.
+Use the pinned Anthropic grading, blind-comparison, aggregation, and static review tools
+through the independent Codex adapter. Follow its credential, isolation, and evidence
+boundaries. This adoption does not run evaluations of the existing custom skills or agents.
 
 ## Adopt and maintain
 

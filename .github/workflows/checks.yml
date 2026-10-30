@@ -24,5 +24,6 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy
       - run: uv run python authoring.py check
+      - run: uv run python -m skill_authoring verify-upstream
       - run: python3 install.py check
       - run: git diff --check

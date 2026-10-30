@@ -1,28 +1,8 @@
 ---
 name: {{skill_name}}
-description: {{capability_and_specific_trigger}}
+description: "[TODO: Briefly describe what this skill does and when it applies.]"
 ---
 
 # {{display_name}}
 
-{{concrete_outcome_and_scope}}
-
-## Apply the expertise
-
-{{domain_specific_procedure_or_conditional_decision_rules}}
-
-{{necessary_inputs_and_how_to_resolve_material_unknowns}}
-
-{{non_obvious_constraints_and_why_they_matter}}
-
-## Verify and deliver
-
-{{observable_success_checks_and_useful_output}}
-
-{{failure_or_exception_behavior_and_completion_boundary}}
-
-<!-- Remove this authoring note and any unused sections before shipping.
-     Add references, examples, or scripts only for a concrete task need.
-     If references are added, link them where needed and say when to read them.
-     Keep evaluations and expected answers outside the acting agent's context.
-     Apply the standard's book or external-effects profile only when relevant. -->
+[TODO: Add the task-specific guidance Codex needs. Reference supporting files only when they are relevant.]

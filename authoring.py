@@ -17,7 +17,7 @@ from install import ROOT, inventory
 
 CATALOG = Path("standards/authoring/adoption.json")
 SCHEMA = "agent-toolkit-authoring/v1"
-STANDARD_VERSION = "1.0.0-proposed"
+STANDARD_VERSION = "1.1.0-proposed"
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 
 

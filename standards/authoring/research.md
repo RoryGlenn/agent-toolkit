@@ -16,12 +16,19 @@ practice; it does not confer external approval on this package or establish a pe
 | S06 | [OpenAI: Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) | Host reference | Codex TOML roles, inherited settings, and focused responsibilities. A syntactically valid file is not execution evidence. |
 | S07 | [Agent Skills: Evaluating output quality](https://agentskills.io/skill-creation/evaluating-skills) | Community-maintained method | Realistic cases, baseline comparisons, fresh contexts, traces, objective checks, and human review. Examples are starter procedures, not universal statistical guarantees. |
 | S08 | [Claude Code: Custom subagents](https://code.claude.com/docs/en/sub-agents) | Host reference | Separate context, role routing, tools, and skill preloading. Used to explain portability boundaries; no new Claude installer support is claimed. |
+| S09 | [OpenAI native skill-creator](https://github.com/openai/codex/tree/55c099a142eb302188fee00ab9e9062f2db1c359/codex-rs/skills/src/assets/samples/skill-creator) | Pinned implementation | The actual initializer, UI metadata generator, and quick validator are vendored without modification. The blank template is extracted from that initializer. Validator behavior is narrower than the open format in some cases. |
+| S10 | [Anthropic skill-creator](https://github.com/anthropics/skills/tree/ca45fc496a3436251f191354091d557da31c15b5/skills/skill-creator) | Pinned implementation and workflow | Actual grading/comparison prompts, schemas, aggregation, and static viewer are reused. The separate Codex adapter supplies execution and strict result checks. Existence of evaluation tooling is not proof of improved model performance. |
+| S11 | [AAIF: Agent Skills](https://aaif.io/blog/agent-skills-sharing-team-expertise-across-ai-agents), 2026-10-22 | Foundation announcement | Agent Skills now has neutral multi-company governance under AAIF. This establishes community governance of the format, not endorsement of our adapter or domain instructions. |
 
 The open format's [maintained repository](https://github.com/agentskills/agentskills)
 describes open contributions and cross-client use. Independent documentation from OpenAI,
 Anthropic, and GitHub establishes practical cross-vendor alignment. This evidence supports
 the term **community-aligned**. We have not obtained an external review or endorsement of
 the toolkit's local requirements, templates, or validator.
+
+The selected implementation is now S01 + S09 + S10. See the independent
+[authoring package and provenance](../../skill_authoring/README.md). Its integration does
+not invoke or reuse Rory's existing custom skills, agents, or evaluation implementation.
 
 ## Empirical evidence
 
