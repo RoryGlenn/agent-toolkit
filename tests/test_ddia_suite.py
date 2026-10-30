@@ -59,6 +59,15 @@ class DDIASuiteTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             guide.route("the and")
 
+    def test_explanations_route_across_all_chapters(self) -> None:
+        """A teaching request can retrieve every domain instead of only data models."""
+        for concept in guide.load()["concepts"]:
+            with self.subTest(concept=concept["id"]):
+                matches = guide.route(concept["title"], workflow="explain", limit=20)
+                self.assertIn(concept["id"], {match["id"] for match in matches})
+        matches = guide.route("old lease owner fencing", workflow="explain")
+        self.assertIn("leases-fencing", {match["id"] for match in matches})
+
     def test_all_authored_locators_resolve_against_the_actual_bundled_source(self) -> None:
         """A mistyped or stale concept anchor fails against real EPUB chapter structure."""
         corpus = book.extract(ROOT / "books/designing-data-intensive-applications-2nd-edition.epub")

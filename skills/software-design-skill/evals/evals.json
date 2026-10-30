@@ -1,0 +1,38 @@
+{
+  "skill_name": "software-design-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this proposed API, advice only: ReportClient callers must call connect(), load_schema(), choose_encoding(), send_rows(), flush(), then close(), in exactly that order. Every caller sends one report, schema and encoding are fixed by the service, and two callers omit flush after errors. Compare a small improvement with retaining the API; preserve error reporting and cleanup.",
+      "expected_output": "A concrete caller-cost comparison and proportionate boundary recommendation.",
+      "files": [],
+      "expectations": [
+        "Identifies repeated ordering/configuration knowledge as the caller burden.",
+        "Compares a coherent report operation with the existing interface and preserves necessary error/cleanup semantics.",
+        "Does not introduce a speculative framework or claim an original book section was read when unavailable."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Rewrite \"The export is ready\" in past tense. Answer only the rewritten sentence.",
+      "expected_output": "The export was ready.",
+      "files": [],
+      "expectations": [
+        "Provides the requested sentence without an architecture review.",
+        "Does not read specialist resources."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "A small helper converts a validated temperature with Celsius = (Fahrenheit - 32) * 5 / 9. It has one caller and no configuration. Should we introduce a strategy interface and dependency injection? Advice only. No original book library is provided.",
+      "expected_output": "Preserve the sufficient helper and disclose any attribution limit.",
+      "files": [],
+      "expectations": [
+        "Recommends retaining the simple helper absent a concrete need for strategies.",
+        "Does not claim to retrieve an unavailable book or invent page citations.",
+        "Distinguishes the recommendation from a blanket ban on interfaces."
+      ]
+    }
+  ]
+}

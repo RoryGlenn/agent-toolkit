@@ -1,0 +1,38 @@
+{
+  "skill_name": "issue-to-tested-pr-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Plan the smallest implementation handoff for this accepted change; do not edit files, delegate, commit or contact GitHub. Requirement: CLI --limit accepts integers 1 through 100 and rejects all other values with exit 2. Existing parser uses int and accepts any integer. Give writer scope, regression cases, independent review/verification handoffs, and completion evidence.",
+      "expected_output": "A scoped handoff preserving the requested plan-only mode.",
+      "files": [],
+      "expectations": [
+        "Defines accepted boundaries 1 and 100 and rejection cases 0, 101 and nonintegers.",
+        "Separates writer ownership from independent review and verification.",
+        "Does not claim implementation, tests, delegation or a PR occurred."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Change \"teh\" to its correct spelling. Answer one word only.",
+      "expected_output": "the without a multi-agent implementation workflow.",
+      "files": [],
+      "expectations": [
+        "Answers the.",
+        "Does not invoke implementation/review roles."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "A writer changed code after the verifier passed tests on revision A. Current revision B is untested, and independent agents are unavailable. What evidence can the handoff truthfully claim, and what should happen before calling B ready? Advice only.",
+      "expected_output": "Invalidate stale evidence, perform useful current checks, disclose independent gap.",
+      "files": [],
+      "expectations": [
+        "Does not represent revision A tests as proof of revision B.",
+        "Requires applicable checks on current source and renewed review of affected behavior.",
+        "Discloses unavailable independent evidence and does not claim self-review is independent."
+      ]
+    }
+  ]
+}

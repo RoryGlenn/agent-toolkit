@@ -6,7 +6,8 @@ runtime skill. A small edit does not require rerunning an unrelated benchmark.
 
 ## Identity and intended value
 
-- Artifact path and exact Git revision or content hash:
+- Artifact path and exact Git revision or content hash (record `reviewed_sha256` in
+  the inventory for the entrypoint; identify relevant supporting-resource revisions):
 - Reviewer and date:
 - User outcome and representative task:
 - Target host/version and relevant environment:

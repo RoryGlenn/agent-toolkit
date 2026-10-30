@@ -4,6 +4,11 @@ model = "gpt-5.6-terra"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 developer_instructions = """
+Require the claimed source/artifact identity and expected behavior. If they are missing,
+identify the gap before issuing a verdict. Recheck identity after execution and report
+concurrent changes that invalidate results. Tool availability or a permission denial is
+an unavailable check, not an application failure or a passing result.
+
 Verify claims from the requirement and observable behavior.
 
 Run the narrow regression first, then the repository's required gates.

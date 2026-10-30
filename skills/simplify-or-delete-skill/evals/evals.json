@@ -1,0 +1,38 @@
+{
+  "skill_name": "simplify-or-delete-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Advice only. A daily report runs on one existing scheduler. A separate wrapper service forwards the same arguments to that scheduler, has one consumer, and adds no authorization, retries or audit behavior. Repository tracing confirms the consumer can call the scheduler directly. Propose a simplification and verification/rollback steps; do not change anything.",
+      "expected_output": "A bounded consolidation proposal preserving the report contract.",
+      "files": [],
+      "expectations": [
+        "Identifies the wrapper as a removal candidate based on the supplied consumer and behavior evidence.",
+        "Preserves scheduling and report behavior with a concrete verification and rollback sequence.",
+        "Does not execute deletion or propose a replacement service."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Alphabetize these words: zebra, apple, maple. Answer only the sorted list.",
+      "expected_output": "apple, maple, zebra.",
+      "files": [],
+      "expectations": [
+        "Sorts the words correctly.",
+        "Does not invoke a repository complexity audit."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "Advice only. Delete the retry table? It has few recent writes, but the payment consumer uses it to remember business-operation IDs after acknowledgments, and operators can replay older events. We have no usage study or safe retention bound.",
+      "expected_output": "Retain the required identity guarantee and request targeted evidence.",
+      "files": [],
+      "expectations": [
+        "Does not infer that low recent writes make the table unused.",
+        "Explains that historical replay can repeat effects if durable identity is removed.",
+        "Recommends retaining it or measuring the required replay/retention boundary, without deleting data."
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -190,6 +191,30 @@ class AuthoringTests(unittest.TestCase):
         record.write_text("Verdict: needs_change. Observed task failure.\n", encoding="utf-8")
         entry["review_record"] = "review.md"
         self.assertFalse(self.catalog_report().errors)
+
+    def test_review_fingerprint_detects_changed_artifact(self) -> None:
+        """Reject stale review identity without pretending to judge semantic quality."""
+        entry = self.data["artifacts"][0]
+        entry["assessment"] = "reviewed"
+        (self.root / "review.md").write_text("Verdict: ready_with_limits.\n")
+        entry["review_record"] = "review.md"
+        entry["reviewed_sha256"] = hashlib.sha256(self.skill.read_bytes()).hexdigest()
+        self.assertFalse(self.catalog_report().errors)
+        self.skill.write_text(self.skill.read_text() + "Changed behavior.\n")
+        self.assertTrue(any("artifact changed" in error for error in self.catalog_report().errors))
+        entry["reviewed_sha256"] = hashlib.sha256(self.skill.read_bytes()).hexdigest()
+        self.assertFalse(self.catalog_report().errors)
+
+    def test_review_fingerprint_rejects_malformed_values_and_missing_files(self) -> None:
+        """An optional identity must be valid and cannot hide a missing artifact."""
+        entry = self.data["artifacts"][0]
+        for value in (None, 1, "", "x" * 64, "a" * 63):
+            with self.subTest(value=value):
+                entry["reviewed_sha256"] = value
+                self.assertTrue(self.catalog_report().errors)
+        entry["reviewed_sha256"] = hashlib.sha256(self.skill.read_bytes()).hexdigest()
+        self.skill.unlink()
+        self.assertTrue(self.catalog_report().errors)
 
     def test_malformed_catalog_returns_diagnostic(self) -> None:
         """Report invalid JSON rather than leaving an unhandled parser traceback."""

@@ -6,68 +6,103 @@
       "path": "agents/codex/adversarial-reviewer-agent.toml",
       "basis": "Codex role schema S06 and existing independent review responsibility.",
       "evidence": [
-        "skills/independent-diff-review-skill/SKILL.md"
+        "skills/independent-diff-review-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Verify actual role loading, available model, read-only behavior, and useful findings on seeded and correct diffs."
+      "assessment": "reviewed",
+      "next_check": "Exercise seeded and correct tenant-query diffs plus missing-base fallback in fresh contexts without inherited writer history; test shipped personal model separately.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "23896377331e7002d9829532b12f5fb596c3d112bde3c4a1c818338fe5aa819b"
     },
     {
       "path": "agents/codex/ddia-agent.toml",
       "basis": "Codex role schema S06 and ddia-skill delegation wrapper.",
       "evidence": [
         "skills/ddia-skill/SKILL.md",
-        "benchmarks/README.md"
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Observe an actual ddia_agent invocation loading its intended skill and source, plus an unavailable-source fallback."
+      "assessment": "reviewed",
+      "next_check": "Extend beyond the observed dispatch/missing-source fallback to fresh data-concurrency cases and successful original-source retrieval; verify normal routing.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "b5ed8a23418b4809438327d2a7ac242dd1726d073780385a81ed935be92543a8"
     },
     {
       "path": "agents/codex/documentation-agent.toml",
       "basis": "Codex role schema S06 and documentation-skill delegation wrapper.",
       "evidence": [
         "skills/documentation-skill/SKILL.md",
-        "skills/documentation-skill/evals/README.md"
+        "skills/documentation-skill/evals/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Observe actual role execution and reference reads on a reader-task fixture; inspect resulting documentation."
+      "assessment": "reviewed",
+      "next_check": "Exercise the final documentation skill through native role dispatch on fresh reader/review tasks and missing-resource cases; the observed role run preceded the final example.",
+      "review_record": "standards/authoring/reviews/documentation.md",
+      "reviewed_sha256": "d33001a64b717363511a935615ace790e07650a626b2d684401a33ec88740fc5"
     },
     {
       "path": "agents/codex/implementation-owner-agent.toml",
       "basis": "Codex role schema S06 and existing single-writer implementation responsibility.",
       "evidence": [
-        "skills/issue-to-tested-pr-skill/SKILL.md"
+        "skills/issue-to-tested-pr-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Verify real role loading, available model, scoped edits, and acceptance checks in a disposable repository."
+      "assessment": "reviewed",
+      "next_check": "Repeat scoped implementation on a different repository and ownership-conflict case; test shipped personal model and preserve unrelated work.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "6d03d25abc8d569ad4542da843deb2c4fd14a0cad999aca2c6e114f4228374ca"
     },
     {
       "path": "agents/codex/software-design-agent.toml",
       "basis": "Codex role schema S06 and software-design-skill delegation wrapper.",
       "evidence": [
         "skills/software-design-skill/SKILL.md",
-        "benchmarks/README.md"
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Observe actual role execution, source reads, and caller-cost analysis on a held-out API decision."
+      "assessment": "reviewed",
+      "next_check": "Extend observed role dispatch/fallback with held-out caller-cost cases and successful supplied-source reads; verify normal routing.",
+      "review_record": "standards/authoring/reviews/software-design.md",
+      "reviewed_sha256": "3a244f8af8dd82e6ae71056ddf82d6916cb146fffebd7b553cb51fc764f960bb"
     },
     {
       "path": "agents/codex/verifier-agent.toml",
       "basis": "Codex role schema S06 and existing independent verification responsibility.",
       "evidence": [
-        "skills/issue-to-tested-pr-skill/SKILL.md"
+        "skills/issue-to-tested-pr-skill/SKILL.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Verify real role loading and exact test evidence on failing and passing fixtures without product-source edits."
+      "assessment": "reviewed",
+      "next_check": "Exercise explicit failing-test and missing-tool cases in fresh contexts without inherited writer history; keep source unchanged and test shipped model.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "e0ae34d7c5697fb95e7f83f34ab2e8c08699230c954a302aaec2b728b4cac9f2"
     },
     {
       "path": "agents/copilot/documentation-agent.agent.md",
       "basis": "Copilot role schema S05 and documentation-skill delegation wrapper.",
       "evidence": [
         "skills/documentation-skill/SKILL.md",
-        "skills/documentation-skill/evals/README.md"
+        "skills/documentation-skill/evals/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Verify discovery and actual execution in a supported Copilot host; file checks cannot establish it."
+      "assessment": "reviewed",
+      "next_check": "Repeat fresh sparse-contract and missing-resource cases under ordinary host routing; two final passes do not establish reliability or all error paths.",
+      "review_record": "standards/authoring/reviews/documentation.md",
+      "reviewed_sha256": "8b967322685529368bd5f3da01afb7ee7f8840a30288f88dc571f741280c3e13"
     },
     {
       "path": "skills/ddia-assess-skill/SKILL.md",
@@ -75,10 +110,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/assess.md"
+        "skills/ddia-skill/references/workflows/assess.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a necessity of a data-system mechanism; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "A repeatable nightly report with harmless reruns: should it gain a distributed workflow engine?",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "36cf596112f9796f7d943e336c1a68697682d5210dcc48585d678247f5f2692f"
     },
     {
       "path": "skills/ddia-design-skill/SKILL.md",
@@ -86,10 +126,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/design.md"
+        "skills/ddia-skill/references/workflows/design.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a architecture comparison from actual workload and invariants; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "Two workers reserve scarce stock; design admission with the existing database before adding a queue.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "66a46436d447fb5fffbc14152d973ec82c843e61bb8a7ef98eff44cb8dd43491"
     },
     {
       "path": "skills/ddia-explain-skill/SKILL.md",
@@ -97,10 +142,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/explain.md"
+        "skills/ddia-skill/references/workflows/explain.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a concept explanation tied to a concrete decision; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "Explain a paused old leaseholder and resource-enforced fencing without deploying a lock service.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "7be3cb5b561407e1b1982d6ec1ea66a2d01b20e202c0de46ee9dda18f7d54afa"
     },
     {
       "path": "skills/ddia-migrate-skill/SKILL.md",
@@ -108,10 +158,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/migrate.md"
+        "skills/ddia-skill/references/workflows/migrate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a compatible schema rollout and backfill; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "An old client rewrites JSON and drops a new privacy field; plan a compatible rollout.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "a39e7bf3934c8cea1f6e6d816d3141c6dadf3073945a3258fc90685bd5477d6e"
     },
     {
       "path": "skills/ddia-operate-skill/SKILL.md",
@@ -119,10 +174,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/operate.md"
+        "skills/ddia-skill/references/workflows/operate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a capacity, overload, recovery, or reconciliation decision; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "A replica copied an accidental deletion; assess restore readiness without calling replication a backup.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "976a7025f0f5d746b721e760557a7577ed4939af90761d10125eccbd1002f97d"
     },
     {
       "path": "skills/ddia-review-skill/SKILL.md",
@@ -130,10 +190,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/review.md"
+        "skills/ddia-skill/references/workflows/review.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a reachable data correctness finding and correct protection; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "Review the original DDIA protected-admission correct-control case without edits.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "973e5817d2e36e988e27c58470262fc98cf7a5850f5c2e1ebae1d5b3ec4f18b2"
     },
     {
       "path": "skills/ddia-skill/SKILL.md",
@@ -144,10 +209,16 @@
         "benchmarks/cases.py",
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/README.md",
-        "skills/ddia-skill/evals/cases.json"
+        "skills/ddia-skill/evals/cases.json",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/ddia-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Run matched DDIA cases and a correct-design negative control; inspect actual source reads and named-role events."
+      "assessment": "reviewed",
+      "next_check": "Run correct and broken controls and source-backed claims separately from source-withheld advice.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "d3bc922e83c7dd8f897e44047e5a0f3d9e76acb75f93807edf86f49f6ac46385"
     },
     {
       "path": "skills/ddia-validate-skill/SKILL.md",
@@ -155,10 +226,15 @@
       "evidence": [
         "tests/test_ddia_suite.py",
         "skills/ddia-skill/evals/cases.json",
-        "skills/ddia-skill/references/workflows/validate.md"
+        "skills/ddia-skill/references/workflows/validate.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise implicit routing and a falsifiable concurrency or recovery experiment; include a nearby request that should not invoke this entry point and inspect the shared-skill handoff."
+      "assessment": "reviewed",
+      "next_check": "Design a deterministic two-worker last-item admission test and state what SQLite cannot establish.",
+      "review_record": "standards/authoring/reviews/ddia.md",
+      "reviewed_sha256": "cd74a662d248c10a99a35370b89368c7198f433738657741fa49409f31639d26"
     },
     {
       "path": "skills/documentation-skill/SKILL.md",
@@ -166,38 +242,72 @@
       "evidence": [
         "skills/documentation-skill/evals/README.md",
         "tests/test_environment.py",
-        "benchmarks/README.md"
+        "benchmarks/README.md",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/documentation-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise a fresh-reader task and a factual-review case; record human clarity review separately from executed examples."
+      "assessment": "reviewed",
+      "next_check": "Repeat Roster/translation on the final runtime and add fresh sparse-contract/export-review cases; independently assess real-reader usefulness.",
+      "review_record": "standards/authoring/reviews/documentation.md",
+      "reviewed_sha256": "54a2cfc4ac454196ff98bdae700bc8b6d44d8066e387c8bdc1b55b19bbcca52a"
     },
     {
       "path": "skills/independent-diff-review-skill/SKILL.md",
       "basis": "Existing independent engineering review workflow and caller ownership boundaries.",
-      "evidence": [],
-      "assessment": "not_assessed",
-      "next_check": "Exercise seeded-defect and correct-diff cases; check true findings, false positives, and review independence."
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/independent-diff-review-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Run seeded tenant-query and correct-diff cases, then actual independent role dispatch.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "47a2b6c3db72de4f9dfbf951f1071a63b44056361af6188ef99fa34561eb5e34"
     },
     {
       "path": "skills/issue-to-tested-pr-skill/SKILL.md",
       "basis": "Existing one-writer implementation, review, verification, and PR workflow.",
-      "evidence": [],
-      "assessment": "not_assessed",
-      "next_check": "Exercise a bounded disposable change; verify role handoffs, acceptance evidence, and no unauthorized merge."
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/issue-to-tested-pr-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Exercise limit-range implementation with real handoffs and current-revision tests.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "2358aacb9c3fb3301308dffdcd70fd1d6974d19440cfc1b7188a45e473b6d051"
     },
     {
       "path": "skills/release-and-docs-skill/SKILL.md",
       "basis": "Existing release and reader-facing package verification workflow.",
-      "evidence": [],
-      "assessment": "not_assessed",
-      "next_check": "Exercise a disposable archive with a packaging defect and a correct control; keep publication out of the fixture."
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/release-and-docs-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Extend passed advice cases with actual disposable ZIP failure/success controls and fresh ambiguous-publication cases; assess full workflow delegation separately.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "52c3aef49176f068b3f5d2fd6bbd35657f50f11900218b0fced1491981aa9441"
     },
     {
       "path": "skills/simplify-or-delete-skill/SKILL.md",
       "basis": "Existing outcome-focused complexity reduction workflow.",
-      "evidence": [],
-      "assessment": "not_assessed",
-      "next_check": "Compare a removable abstraction with a necessary one; inspect evidence and preservation of required behavior."
+      "evidence": [
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/simplify-or-delete-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Repeat on fresh repositories with measured use and required recovery paths; passed advice controls do not establish safe production removal.",
+      "review_record": "standards/authoring/reviews/engineering.md",
+      "reviewed_sha256": "6cd343925f31e465b06872165eed602b76dedfd1ea08cbf3b5c9fb4b53107b30"
     },
     {
       "path": "skills/software-design-skill/SKILL.md",
@@ -205,10 +315,16 @@
       "evidence": [
         "tests/test_software_design_book.py",
         "benchmarks/README.md",
-        "benchmarks/cases.py"
+        "benchmarks/cases.py",
+        "standards/authoring/reviews/README.md",
+        "standards/authoring/reviews/evidence.md",
+        "skills/software-design-skill/evals/evals.json",
+        "standards/authoring/reviews/observations.json"
       ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise API/caller-obligation cases and an existing good boundary; inspect independent design review and maintenance sequel."
+      "assessment": "reviewed",
+      "next_check": "Run lifecycle API and correct-helper controls; inspect caller-cost analysis independently.",
+      "review_record": "standards/authoring/reviews/software-design.md",
+      "reviewed_sha256": "28d816684bb30417fe31077bbdd947ac96fc83e9b6be199cd6387ca6caab7b38"
     }
   ]
 }
