@@ -14,6 +14,7 @@ import sys
 import tempfile
 import tomllib
 from collections.abc import Sequence
+from contextlib import ExitStack
 from functools import cache
 from pathlib import Path
 from typing import Any
@@ -284,6 +285,10 @@ def permission_config(workspace: Path, readonly: Sequence[Path], temporary: Path
     permissions = {
         ":root": "deny",
         ":minimal": "read",
+        # :minimal includes shared scratch on macOS. Deny the canonical global roots
+        # before adding narrow grants; :tmpdir would deny our explicitly writable TMPDIR.
+        str(Path("/tmp").resolve()): "deny",
+        str(Path("/var/tmp").resolve()): "deny",
         str(workspace.resolve()): "write",
         str(temporary.resolve()): "write",
     }
@@ -399,7 +404,8 @@ class NativeExecutor:
         self.client_home = client_home
         self.actor_home = actor_home
         self.workspace = workspace.resolve()
-        self.environment = sanitized_environment(actor_home, temporary)
+        self.temporary = temporary.resolve()
+        self.environment = sanitized_environment(actor_home, self.temporary)
         self.environment["CODEX_HOME"] = str(client_home)
         self.environment["GIT_CEILING_DIRECTORIES"] = str(self.workspace.parent)
         self.verified = False
@@ -434,45 +440,77 @@ class NativeExecutor:
         return bounded_process(command, cwd, self.environment, stdin=stdin, timeout=timeout)
 
     def preflight(self, forbidden: Sequence[Path]) -> list[dict[str, Any]]:
-        """Require positive workspace access plus read/write/alias/network denial evidence."""
+        """Require workspace/private scratch access and host read/write/alias/network denial."""
         if platform.system() not in {"Darwin", "Linux"}:
             raise ValueError("unsupported native sandbox platform")
         if not forbidden:
             raise ValueError("native preflight requires known existing forbidden files")
-        host_targets = []
-        for path in forbidden:
-            metadata = path.lstat()
-            if not stat.S_ISREG(metadata.st_mode):
-                raise ValueError("forbidden preflight target must be a real regular file")
-            host_targets.append(
-                {
-                    "path": str(path.resolve()),
-                    "device": metadata.st_dev,
-                    "inode": metadata.st_ino,
-                    "size": metadata.st_size,
-                }
-            )
-        with tempfile.NamedTemporaryFile(
-            dir=self.actor_home, prefix=".isolation-readonly-", delete=False
-        ) as stream:
-            stream.write(b"known-readonly")
-            readonly_control = Path(stream.name)
-        control = self.workspace / ".isolation-control"
-        control.write_text("allowed")
-        alias = self.workspace / ".isolation-alias"
-        alias.symlink_to(forbidden[0])
-        listener = socket.socket()
-        listener.bind(("127.0.0.1", 0))
-        listener.listen(1)
-        port = listener.getsockname()[1]
-        paths = [str(path.resolve()) for path in forbidden] + [str(alias)]
-        source = f"""import json, pathlib, socket, subprocess
+        with ExitStack() as cleanup:
+            protected = list(forbidden)
+            scratch_paths: list[str] = []
+            missing_paths: list[str] = []
+            for parent in (Path("/tmp"), Path("/var/tmp")):
+                directory = Path(
+                    cleanup.enter_context(
+                        tempfile.TemporaryDirectory(dir=parent, prefix=".isolation-global-")
+                    )
+                )
+                target = directory / "existing"
+                target.write_text("known-global-temporary")
+                protected.append(target)
+                # /tmp and /var are aliases on macOS; prove denial through both spellings.
+                scratch_paths.extend(dict.fromkeys((str(target), str(target.resolve()))))
+                sibling = directory / "new-sibling"
+                missing_paths.extend(dict.fromkeys((str(sibling), str(sibling.resolve()))))
+            host_targets = []
+            for path in protected:
+                metadata = path.lstat()
+                if not stat.S_ISREG(metadata.st_mode):
+                    raise ValueError("forbidden preflight target must be a real regular file")
+                host_targets.append(
+                    {
+                        "path": str(path.resolve()),
+                        "device": metadata.st_dev,
+                        "inode": metadata.st_ino,
+                        "size": metadata.st_size,
+                        "sha256": digest(path),
+                    }
+                )
+            with tempfile.NamedTemporaryFile(
+                dir=self.actor_home, prefix=".isolation-readonly-", delete=False
+            ) as stream:
+                stream.write(b"known-readonly")
+                readonly_control = Path(stream.name)
+            cleanup.callback(readonly_control.unlink, missing_ok=True)
+            control = self.workspace / ".isolation-control"
+            control.write_text("allowed")
+            alias = self.workspace / ".isolation-alias"
+            alias.symlink_to(forbidden[0])
+            for path in (
+                control,
+                alias,
+                self.workspace / ".isolation-write",
+                self.workspace / ".isolation-different",
+                self.workspace / ".isolation-hardlink",
+            ):
+                cleanup.callback(path.unlink, missing_ok=True)
+            listener = cleanup.enter_context(socket.socket())
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(1)
+            port = listener.getsockname()[1]
+            paths = [str(path.resolve()) for path in forbidden] + [str(alias)]
+            source = f"""import json, pathlib, socket, subprocess, tempfile
 out={{}}
 root=pathlib.Path({str(self.workspace)!r})
 out['allowed_read']=(root/'.isolation-control').read_text()=='allowed'
 (root/'.isolation-write').write_text('allowed')
 out['allowed_write']=(root/'.isolation-write').read_text()=='allowed'
 out['allowed_readonly_read']=pathlib.Path({str(readonly_control)!r}).read_text()=='known-readonly'
+with tempfile.TemporaryDirectory() as directory:
+    private=pathlib.Path(directory)
+    (private/'control').write_text('private')
+    out['allowed_temporary_write']=(private.parent==pathlib.Path({str(self.temporary)!r})
+                                    and (private/'control').read_text()=='private')
 version=subprocess.run(['git','--version'],capture_output=True,text=True,timeout=5)
 out['allowed_git_version']=version.returncode==0 and version.stdout.startswith('git version ')
 (root/'.isolation-different').write_text('different')
@@ -491,6 +529,22 @@ for index,name in enumerate({paths!r}):
         out['denied_read_'+str(index)]=error.errno in (1,2,13)
     else:
         out['denied_read_'+str(index)]=False
+for index,name in enumerate({scratch_paths!r}):
+    for operation in ('read', 'write'):
+        try:
+            path=pathlib.Path(name)
+            path.read_bytes() if operation=='read' else path.write_text('changed-global-temporary')
+        except OSError as error:
+            out['denied_temporary_'+operation+'_'+str(index)]=error.errno in (1,2,13,30)
+        else:
+            out['denied_temporary_'+operation+'_'+str(index)]=False
+for index,name in enumerate({missing_paths!r}):
+    try:
+        pathlib.Path(name).write_text('new-outside')
+    except OSError as error:
+        out['denied_temporary_create_'+str(index)]=error.errno in (1,2,13,30)
+    else:
+        out['denied_temporary_create_'+str(index)]=False
 try:
     pathlib.Path({str(readonly_control)!r}).write_text('bad')
 except OSError as error:
@@ -513,24 +567,26 @@ else:
     out['denied_network']=False
 print(json.dumps(out))
 """
-        try:
             result = self._execute(
                 [str(Path(sys.executable).resolve()), "-I", "-B", "-c", source], self.workspace
             )
             if result.returncode != 0:
                 raise ValueError(f"native sandbox preflight failed: {result.stderr[-2000:]}")
             evidence = json.loads(result.stdout)
-            expected = 9 + len(paths)
-            if len(evidence) != expected or not all(value is True for value in evidence.values()):
-                raise ValueError(f"isolation canaries failed: {evidence}")
-            for path, expected_target in zip(forbidden, host_targets, strict=True):
+            expected = 10 + len(paths) + 2 * len(scratch_paths) + len(missing_paths)
+            for path, expected_target in zip(protected, host_targets, strict=True):
                 metadata = path.lstat()
-                if (metadata.st_dev, metadata.st_ino, metadata.st_size) != (
+                if (metadata.st_dev, metadata.st_ino, metadata.st_size, digest(path)) != (
                     expected_target["device"],
                     expected_target["inode"],
                     expected_target["size"],
+                    expected_target["sha256"],
                 ):
                     raise ValueError("host-positive preflight target changed during the probe")
+            if any(Path(path).exists() or Path(path).is_symlink() for path in missing_paths):
+                raise ValueError("native command created an unrelated host temporary file")
+            if len(evidence) != expected or not all(value is True for value in evidence.values()):
+                raise ValueError(f"isolation canaries failed: {evidence}")
             if readonly_control.read_text() != "known-readonly":
                 raise ValueError("native command overwrote protected source data")
             self.verified = True
@@ -542,17 +598,6 @@ print(json.dumps(out))
                     "execution": result.to_dict(),
                 }
             ]
-        finally:
-            listener.close()
-            readonly_control.unlink(missing_ok=True)
-            for path in (
-                control,
-                alias,
-                self.workspace / ".isolation-write",
-                self.workspace / ".isolation-different",
-                self.workspace / ".isolation-hardlink",
-            ):
-                path.unlink(missing_ok=True)
 
 
 def resolve_codex(path: str = "codex") -> Path:

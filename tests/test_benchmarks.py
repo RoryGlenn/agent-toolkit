@@ -182,6 +182,47 @@ class BenchmarkProfileTests(unittest.TestCase):
             self.assertEqual(environment["GIT_CONFIG_GLOBAL"], "/dev/null")
             self.assertEqual(environment["GIT_TERMINAL_PROMPT"], "0")
 
+    def test_global_temp_denies_preserve_nested_grants_in_both_network_profiles(self) -> None:
+        workspace = Path("/tmp/benchmark/workspace").resolve()
+        temporary = Path("/var/tmp/benchmark/private").resolve()
+        readonly = [Path(parent).resolve() / "benchmark/roles" for parent in ("/tmp", "/var/tmp")]
+        for local_network in (False, True):
+            with self.subTest(local_network=local_network):
+                data = tomllib.loads(
+                    config_text(
+                        workspace,
+                        readonly[0],
+                        Path("/benchmark-client"),
+                        temporary,
+                        "same",
+                        "high",
+                        local_network=local_network,
+                        readonly_extra=readonly[1:],
+                    )
+                )
+                profile = data["permissions"]["benchmark"]
+                filesystem = profile["filesystem"]
+                self.assertNotIn(":tmpdir", filesystem)
+                self.assertEqual(filesystem[str(workspace)], "write")
+                self.assertEqual(filesystem[str(temporary)], "write")
+                for parent in (Path("/tmp").resolve(), Path("/var/tmp").resolve()):
+                    self.assertEqual(filesystem[str(parent)], "deny")
+                    for path in (workspace, temporary, *readonly):
+                        if path.is_relative_to(parent):
+                            self.assertLess(
+                                list(filesystem).index(str(parent)),
+                                list(filesystem).index(str(path)),
+                            )
+                for path in readonly:
+                    self.assertEqual(filesystem[str(path)], "read")
+                self.assertEqual(profile["network"]["enabled"], local_network)
+                if local_network:
+                    self.assertEqual(profile["network"]["mode"], "limited")
+                    self.assertTrue(profile["network"]["allow_local_binding"])
+                    self.assertEqual(
+                        profile["network"]["domains"], {"localhost": "allow", "127.0.0.1": "allow"}
+                    )
+
     def test_permission_config_denies_default_access_and_parent_config_writes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

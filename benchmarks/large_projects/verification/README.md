@@ -1,4 +1,9 @@
-# Linux qualification record — 29 October 2026
+# Archived Linux curator qualification record — 29 October 2026
+
+This is the historical pre-integration record for commit `4fa5d4e`. Its results and remaining-work
+list describe that revision, including the then-unimplemented integrated pipeline and native
+preflight failure. They are not current integrated-runner qualification or a report on later
+macOS repairs. The original JSON evidence remains unchanged.
 
 This record supports the curator adapters, not completion of issue #5 or a model comparison.
 `linux-summary.json` contains sanitized exact commands, environment choices, source/test/runner
@@ -51,7 +56,7 @@ the final scorer; every verdict was unchanged. The verifier also checked all 112
 replayed PostgreSQL on both revisions and verified server cleanup. No named custom-role
 loading is claimed. `independent-checks.json` records the separate verifier artifact hashes.
 
-Current final-code repository checks:
+Repository checks at the archived revision:
 
 - `uv sync --group dev --frozen` — passed.
 - `uv run python -m unittest discover -s tests -p 'test_large_project*.py' -v` — 33 passed.

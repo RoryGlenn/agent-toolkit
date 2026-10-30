@@ -60,7 +60,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_actor_keeps_canonical_runtime_and_private_bison_data(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            stage = Path(directory)
+            stage = Path(directory).resolve()
             (stage / "actor-home").mkdir()
             stage_runtime(stage / "actor-home")
             tools = stage / "tools"
@@ -85,7 +85,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_deferred_dependency_links_cannot_create_any_host_outside_entry(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             archive = root / "links.tar"
             with tarfile.open(archive, "w") as output:
                 for name, target in (
@@ -106,7 +106,7 @@ class PipelineDataTests(unittest.TestCase):
         case = case_at("otel-queue-cancellation")
         self.assertIn("exporter/exporterhelper/internal/queue/*.go", scope_contract(case["id"]))
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             parent = root / "parent"
             parent.mkdir()
             helper = "outside_component.go"
@@ -150,7 +150,7 @@ class PipelineDataTests(unittest.TestCase):
             ["node-version", "npm-version", "dependencies-root", "dependencies-build", "browser"],
         )
         with tempfile.TemporaryDirectory() as directory:
-            source = Path(directory)
+            source = Path(directory).resolve()
             tests = source / "src/vs/editor/contrib/snippet/test/browser"
             tests.mkdir(parents=True)
             titles = [*sorted(VS_REGRESSIONS), *(f"existing {n}" for n in range(79))]
@@ -173,7 +173,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_frozen_delta_restores_authoritative_tests(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             parent = root / "parent"
             production = "exporter/exporterhelper/internal/queue/cond.go"
             test = "exporter/exporterhelper/internal/queue/cond_test.go"
@@ -206,7 +206,7 @@ class PipelineDataTests(unittest.TestCase):
     def test_candidate_archive_aliases_and_duplicates_are_rejected(self) -> None:
         for kind in ("traversal", "symlink", "hardlink", "duplicate"):
             with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory)
+                root = Path(directory).resolve()
                 parent = root / "parent"
                 parent.mkdir()
                 archive = root / "worker.tar"
@@ -225,10 +225,10 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_binary_capture_and_fast_output_overrun(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "capture"
+            path = Path(directory).resolve() / "capture"
             execution = bounded_process(
                 [sys.executable, "-c", "import sys;sys.stdout.buffer.write(bytes([0,255,10]))"],
-                Path(directory),
+                Path(directory).resolve(),
                 {},
                 stdout_path=path,
             )
@@ -236,13 +236,16 @@ class PipelineDataTests(unittest.TestCase):
             self.assertEqual(path.read_bytes(), bytes([0, 255, 10]))
             self.assertEqual(execution.stdout, "")
             limited = bounded_process(
-                [sys.executable, "-c", "print('x'*100)"], Path(directory), {}, max_output=1
+                [sys.executable, "-c", "print('x'*100)"],
+                Path(directory).resolve(),
+                {},
+                max_output=1,
             )
             self.assertTrue(limited.output_limited)
-            strict = Path(directory) / "strict"
+            strict = Path(directory).resolve() / "strict"
             physical = bounded_process(
                 [sys.executable, "-c", "print('x'*20000)"],
-                Path(directory),
+                Path(directory).resolve(),
                 {},
                 max_output=4096,
                 stdout_path=strict,
@@ -253,7 +256,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_runtime_grants_cannot_alias_curator_or_controller_trees(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             curator = root / "curator"
             exposed = curator / "fixed"
             (exposed / "bin").mkdir(parents=True)
@@ -265,7 +268,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_streamed_hash_supports_large_dependencies_without_aliases(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             data = root / "data"
             with data.open("wb") as output:
                 output.truncate(21_000_000)
@@ -295,7 +298,7 @@ class PipelineDataTests(unittest.TestCase):
         if compiler is None:
             self.skipTest("C compiler unavailable")
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             source = root / "broken.c"
             source.write_text("int broken( { return 1; }\n")
             result = bounded_process([compiler, "-c", str(source)], root, {"PATH": "/usr/bin:/bin"})
@@ -338,7 +341,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_cancelled_set_does_not_start_another_case(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory) / "set"
+            root = Path(directory).resolve() / "set"
 
             def cancelled(case: dict[str, object], *_args: object) -> dict[str, object]:
                 return {"case_id": case["id"], "status": "cancelled"}
@@ -365,7 +368,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_cancellation_survives_cleanup_failure_and_stops_the_set(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             with patch("benchmarks.large_projects.deadline.multiprocessing.get_context") as context:
                 process = context.return_value.Process.return_value
                 process.join.side_effect = KeyboardInterrupt
@@ -404,7 +407,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_missing_runtime_gates_block_planning(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             (root / "runtime.json").write_text(json.dumps({"status": "passed", "gates": {}}))
             context = root / "context.json"
             context.write_text(
@@ -422,7 +425,7 @@ class PipelineDataTests(unittest.TestCase):
 
     def test_refreshing_a_valid_same_parent_bundle_invalidates_the_plan(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             case = case_at("otel-queue-cancellation")
             bundle = root / "bundle"
             module = bundle / "inputs/cache/go-mod/example.mod"
@@ -540,20 +543,20 @@ class KernelBoundaryTests(unittest.TestCase):
     def test_aggregate_limits_freeze_and_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             controls = kernel_controls(
-                Path(directory) / "controls", str(uuid.uuid4()), Deadline(90)
+                Path(directory).resolve() / "controls", str(uuid.uuid4()), Deadline(90)
             )
             self.assertEqual(len(controls), 6)
             self.assertTrue(all(c["status"] == "passed" for c in controls.values()))
 
     def test_staging_timeout_and_external_cancellation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            controls = watchdog_controls(Path(directory))
+            controls = watchdog_controls(Path(directory).resolve())
             self.assertEqual(set(controls), {"staging_deadline", "cancellation_cleanup"})
             self.assertTrue(all(c["status"] == "passed" for c in controls.values()))
 
     def test_authoritative_inputs_are_readonly_in_evaluator(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             seed = root / "seed"
             seed.mkdir()
             (seed / "hidden").write_text("authoritative")
