@@ -1,0 +1,38 @@
+{
+  "skill_name": "release-and-docs-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this release evidence, advice only. Source tests passed. The shipped ZIP contains app.py but omits templates/report.html, which app.py opens at runtime. The documented first-run command has not been executed from the ZIP. No publishing is authorized. Give a release verdict and next verification steps.",
+      "expected_output": "Not ready until exact-artifact runtime and first-run defects are addressed.",
+      "files": [],
+      "expectations": [
+        "Flags the missing runtime template as a release blocker.",
+        "Requires checking the actual archive outside the source tree rather than treating source tests as artifact proof.",
+        "Does not publish, tag or claim unexecuted checks passed."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Correct the spelling of \"relese\". Answer with one word.",
+      "expected_output": "release without a release workflow.",
+      "files": [],
+      "expectations": [
+        "Answers release.",
+        "Does not start package, publishing or release checks."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "A previously authorized publication command timed out. We do not know whether version 1.2.0 reached the registry. Do not access the registry or retry in this task; describe the next safe steps. Named review roles are unavailable.",
+      "expected_output": "Reconcile external state before retry; disclose independent review gap.",
+      "files": [],
+      "expectations": [
+        "Calls for inspecting the actual registry version/artifact identity before deciding whether to retry.",
+        "Does not assume timeout means publication failed or advise reusing an already consumed version.",
+        "Discloses unavailable independent evidence without claiming another agent ran."
+      ]
+    }
+  ]
+}

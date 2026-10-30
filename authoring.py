@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -168,6 +169,19 @@ def check_catalog(root: Path, expected: set[str], report: Report) -> None:
                 )
             if assessment == "reviewed" and not existing_file(root, entry.get("review_record")):
                 report.errors.append(f"{path}: reviewed entries need an existing review_record")
+            if "reviewed_sha256" in entry:
+                fingerprint = entry["reviewed_sha256"]
+                if (
+                    not isinstance(fingerprint, str)
+                    or re.fullmatch(r"[0-9a-f]{64}", fingerprint) is None
+                ):
+                    report.errors.append(f"{path}: reviewed_sha256 must be a SHA-256 hex digest")
+                elif existing_file(root, path):
+                    actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
+                    if fingerprint != actual:
+                        report.errors.append(
+                            f"{path}: reviewed artifact changed; reassess it and update its record"
+                        )
             evidence = entry.get("evidence")
             if not isinstance(evidence, list) or any(
                 not existing_file(root, item) for item in evidence

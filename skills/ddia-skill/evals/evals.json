@@ -1,0 +1,38 @@
+{
+  "skill_name": "ddia-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this design, advice only: two workers each SELECT remaining=1 outside a transaction, then each sets remaining to 0 and inserts a reservation. At most one reservation may be admitted. Propose the simplest sufficient protection and a falsifying experiment. No external source library is provided.",
+      "expected_output": "Reachable double-admission trace, atomic admission and bounded verification.",
+      "files": [],
+      "expectations": [
+        "Shows both workers can admit against the same last unit.",
+        "Proposes protecting decrement and reservation together with a conditional update or equivalent correct transaction.",
+        "Uses a controlled two-worker schedule and a correct control without claiming a production-engine test ran."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Change the wording of this button from \"Submit\" to \"Send\". Return the new label only.",
+      "expected_output": "Send without a data-system review.",
+      "files": [],
+      "expectations": [
+        "Answers Send.",
+        "Does not read DDIA references or impose a data architecture gate."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "Explain why a lease alone cannot stop an old owner after a long pause. Give a concrete execution and the condition under which fencing helps. This is an explanation, not permission to deploy a lock service; no source library is provided.",
+      "expected_output": "Explanation of stale owner and resource-enforced fencing, with honest source limits.",
+      "files": [],
+      "expectations": [
+        "Describes old owner resuming after a new owner obtains the lease.",
+        "Requires the protected resource to reject stale tokens rather than treating token issuance alone as protection.",
+        "Does not claim access to an unavailable book or a real distributed-system experiment."
+      ]
+    }
+  ]
+}

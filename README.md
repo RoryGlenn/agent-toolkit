@@ -449,6 +449,11 @@ Add scripts, references, or assets only when useful. An optional custom agent li
 to `AGENTS` in `install.py`. Run the [development checks](#development-checks) and relevant
 behavior checks before installing the change.
 
+See the [completed authoring adoption assessment](standards/authoring/reviews/README.md)
+for per-artifact dispositions, representative cases and remaining host/behavior checks.
+Reviewed artifacts retain their useful structures; the standard does not require identical
+headings or turn structural validation into a quality certification.
+
 ## Development checks
 
 `uv` manages the development tools; it is not required for installation.

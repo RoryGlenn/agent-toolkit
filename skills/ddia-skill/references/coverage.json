@@ -25,7 +25,8 @@
       ],
       "workflows": [
         "assess",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "workload-separation: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -50,7 +51,8 @@
       ],
       "workflows": [
         "assess",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "authority-derived: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -75,7 +77,8 @@
       ],
       "workflows": [
         "assess",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "cloud-operations: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -100,7 +103,8 @@
       ],
       "workflows": [
         "assess",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "distribution-necessity: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -125,7 +129,8 @@
       ],
       "workflows": [
         "assess",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "service-boundaries: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -151,7 +156,8 @@
       "workflows": [
         "assess",
         "design",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "load-shape: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -177,7 +183,8 @@
       "workflows": [
         "assess",
         "design",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "performance-objectives: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -203,7 +210,8 @@
       "workflows": [
         "assess",
         "design",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "overload: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -229,7 +237,8 @@
       "workflows": [
         "assess",
         "design",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "reliability-recovery: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -255,7 +264,8 @@
       "workflows": [
         "assess",
         "design",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "maintainability: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -412,7 +422,8 @@
       "workflows": [
         "design",
         "operate",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "storage-engines: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -438,7 +449,8 @@
       "workflows": [
         "design",
         "operate",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "indexes: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -465,7 +477,8 @@
       "workflows": [
         "design",
         "operate",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "columnar: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -491,7 +504,8 @@
       "workflows": [
         "design",
         "operate",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "search-indexes: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -517,7 +531,8 @@
       "workflows": [
         "design",
         "operate",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "vector-search: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -544,7 +559,8 @@
       "workflows": [
         "migrate",
         "review",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "compatibility: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -572,7 +588,8 @@
       "workflows": [
         "migrate",
         "review",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "encoding-types: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -598,7 +615,8 @@
       "workflows": [
         "migrate",
         "review",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "schema-formats: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -624,7 +642,8 @@
       "workflows": [
         "migrate",
         "review",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "rpc-outcomes: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -650,7 +669,8 @@
       "workflows": [
         "migrate",
         "review",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "durable-workflows: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -677,7 +697,8 @@
       "workflows": [
         "design",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "replication-durability: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -704,7 +725,8 @@
       "workflows": [
         "design",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "replication-reads: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -730,7 +752,8 @@
       "workflows": [
         "design",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "multi-leader-sync: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -757,7 +780,8 @@
       "workflows": [
         "design",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "conflict-resolution: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -784,7 +808,8 @@
       "workflows": [
         "design",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "leaderless-quorums: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -810,7 +835,8 @@
       "workflows": [
         "design",
         "migrate",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "sharding-need: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -836,7 +862,8 @@
       "workflows": [
         "design",
         "migrate",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "shard-keys: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -862,7 +889,8 @@
       "workflows": [
         "design",
         "migrate",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "hotspots: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -889,7 +917,8 @@
       "workflows": [
         "design",
         "migrate",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "rebalancing: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -915,7 +944,8 @@
       "workflows": [
         "design",
         "migrate",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "distributed-indexes: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -941,7 +971,8 @@
       "workflows": [
         "review",
         "validate",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "transaction-boundaries: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -972,7 +1003,8 @@
       "workflows": [
         "review",
         "validate",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "isolation-anomalies: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1005,7 +1037,8 @@
       "workflows": [
         "review",
         "validate",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "write-skew: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1032,7 +1065,8 @@
       "workflows": [
         "review",
         "validate",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "distributed-transactions: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1058,7 +1092,8 @@
       "workflows": [
         "review",
         "validate",
-        "design"
+        "design",
+        "explain"
       ],
       "example": "message-atomicity: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1087,7 +1122,8 @@
       "workflows": [
         "validate",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "ambiguous-failure: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1113,7 +1149,8 @@
       "workflows": [
         "validate",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "clock-assumptions: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1139,7 +1176,8 @@
       "workflows": [
         "validate",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "leases-fencing: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1168,7 +1206,8 @@
       "workflows": [
         "validate",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "failure-models: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1195,7 +1234,8 @@
       "workflows": [
         "validate",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "formal-testing: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1221,7 +1261,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "consistency-contracts: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1247,7 +1288,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "partition-tradeoffs: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1273,7 +1315,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "logical-identities: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1300,7 +1343,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "consensus-mechanisms: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1327,7 +1371,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "coordination-use: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1353,7 +1398,8 @@
       "workflows": [
         "design",
         "operate",
-        "migrate"
+        "migrate",
+        "explain"
       ],
       "example": "batch-baseline: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1379,7 +1425,8 @@
       "workflows": [
         "design",
         "operate",
-        "migrate"
+        "migrate",
+        "explain"
       ],
       "example": "batch-storage: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1406,7 +1453,8 @@
       "workflows": [
         "design",
         "operate",
-        "migrate"
+        "migrate",
+        "explain"
       ],
       "example": "batch-orchestration: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1433,7 +1481,8 @@
       "workflows": [
         "design",
         "operate",
-        "migrate"
+        "migrate",
+        "explain"
       ],
       "example": "batch-dataflow: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1460,7 +1509,8 @@
       "workflows": [
         "design",
         "operate",
-        "migrate"
+        "migrate",
+        "explain"
       ],
       "example": "derived-publication: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1489,7 +1539,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "stream-delivery: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1516,7 +1567,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "cdc-handoff: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1543,7 +1595,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "stream-history: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1575,7 +1628,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "stream-time-joins: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1607,7 +1661,8 @@
       "workflows": [
         "design",
         "review",
-        "validate"
+        "validate",
+        "explain"
       ],
       "example": "stream-recovery: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1633,7 +1688,8 @@
       "workflows": [
         "design",
         "migrate",
-        "review"
+        "review",
+        "explain"
       ],
       "example": "derived-dag: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1659,7 +1715,8 @@
       "workflows": [
         "design",
         "migrate",
-        "review"
+        "review",
+        "explain"
       ],
       "example": "reprocessing-evolution: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1686,7 +1743,8 @@
       "workflows": [
         "design",
         "migrate",
-        "review"
+        "review",
+        "explain"
       ],
       "example": "dataflow-clients: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1713,7 +1771,8 @@
       "workflows": [
         "design",
         "migrate",
-        "review"
+        "review",
+        "explain"
       ],
       "example": "end-to-end-identity: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1741,7 +1800,8 @@
       "workflows": [
         "design",
         "migrate",
-        "review"
+        "review",
+        "explain"
       ],
       "example": "integrity-audit: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1767,7 +1827,8 @@
       "workflows": [
         "assess",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "human-purpose: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1794,7 +1855,8 @@
       "workflows": [
         "assess",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "bias-feedback: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1820,7 +1882,8 @@
       "workflows": [
         "assess",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "accountability: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1846,7 +1909,8 @@
       "workflows": [
         "assess",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "privacy-lifecycle: incorrect/sufficient examples in reference",
       "evaluation_cases": [
@@ -1874,7 +1938,8 @@
       "workflows": [
         "assess",
         "review",
-        "operate"
+        "operate",
+        "explain"
       ],
       "example": "law-society: incorrect/sufficient examples in reference",
       "evaluation_cases": [

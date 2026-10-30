@@ -122,16 +122,21 @@ between arms, describe the intervention as a package comparison, not a prompt-on
 
 Use the pinned Anthropic grading, blind-comparison, aggregation, and static review tools
 through the independent Codex adapter. Follow its credential, isolation, and evidence
-boundaries. This adoption does not run evaluations of the existing custom skills or agents.
+boundaries. The authoring adapter itself does not automatically evaluate existing custom skills or
+agents. The [adoption review](reviews/README.md) links explicit cases and records their
+actual evidence separately.
 
 ## Adopt and maintain
 
 [adoption.json](adoption.json) covers every shipped skill and host role. Its evidence paths
-identify available tests or cases, not proof those checks were run or passed. All entries
-start **not_assessed** for this new standard. The next-check field makes gaps actionable.
+identify available tests or cases, not proof those checks were run or passed. Entries begin **not_assessed** until assessed; the
+[current adoption review](reviews/README.md) records the shipped collection's assessment. The next-check field makes gaps actionable.
 Use the [review record](review.md) when assessing an artifact; retain the exact revision and
 observations. Set an entry to **reviewed** only with a linked completed `review_record`;
-that label records an assessment, not a favorable verdict or certification. Prior evidence
+that label records an assessment, not a favorable verdict or certification. New or
+updated reviews record `reviewed_sha256` for the exact entrypoint bytes. The checker
+rejects a stale supplied fingerprint; supporting-resource changes still require semantic
+reassessment because this field does not fingerprint the complete package. Prior evidence
 keeps its original scope and is not retroactively certified.
 
 For a new or changed package:

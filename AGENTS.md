@@ -13,3 +13,7 @@ Use the standalone `skill_authoring` package for native scaffolding and upstream
 evaluation. It is independent of the toolkit's custom skills, agents, and benchmark code.
 
 Run the [development checks](README.md#development-checks) before completing a change.
+
+For changes to a reviewed artifact, reassess affected contract and behavior claims, update
+its linked review record and `reviewed_sha256`, and preserve explicit evaluation gaps.
+Do not refresh a fingerprint without the assessment it represents.
