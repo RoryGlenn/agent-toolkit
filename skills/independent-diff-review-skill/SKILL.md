@@ -5,6 +5,11 @@ description: Review a branch, pull request, commit, or working-tree diff indepen
 
 # Independent Diff Review Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Review the change from the requirement and observable behavior, not from the author's confidence or narrative.
 
 ## Inputs

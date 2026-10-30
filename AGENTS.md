@@ -17,3 +17,11 @@ Run the [development checks](README.md#development-checks) before completing a c
 For changes to a reviewed artifact, reassess affected contract and behavior claims, update
 its linked review record and `reviewed_sha256`, and preserve explicit evaluation gaps.
 Do not refresh a fingerprint without the assessment it represents.
+
+New or changed toolkit entrypoints must participate in the shared task-routing contract.
+Keep the policy in task-routing-skill, declare its dependency for new skill packages, and
+verify selective installation plus routing outcomes separately from catalog validation.
+
+Maintain only Codex TOML named-agent definitions. Portable skills may support other hosts,
+but do not add or generate a second Copilot role format. Preserve historical receipt and
+project ownership handling when retiring previously shipped role files.

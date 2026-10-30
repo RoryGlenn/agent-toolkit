@@ -5,6 +5,11 @@ description: Apply DDIA across data-system architecture, storage/models, evoluti
 
 # DDIA Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Improve the actual engineering decision using *Designing Data-Intensive Applications*,
 Second Edition. Start with the repository, workload, business invariants and failure
 model. Prefer the simplest sufficient design; additional distribution and components

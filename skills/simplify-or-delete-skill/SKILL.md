@@ -5,6 +5,11 @@ description: Audit a repository, workflow, agent system, or architecture for unn
 
 # Simplify or Delete Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Reduce permanent maintenance cost without removing behavior that users or safety boundaries actually need.
 
 ## Principle

@@ -17,7 +17,8 @@ python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-projec
 
 The default engineering selection includes `documentation-skill`, `ddia-skill`,
 `software-design-skill`, `independent-diff-review-skill`, `issue-to-tested-pr-skill`,
-`release-and-docs-skill`, and `simplify-or-delete-skill`. It supports both Codex and Copilot.
+`release-and-docs-skill`, and `simplify-or-delete-skill`, plus their shared
+`task-routing-skill` dependency. It supplies Codex agent roles and portable skills; the Copilot target is skill-only.
 Use repeated `--skill` flags for an explicit selection or `--all` for the entire
 collection. Select one host with `--target codex` or `--target copilot`.
 
@@ -34,7 +35,6 @@ The bootstrap copies regular files into the application repository:
 AGENTS.md                         Existing guidance plus one managed routing block
 .agents/skills/<name>-skill/       Shared skill packages for both hosts
 .codex/agents/*-agent.toml         Selected Codex roles
-.github/agents/*-agent.agent.md    Selected Copilot roles
 .agent-toolkit/manifest.json      Relative owned paths, hashes, and source provenance
 ```
 
@@ -53,8 +53,9 @@ personal installation's pinned settings remain unchanged in the toolkit source.
 
 Codex discovers [project skill packages](https://learn.chatgpt.com/docs/build-skills) and
 [project agent definitions](https://learn.chatgpt.com/docs/agent-configuration/subagents).
-Copilot supports [shared `.agents/skills` packages](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills)
-and [project `.github/agents` definitions](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/invoke-custom-agents).
+Copilot can use [shared `.agents/skills` packages](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills).
+This toolkit ships only Codex TOML agent definitions; it does not translate them into
+Copilot profiles or maintain a second role format.
 Open the project in the host, complete any normal project-trust prompt, and refresh or
 start a new session. File validation does not establish successful live role execution;
 verify discovery and a representative task in your actual host.
@@ -101,12 +102,25 @@ block; edits there are preserved. Unrelated files, including additions within a 
 folder, are preserved. There is no force-overwrite option. Resolve a conflict by preserving
 custom work in project Git and deliberately reconciling it before retrying.
 
-This manifest version keeps the original host/skill selection fixed. A deliberate
+This manifest version keeps the original hosts and selected capabilities fixed. An explicit
+update may add newly required shared dependencies, while preserving every previously selected
+package. It still rejects unrelated skill/host reconfiguration. A deliberate
 reconfiguration requires removing or reverting the prior generated layer through project
 Git, including its managed instruction block and manifest, then bootstrapping the new
 selection. The command does not perform that removal for you. Ordinary write failures roll
 back in process; it is not a crash-atomic transaction. Review or revert updates with the
 application's Git history rather than a second installation receipt system.
+
+### Existing Copilot roles
+
+An explicit project `bootstrap --update` retires old owned `.github/agents` files only when
+their bytes still match the manifest. Locally edited roles cause refusal; unmanaged roles
+remain untouched. Existing manifests selecting Copilot remain valid and become skill-only.
+
+Personal installs do not delete existing Copilot wrappers or their source checkouts. The
+skill-only target preserves those files; use the original restoration receipt or deliberately
+manage a separate migration if you want to retire them. Updating the repository alone does
+not update a running host session or silently remove personal configuration.
 
 ## Naming convention: skills and agents
 
@@ -121,11 +135,11 @@ Every toolkit name states its type:
 | Skill directory and `SKILL.md` frontmatter `name` | `<task-or-domain>-skill` | `skills/documentation-skill/SKILL.md`, invoked as `$documentation-skill` |
 | Codex agent file | `<role-or-domain>-agent.toml` | `agents/codex/documentation-agent.toml` |
 | Codex agent `name` and delegation identifier | Filename stem converted to snake_case, ending `_agent` | `documentation_agent` |
-| Copilot agent file | `<role-or-domain>-agent.agent.md` | `agents/copilot/documentation-agent.agent.md` |
 | Display names | End with **Skill** or **Agent** according to the artifact | **Documentation Skill**, **Documentation Agent** |
 
-Use lowercase kebab-case for directory and file stems. Copilot's `.agent.md` is the host's
-required extension, appended to the toolkit's `-agent` stem. Keep the host-defined
+Use lowercase kebab-case for directory and file stems. New agent definitions use Codex
+TOML only. Legacy Copilot filenames remain recognized for ownership-safe cleanup, not new
+agent authoring. Keep the host-defined
 `SKILL.md` and optional `agents/openai.yaml` names unchanged: the latter contains skill UI
 metadata and does not define a separate worker. `python3 install.py check` enforces skill
 directory/frontmatter names, agent filenames and runtime names, and agent associations.
@@ -154,16 +168,16 @@ actual role names from their definitions.
 
 | Skill | Use it for | Codex roles installed | Copilot roles installed |
 | --- | --- | --- | --- |
-| [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) | [Documentation Agent](agents/copilot/documentation-agent.agent.md) |
-| [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) | None |
-| [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) | None |
+| [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) | None (skills only) |
+| [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) | None (skills only) |
+| [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) | None (skills only) |
 
 ### DDIA workflow skills
 
 These discoverable entry points share `ddia-skill`; selecting any one includes the shared
 package automatically in personal installations and portable project copies. Codex installs
-one `ddia_agent` role, even when several workflow skills are selected. Copilot receives skills
-without a named DDIA role. The default `ddia-skill` already contains all procedures/references;
+one `ddia_agent` role, even when several workflow skills are selected. Other hosts use the
+portable skills directly; the Copilot target installs no named roles. The default `ddia-skill` already contains all procedures/references;
 select these optional entry points when separate workflow discovery is useful.
 
 | Skill | Outcome |
@@ -175,6 +189,31 @@ select these optional entry points when separate workflow discovery is useful.
 | [ddia-migrate-skill](skills/ddia-migrate-skill/SKILL.md) | Plan compatible evolution, backfill and cutover. |
 | [ddia-operate-skill](skills/ddia-operate-skill/SKILL.md) | Assess capacity, overload, restore and reconciliation. |
 | [ddia-explain-skill](skills/ddia-explain-skill/SKILL.md) | Explain concepts through concrete decisions and examples. |
+
+### Shared task routing
+
+[task-routing-skill](skills/task-routing-skill/SKILL.md) is a small shared instruction package
+with no named role. Every other shipped skill includes it as a dependency. A selected
+specialist is a default expertise, not a requirement to force unrelated questions through
+that procedure. Simple questions can load the relevant installed skill directly; consequential
+bounded work can delegate to an available specialist and return to the current owner.
+Mixed tasks keep one owner, explicit no-delegation requests are honored, and routed subtasks
+do not bounce recursively between specialists. Trivial requests need no routing ceremony.
+
+Named roles use only Codex TOML. Native Codex delegation returns a specialist result to
+the current owner; direct skill loading and delegation do not change the visible agent
+picker. Other hosts can use the portable skill guidance, but this package supplies no
+Copilot agent profiles, cross-host role translation or universal UI switching.
+
+Selected installation remains selective: installing only documentation supplies documentation
+and routing guidance, not every specialist. The policy requires a disclosed, bounded fallback
+when domains/tools are unavailable; install desired capabilities explicitly or use the default
+engineering bootstrap. In the bounded CLI checks, one missing-skill case answered generally
+without discovering/disclosing the missing capability and remains a partial result.
+No global settings, model/provider defaults, permissions or account configuration are changed.
+See the [routing evaluation matrix](skills/task-routing-skill/evals/README.md) and
+[current routing assessment](standards/authoring/reviews/routing.md) for observed coverage and
+host limitations. CLI execution does not by itself establish VS Code GUI behavior.
 
 ### Workflow and task skills
 
@@ -199,7 +238,6 @@ skills/<task-or-domain>-skill/
   references/, scripts/    Supporting material or tools, when needed
 agents/
   codex/*-agent.toml       Named Codex agent definitions
-  copilot/*-agent.agent.md Named Copilot agent definitions
 books/                     Included source books; not skills or agent roles
 install.py                 Catalog and CLI for personal install and project bootstrap
 project_bootstrap.py        Portable project copies, ownership, and updates
@@ -243,9 +281,9 @@ for Codex installs its skill and the `ddia_agent` role.
 | Target | Skills | Agent definitions |
 | --- | --- | --- |
 | Codex | `~/.agents/skills/<name>` | `${CODEX_HOME:-~/.codex}/agents/` |
-| Copilot | `~/.copilot/skills/<name>` | `~/.copilot/agents/` |
+| Copilot (skills only) | `~/.copilot/skills/<name>` | None |
 
-Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills and Copilot wrappers remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Imported engineering roles retain their existing model selections; edit `agents/codex/*.toml` if your account uses different models. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
+Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Imported engineering roles retain their existing model selections; edit `agents/codex/*.toml` if your account uses different models. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
 
 Copilot can also discover shared `~/.agents/skills` content. Avoid separately maintaining another copy of a skill it already discovers. Host versions can differ in how duplicate names appear; inspect the skill picker after installation.
 
@@ -418,7 +456,10 @@ python3 install.py restore /path/to/receipt.json --dry-run
 python3 install.py restore /path/to/receipt.json
 ```
 
-Restore first checks every managed destination. It refuses to overwrite a link or file you replaced after installation. It removes the toolkit links, restores prior entries, and keeps the receipt as a record. Empty host directories remain. Ordinary installation or restoration errors trigger rollback; interrupted processes and manual changes to receipts require inspection before further changes. Backups use filesystem moves, so a custom Codex home on another filesystem may prevent a migration; a failed move is rolled back.
+Restore first checks every managed destination. It also refuses to remove a shared skill
+or role still required by a surviving managed skill linked to the same source checkout; restore the dependent installation
+first. A recorded backup is restored as the prior entry, without claiming compatibility
+of that historical version with newer consumers. It refuses to overwrite a link or file you replaced after installation. It removes the toolkit links, restores prior entries, and keeps the receipt as a record. Empty host directories remain. Ordinary installation or restoration errors trigger rollback; interrupted processes and manual changes to receipts require inspection before further changes. Backups use filesystem moves, so a custom Codex home on another filesystem may prevent a migration; a failed move is rolled back.
 
 ## Maintain the collection
 
@@ -499,7 +540,7 @@ repository controls and the existing checks, with no model credentials or paid c
 
 This toolkit is the maintained source for the collected skills and agent definitions. Original repositories and installations are retained until deliberately migrated; no source repository, published history, or old installer manifest is changed by this package.
 
-- The docs package, Copilot wrapper, and optional browser regression runner came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/documentation-skill/references/book-foundation.md) credits the authors and explains the original synthesis. The [archived standalone validation record](docs/validation/doc-agent-2026-09-26.md) preserves the initial package's evidence and limits; it does not validate this toolkit or later changes. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
+- The docs package, historical Copilot wrapper, and optional browser regression runner came from [RoryGlenn/doc-agent](https://github.com/RoryGlenn/doc-agent), commit `589d26d92d9ff29658e88af795e5164972329e00`. The current package retains the skill and Codex role; the former Copilot wrapper is removed. The fuller repository package incorporates the earlier installed Codex skill and adds tools, templates, and evaluations. Its [book foundation](skills/documentation-skill/references/book-foundation.md) credits the authors and explains the original synthesis. The [archived standalone validation record](docs/validation/doc-agent-2026-09-26.md) preserves the initial package's evidence and limits; it does not validate this toolkit or later changes. The source [Docs for Developers, Second Edition EPUB](books/docs-for-developers-2nd-edition.epub) is included for reference; the agent does not require it at runtime. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - The software-design specialist uses an original synthesis of *A Philosophy of Software Design*, Second Edition, by John K. Ousterhout (Yaknyam Press, 2021). Its personal EPUB and detailed reading notes are kept outside this repository; the skill retrieves them locally and does not redistribute the source.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.

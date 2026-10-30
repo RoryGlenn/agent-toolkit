@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Routing Skill"
+  short_description: "Choose relevant expertise without unnecessary delegation"
+  default_prompt: "Use $task-routing-skill to choose the relevant installed expertise for this request."

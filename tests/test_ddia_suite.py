@@ -140,7 +140,9 @@ class DDIASuiteTests(unittest.TestCase):
         self.assertEqual(guide.check(shared)["chapters"], 14)
         self.assertTrue((shared / "assets/handoff.template.md").is_file())
         manifest = json.loads((relocated / project_bootstrap.MANIFEST).read_text())
-        self.assertEqual(manifest["skills"], ["ddia-migrate-skill", "ddia-skill"])
+        self.assertEqual(
+            manifest["skills"], ["ddia-migrate-skill", "ddia-skill", "task-routing-skill"]
+        )
         self.assertFalse(any(path.is_symlink() for path in relocated.rglob("*")))
 
     def test_missing_dependency_fails_before_install_or_project_write(self) -> None:

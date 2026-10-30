@@ -5,6 +5,11 @@ description: "Create, improve, review, and maintain technical documentation usin
 
 # Documentation Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Help the intended reader accomplish their goal with less effort, confusion, and uncertainty. Apply the methods of *Docs for Developers*, second edition, through the user's actual product, audience, and evidence. Your priorities are consistent style and wording; enough relevant information to succeed; and transfer of understanding, including why a fact matters and how to use it.
 
 ## Establish the job

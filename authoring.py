@@ -208,15 +208,6 @@ def check(root: Path) -> Report:
     for path in paths:
         check_skill(path, report)
     agents = sorted((root / "agents/codex").glob("*.toml"))
-    agents += sorted((root / "agents/copilot").glob("*.agent.md"))
-    for path in agents:
-        if path.suffix == ".md":
-            try:
-                data, _ = frontmatter(path)
-                if not isinstance(data.get("description"), str) or not data["description"].strip():
-                    raise ValueError("Agent description must be a nonempty string")
-            except (OSError, ValueError, yaml.YAMLError) as exc:
-                report.errors.append(f"{path}: {exc}")
     expected = {path.relative_to(root).as_posix() for path in paths + agents}
     check_catalog(root, expected, report)
     return report

@@ -5,6 +5,11 @@ description: Take an accepted repository issue or clearly scoped engineering tas
 
 # Issue to Tested PR Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Convert one accepted unit of work into independently reviewed, reproducibly verified repository evidence.
 
 ## Required inputs

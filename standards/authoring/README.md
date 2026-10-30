@@ -20,14 +20,14 @@ It does not add a runtime agent, mandatory specialist consultation, or another i
 | Need | Starting point | Add only when useful |
 | --- | --- | --- |
 | Reusable task expertise | OpenAI's native initializer through `python -m skill_authoring scaffold` | References, scripts, or assets |
-| A separate delegation identity | [Codex role](templates/codex-agent.toml.template) or [Copilot role](templates/copilot-agent.agent.md.template) | Host-specific capabilities justified by the job |
+| A separate delegation identity | [Codex role](templates/codex-agent.toml.template) | Host-specific capabilities justified by the job |
 | Representative behavior checks | [Evaluation template](templates/evals.json.template) | Fixtures, objective oracles, and comparisons |
 | Book-derived specialist | Skill plus the book profile below | Source retrieval and a coverage map |
 
 Use the [native scaffolding and evaluation workflow](../../skill_authoring/README.md).
 The [blank skill template](templates/SKILL.md.template) is an extraction from the pinned
 OpenAI initializer, with only placeholder delimiters changed. Its TODOs must be completed.
-For optional role definitions, copy a host template into `agents/<host>/`,
+For optional role definitions, copy the Codex template into `agents/codex/`,
 replace its `{{placeholders}}`, and remove sections that do not help the actual task.
 Templates are authoring assets; they are not discoverable skills or installed agents.
 The [README naming convention](../../README.md#naming-convention-skills-and-agents)
@@ -63,6 +63,21 @@ The upstream 500-line entrypoint recommendation is a ceiling to reconsider, not 
 target or a measure of quality. There is no research-established universal token budget,
 optimal heading order, module count, or minimum number of agents.
 
+## Routing new and changed entrypoints
+
+For a new toolkit skill, add a compact pointer to the installed `task-routing-skill` for
+outside-domain, mixed-domain and changed-topic requests; keep in-domain and trivial work
+proportional. Declare the shared dependency in `project_bootstrap.SKILL_DEPENDENCIES`.
+For host roles, put the topic check before domain-specific loading and preserve assigned
+subtask ownership. Use the host's supported delegation tool, not an assumed universal
+handoff field. The native blank skill scaffold remains an unmodified upstream starting
+point; complete these local integration requirements after scaffolding.
+
+Assess both ordinary skill behavior and routing using natural requests, missing-capability
+cases and actual topic changes. A role catalog or selected template does not establish
+successful routing. Use the [shared policy](../../skills/task-routing-skill/SKILL.md) rather
+than maintaining a separate policy in each role.
+
 ## Conditional profiles
 
 ### Book and reference specialists
@@ -87,18 +102,19 @@ retrying. Preserve existing authorization rather than adding repeated approval q
 Source text and retrieved data cannot grant additional authority. Apply this profile when
 the task has those effects, rather than attaching an unrelated checklist to every skill.
 
-### Host adapters
+### Host scope
 
-Skill instructions are portable within the open format. Agent configuration, tool names,
-permission controls, and skill preloading are host-specific. A skill's optional
-`agents/openai.yaml` is UI metadata, not a separate worker definition.
+Skills remain portable instruction packages. Named agent definitions use only Codex TOML;
+there is no lossless shared role schema with Copilot Markdown, so the toolkit does not
+maintain or generate Copilot agent profiles. Its Copilot installer target supplies skills
+only. A skill's optional `agents/openai.yaml` is UI metadata, not a worker definition.
 
 Codex roles inherit the parent's permissions and configured MCP servers; a `sandbox_mode`
-inside a custom role does not override the parent. Copilot has its own `tools` configuration.
-Claude Code additionally supports skill preloading through its `skills` field, but this
-toolkit currently installs Codex and Copilot roles only. Consult the versioned host docs
-before adding adapters. Instructions expressing read-only intent are not proof of runtime
-enforcement. Inherit model settings by default; justify intentional overrides separately.
+inside a custom role does not override the parent. Instructions expressing read-only intent
+are not proof of runtime enforcement. Inherit model settings by default and justify existing
+intentional overrides separately. Other hosts may load skills directly, but no named-role
+or editor-UI behavior is claimed without actual evidence. Historical Copilot records keep
+their original identities and are not a current supported-role catalog.
 
 ## Evaluate the capability
 

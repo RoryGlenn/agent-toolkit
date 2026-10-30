@@ -5,6 +5,11 @@ description: Plan compatible schema, API, event, shard, and derived-state migrat
 
 # DDIA Migrate Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Use the shared [DDIA Skill](../ddia-skill/SKILL.md), then the
 [migrate procedure](../ddia-skill/references/workflows/migrate.md).
 Read only the topic references relevant to the actual requirement.

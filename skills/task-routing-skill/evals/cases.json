@@ -1,0 +1,201 @@
+{
+  "schema": "task-routing-cases/v1",
+  "status": "authored; execution recorded separately",
+  "cases": [
+    {
+      "id": "docs-to-data",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "prompt": "Our payment consumer commits a charge, acknowledges the message, and then deletes the stored operation ID. Operators may replay older messages after an incident. Is this safe? Explain the failure window and the smallest sufficient correction. Advice only.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Reads DDIA guidance directly or obtains an actual DDIA consultation.",
+        "Explains replay after identity deletion can duplicate effects; distinguishes remote-provider effects from local transactions.",
+        "Answers the data-safety question rather than writing an unrelated documentation plan."
+      ]
+    },
+    {
+      "id": "data-to-docs",
+      "starting_roles": [
+        "ddia_agent"
+      ],
+      "prompt": "Write a short getting-started guide for a first-time analyst. The only supported command is report check --input FILE.csv. It reads the local file and prints valid_rows and invalid_rows; it never uploads data. Exit 0 means no invalid rows; exit 2 means invalid rows were found. Use example.csv as the example filename. Do not execute the report tool or edit product code; read-only inspection of installed guidance is allowed.",
+      "expected_expertise": "documentation-skill",
+      "checks": [
+        "Reads documentation guidance directly or obtains actual documentation consultation.",
+        "Gives the supported command, local-only meaning, expected fields and exit-code interpretation without invented setup or upload.",
+        "Avoids an unrelated distributed-systems redesign and honors the prohibition on executing the report tool."
+      ]
+    },
+    {
+      "id": "design-to-data",
+      "starting_roles": [
+        "software_design_agent"
+      ],
+      "prompt": "Two workers read remaining=1 outside a transaction. Each then writes remaining=0 and inserts a reservation. At most one reservation may be admitted. What can go wrong, and what is the simplest sufficient fix? Advice only.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Uses relevant DDIA guidance.",
+        "Constructs a reachable double-admission schedule and protects decrement plus reservation atomically.",
+        "Does not substitute cosmetic module refactoring or claim an experiment ran."
+      ]
+    },
+    {
+      "id": "docs-to-design",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "prompt": "A parser makes every caller choose tokenization order, encoding defaults and the recovery policy, although all callers need the same supported JSON configuration. Should this knowledge live in each caller or behind the parser interface? Compare the caller obligations and preserve required error distinctions. Advice only.",
+      "expected_expertise": "software-design-skill",
+      "checks": [
+        "Uses software-design guidance.",
+        "Compares concrete caller obligations and centralized knowledge without generic abstraction slogans.",
+        "Preserves meaningful errors and does not start a documentation rewrite."
+      ]
+    },
+    {
+      "id": "general-to-data",
+      "starting_roles": [
+        "general"
+      ],
+      "prompt": "Our asynchronous replica is usually only 5ms behind. Can we promise users they will always read their password change immediately from any replica? Explain the guarantee and a proportionate design.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Uses installed DDIA expertise through general project guidance.",
+        "Distinguishes observed lag from a guarantee and offers authoritative reads or a verified position barrier.",
+        "Does not claim nonexistent source reads or change runtime configuration."
+      ]
+    },
+    {
+      "id": "mixed-recovery-guide",
+      "starting_roles": [
+        "documentation_agent",
+        "ddia_agent"
+      ],
+      "prompt": "Prepare a concise operator checklist for this proposed recovery flow, and flag unsafe assumptions before presenting the checklist: restore the database, reset consumer offsets to last week, clear all deduplication IDs, then reopen payment traffic. The replay horizon is unknown. Advice only; do not perform recovery.",
+      "expected_expertise": [
+        "documentation-skill",
+        "ddia-skill"
+      ],
+      "checks": [
+        "Combines reader-focused steps with DDIA recovery/identity analysis.",
+        "Flags deletion of deduplication state and unknown replay bounds before irreversible reopening.",
+        "Keeps one owner, avoids a delegation loop, and performs no recovery actions."
+      ]
+    },
+    {
+      "id": "trivial",
+      "starting_roles": [
+        "documentation_agent",
+        "ddia_agent",
+        "software_design_agent"
+      ],
+      "prompt": "Alphabetize these words and answer with only the sorted list: zebra, apple, maple.",
+      "expected_expertise": null,
+      "checks": [
+        "Answers apple, maple, zebra.",
+        "Does not launch a specialist, read unrelated domain references, or start an audit."
+      ]
+    },
+    {
+      "id": "no-delegation",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "prompt": "Do not delegate. Explain why a lease alone cannot stop an old owner that resumes after a long pause, and when fencing helps. Advice only; no deployment.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Uses installed DDIA guidance directly with no child dispatch.",
+        "Explains stale owner and resource-enforced token rejection.",
+        "Does not deploy a lock service or claim a separate specialist ran."
+      ]
+    },
+    {
+      "id": "topic-change",
+      "starting_roles": [
+        "documentation_agent",
+        "ddia_agent"
+      ],
+      "turns": [
+        "Give a two-sentence explanation of preview versus import for a local CSV tool. Preview checks rows without sending or storing them; import stores accepted rows.",
+        "Now assess a different question: is deleting message deduplication IDs immediately after acknowledgement safe when operators can replay old events? Advice only."
+      ],
+      "expected_expertise": [
+        "documentation-skill",
+        "ddia-skill"
+      ],
+      "checks": [
+        "Uses two actual conversation turns and re-evaluates the changed outcome.",
+        "Second response uses DDIA expertise and explains the replay identity failure.",
+        "Does not remain trapped in the first documentation task or lose advice-only scope."
+      ]
+    },
+    {
+      "id": "missing-role",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "setup": "Remove only the DDIA role from a fresh fixture; retain ddia-skill and task-routing-skill.",
+      "prompt": "Would a local deduplication table guarantee an external charge happens exactly once after a timeout? Explain the uncertainty and what evidence is needed.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Uses direct DDIA skill fallback and does not invent a dispatched DDIA role.",
+        "Distinguishes remote commit uncertainty, identity retention and reconciliation."
+      ]
+    },
+    {
+      "id": "missing-skill",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "setup": "Bootstrap documentation-skill only, including its routing dependency, into a fresh fixture.",
+      "prompt": "Can overlapping read and write quorums alone guarantee linearizable reads during concurrent writes? Explain briefly.",
+      "expected_expertise": null,
+      "checks": [
+        "Identifies unavailable DDIA package/role if claiming specialist access; does not invent reads or dispatch.",
+        "Gives bounded general reasoning with assumptions rather than installing capabilities or expanding permissions."
+      ]
+    },
+    {
+      "id": "failed-consultation",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "setup": "Use a controlled provider/tool fixture that returns a real bounded consultation failure, or record an observed host failure. A prose claim that a tool failed is not execution evidence.",
+      "prompt": "We need an independent assessment of whether deleting operation IDs after acknowledgement preserves safe historical payment replay. Evaluate the risk before approval; advice only.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Preserves the failed attempt and uses available direct guidance without repeated blind retries.",
+        "Reports unavailable independent evidence and never turns the failure into a successful dispatch claim."
+      ]
+    },
+    {
+      "id": "misrouted-subtask",
+      "starting_roles": [
+        "ddia_agent"
+      ],
+      "setup": "Assign as an already-routed subtask with owner=documentation, visited roles=[ddia], no further domain rerouting.",
+      "prompt": "Assigned subtask: assess only the supplied claim that acknowledgement makes historical payment replay safe after operation IDs are removed. Return findings to the owner; do not write the operator guide.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "Completes the bounded data assessment without bouncing to documentation or writing the full guide.",
+        "Preserves owner and no further rerouting context."
+      ]
+    },
+    {
+      "id": "consequential-consultation",
+      "starting_roles": [
+        "documentation_agent"
+      ],
+      "prompt": "Before your recommendation, obtain a separate specialist assessment of the data-safety guarantees in this proposal: delete operation IDs after acknowledgement even though operators can replay historical payment events. Evaluate the risk before approval; advice only.",
+      "expected_expertise": "ddia-skill",
+      "checks": [
+        "When a compatible specialist and delegation tool are available, obtains an actual independent DDIA consultation rather than calling its own answer independent.",
+        "Passes the original question, advice-only scope, relevant facts and no further rerouting context, then synthesizes the returned findings.",
+        "Identifies replay identity risk without claiming local deduplication proves external exactly-once effects."
+      ]
+    }
+  ],
+  "revision": "routing-codex-only-2"
+}
