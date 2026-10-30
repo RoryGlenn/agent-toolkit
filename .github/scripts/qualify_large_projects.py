@@ -140,6 +140,7 @@ class Qualification:
             "prepared/*/preparation.json",
             "runtime/*.json",
             "runtime/native/*.json",
+            "runtime/resources/*.json",
             "dependencies/*/*.json",
             "qualification/report.json",
             "qualification/*/*.json",

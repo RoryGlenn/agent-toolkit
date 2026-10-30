@@ -132,13 +132,20 @@ raise AssertionError('nested tmpfs bypassed the global backing-page bound')
             ["/usr/bin/python3", "-I", "-B", "-c", script, str(cell.root)], timeout=20
         )
         events = cell.events()
-        if executed.returncode != 137 or events["oom_kill"] < 1:
-            raise ValueError("nested allocated-storage control did not hit its memory cgroup")
-        result["nested_tmpfs"] = {
-            "status": "passed",
+        passed = executed.returncode == 137 and events["oom_kill"] >= 1
+        nested = {
+            "status": "passed" if passed else "failed",
             "execution": executed.to_dict(),
             "events": events,
         }
+        write_json(root / "nested-tmpfs.json", nested)
+        if not passed:
+            raise ValueError(
+                "nested allocated-storage control did not hit its memory cgroup: "
+                f"returncode={executed.returncode}, memory.events={events}, "
+                f"stderr={executed.stderr[-2000:]!r}; see nested-tmpfs.json"
+            )
+        result["nested_tmpfs"] = nested
     # A private named tmpfs volume must expose stable nonempty bytes while *paused*.
     with ResourceCell(root / "freeze", limits, owner=owner, deadline=deadline) as cell:
         require(
