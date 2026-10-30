@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Assess Skill"
+  short_description: "DDIA assess: evidence and engineering decisions"
+  default_prompt: "Use $ddia-assess-skill for this data-system task."

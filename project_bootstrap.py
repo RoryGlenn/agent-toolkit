@@ -27,6 +27,8 @@ DEFAULT_SKILLS = (
     "release-and-docs-skill",
     "simplify-or-delete-skill",
 )
+DDIA_WORKFLOWS = ("assess", "design", "review", "validate", "migrate", "operate", "explain")
+SKILL_DEPENDENCIES = {f"ddia-{mode}-skill": ("ddia-skill",) for mode in DDIA_WORKFLOWS}
 HOST_DIRECTORIES = {"codex": ".codex/agents", "copilot": ".github/agents"}
 INHERITED_SETTINGS = {"model", "model_reasoning_effort", "sandbox_mode"}
 ROUTES = {
@@ -37,9 +39,53 @@ ROUTES = {
     "issue-to-tested-pr-skill": "Accepted nontrivial implementation, fixes, and refactoring",
     "release-and-docs-skill": "Release, package, and documentation verification",
     "simplify-or-delete-skill": "Evidence-backed reduction of unnecessary complexity",
-    "book-to-agent-skill": "Create or improve a skill or agent grounded in a supplied book",
-    "recruiter-followup-skill": "Requested recruiter triage and follow-up",
 }
+ROUTES.update(
+    {
+        f"ddia-{mode}-skill": purpose
+        for mode, purpose in zip(
+            DDIA_WORKFLOWS,
+            (
+                "Assess whether a proposed data mechanism is necessary",
+                "Design data architecture from workload and invariants",
+                "Review consequential data-system changes and generated rules",
+                "Validate data invariants under concurrency and failures",
+                "Migrate schemas, data, and derived state compatibly",
+                "Operate data systems, overload response, and recovery",
+                "Explain DDIA concepts through the current project",
+            ),
+            strict=True,
+        )
+    }
+)
+
+
+def resolve_skills(skills: list[str], available: dict[str, str]) -> list[str]:
+    """Include shared resources required by selected, independently callable skills.
+
+    Parameters
+    ----------
+    skills : list of str
+        Canonical names requested by the caller.
+    available : dict of str to str
+        Validated package inventory.
+
+    Returns
+    -------
+    list of str
+        Sorted dependency closure; unknown and missing dependencies are rejected.
+    """
+    selected = set(skills)
+    pending = list(selected)
+    while pending:
+        name = pending.pop()
+        if name not in available:
+            raise BootstrapError(f"Unknown or missing required skill: {name}")
+        for dependency in SKILL_DEPENDENCIES.get(name, ()):
+            if dependency not in selected:
+                selected.add(dependency)
+                pending.append(dependency)
+    return sorted(selected)
 
 
 class BootstrapError(ValueError):
@@ -115,6 +161,21 @@ def instruction_block(skills: list[str]) -> bytes:
     for skill in skills:
         purpose = ROUTES.get(skill, "Use when the skill's stated task applies")
         lines.append(f"- {purpose}: [{skill}](.agents/skills/{skill}/SKILL.md).")
+    if "ddia-skill" in skills:
+        lines.extend(
+            [
+                "",
+                "During project design or consequential changes to data ownership, schemas,",
+                "transactions, replication, messaging, processing, or recovery, use ddia-skill",
+                "to identify applicable invariants and the simplest sufficient design.",
+                "Its references/workflows provide assess, design, review, validate, migrate,",
+                "operate, and explain procedures; load only the relevant procedure and topics.",
+                "Record agreed data contracts and decision evidence in existing project docs,",
+                "using its assets only when useful. Changes to prose or UI alone need no DDIA",
+                "review. Advice is not a mandatory gate; executable checks enforce explicitly",
+                "agreed requirements. The project owner retains implementation authority.",
+            ]
+        )
     lines.extend(
         [
             "",
@@ -396,8 +457,11 @@ def bootstrap(
     )
     if update and previous is None:
         raise BootstrapError("--update requires an existing project toolkit manifest.")
-    selected = sorted(
-        set(skills if skills is not None else (previous["skills"] if previous else DEFAULT_SKILLS))
+    selected = resolve_skills(
+        list(
+            skills if skills is not None else (previous["skills"] if previous else DEFAULT_SKILLS)
+        ),
+        available,
     )
     hosts = (
         sorted(HOST_DIRECTORIES if target == "both" else [target])

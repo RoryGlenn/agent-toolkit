@@ -1,0 +1,665 @@
+{
+  "schema": "ddia-evaluation-cases/v1",
+  "limits": "Public constructed cases, not held-out tasks or evidence of agent effectiveness. Grade semantic requirements with evidence, never keywords.",
+  "cases": [
+    {
+      "id": "chapter-01",
+      "title": "A two-engine proposal",
+      "chapters": [
+        1
+      ],
+      "concepts": [
+        "workload-separation",
+        "authority-derived",
+        "cloud-operations",
+        "distribution-necessity",
+        "service-boundaries"
+      ],
+      "prompt": "A two-person team runs one PostgreSQL application with 10 writes/minute and a 200-row nightly report. No capacity or latency problem is observed. A proposal splits it into six serverless services, a lake, queue and search index. Customer corrections currently enter the index alone. Assess the proposal, authority, operating costs and evidence needed to revisit your recommendation. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Protect authoritative corrections and explain rebuild ownership.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Choose a sufficient simple baseline without speculative distribution.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Compare operational/query needs and managed/self-hosted costs without vendor assumptions.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Give a concrete failure/measurement and a revisit trigger.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-02",
+      "title": "A misleading reliability dashboard",
+      "chapters": [
+        2
+      ],
+      "concepts": [
+        "load-shape",
+        "performance-objectives",
+        "overload",
+        "reliability-recovery",
+        "maintainability"
+      ],
+      "prompt": "A service aggregates each host p99 by averaging, sizes fan-out from mean follower count, and retries three times in each layer. Its queue has no bound and does not drain after a peak. Three replicas are presented as proof of 15-minute recovery-point and four-hour restoration objectives. Review these claims and propose proportionate verification. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Identify invalid percentile aggregation and skew/tail effects.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Analyze retry/queue overload and recovery rather than merely increase capacity.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Separate replication from demonstrated restore and fault model.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Specify measurable objectives, operator actions and falsifying experiments.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-03",
+      "title": "Representing changing relationships",
+      "chapters": [
+        3
+      ],
+      "concepts": [
+        "aggregate-models",
+        "denormalization",
+        "graph-queries",
+        "event-models",
+        "analytical-shapes"
+      ],
+      "prompt": "A group application embeds shared organization names into every user document, models arbitrary membership traversal through one-hop GraphQL resolvers, and joins ML features to labels by row position after sorting one side. It also proposes event sourcing for simple CRUD. Analytics need historical organization region. Recommend representations and tests. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Tie relations/documents/graphs/API behavior to actual relationships and access patterns.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Define duplicate-fact repair and historical analytical dimensions.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Preserve keyed alignment in DataFrame/array conversion.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Assess event-sourcing need and demonstrate meaningful query/correctness tests.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-04",
+      "title": "Choosing indexes from demos",
+      "chapters": [
+        4
+      ],
+      "concepts": [
+        "storage-engines",
+        "indexes",
+        "columnar",
+        "search-indexes",
+        "vector-search"
+      ],
+      "prompt": "A platform chooses an LSM engine from a ten-second ingestion demo before compaction. It adds separate indexes for each query column, moves single-row operational updates into a columnar warehouse and selects ANN search from an unfiltered latency demo. Search must honor tenant permissions. Review the evidence and propose a benchmark plan. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Evaluate steady-state engine amplification, durability and headroom.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Inspect actual composite/covering query plans and operational/analytical shape.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Measure filtered ANN recall against an exact baseline and distinguish relevance from truth.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Include search permission/deletion freshness and representative workload controls.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-05",
+      "title": "A mixed-version rollout",
+      "chapters": [
+        5
+      ],
+      "concepts": [
+        "compatibility",
+        "encoding-types",
+        "schema-formats",
+        "rpc-outcomes",
+        "durable-workflows"
+      ],
+      "prompt": "Old clients read records and rewrite only fields they understand. New records add a privacy flag and a 64-bit numeric ID; one JavaScript consumer uses numbers. A Protobuf tag is reassigned and archived Avro writer schemas are deleted. A long-running workflow gains a random branch and retries an externally committed timed-out activity with a new ID. Plan the review and rollout. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Build writer-reader/archive/rollback matrix and preserve unknown fields.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Catch numeric fidelity, tag reuse and writer-schema retention.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Separate deterministic workflow replay/versioning from external effect identity.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Give staged compatibility and failure experiments using actual relevant tools.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-06",
+      "title": "A multi-region read/write policy",
+      "chapters": [
+        6
+      ],
+      "concepts": [
+        "replication-durability",
+        "replication-reads",
+        "multi-leader-sync",
+        "conflict-resolution",
+        "leaderless-quorums"
+      ],
+      "prompt": "An asynchronous follower can be promoted without checking its log position. Reads after security changes go to arbitrary replicas. Offline clients merge concurrent inventory values by wall-clock last-write-wins. A leaderless path claims linearizability from w+r>n. Backups are omitted because replicas exist. Analyze stated and achievable guarantees. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Trace acknowledged-write loss, follower bootstrap and recovery.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Address session/causal reads and acceptable staleness.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Separate offline convergence/conflict resolution from inventory safety.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Reject unsupported quorum/backup claims with concrete histories and proportional alternatives.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-07",
+      "title": "Changing the partition map",
+      "chapters": [
+        7
+      ],
+      "concepts": [
+        "sharding-need",
+        "shard-keys",
+        "hotspots",
+        "rebalancing",
+        "distributed-indexes"
+      ],
+      "prompt": "A tenant store partitions by current timestamp for writes, adds nodes with hash(key)%node_count, and immediately routes clients to the new mapping. One tenant dominates traffic and one hot counter cannot be split. Each shard has a local unique-email index, advertised as global uniqueness. Plan a sufficient correction and transition. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Distinguish sharding need and tenant/key skew from replication.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Account for key-locality, hot-key and modulo-remapping effects.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Specify copy/catch-up/ownership cutover, stale routing and headroom.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Separate local/global index lookup and global uniqueness enforcement.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-08",
+      "title": "Reviewing transactional boundaries",
+      "chapters": [
+        8
+      ],
+      "concepts": [
+        "transaction-boundaries",
+        "isolation-anomalies",
+        "write-skew",
+        "distributed-transactions",
+        "message-atomicity"
+      ],
+      "prompt": "Capacity starts at one. Workers read it, then independently write zero and insert admissions in transactions. A second path uses conditional decrement plus admission insert in one transaction and checks rowcount. A predicate rule uses snapshot isolation with disjoint row writes. A proposal calls 2PL the same as 2PC. Processed message IDs are deleted after ack despite later replay. Review both paths and claims. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Find the reachable lost-update violation and recognize the correct conditional-update control.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Analyze predicate write skew/phantoms and actual engine isolation/retry.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Distinguish 2PL/2PC, multi-object scope and in-doubt recovery.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Trace message identity/effect/ack/retention with local versus external limits.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-09",
+      "title": "A lease and test claim",
+      "chapters": [
+        9
+      ],
+      "concepts": [
+        "ambiguous-failure",
+        "clock-assumptions",
+        "leases-fencing",
+        "failure-models",
+        "formal-testing"
+      ],
+      "prompt": "Worker A checks a lease, pauses, and writes after B acquires a later lease and writes. The resource accepts both. Timeouts are treated as proof an RPC did nothing, and wall time controls elapsed deadlines. The team calls seeded random test ordering deterministic simulation and says it proved all possible failures absent. Review using a stated failure model. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Construct stale-owner failure and require resource-enforced fencing.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Distinguish unknown remote outcomes, monotonic duration and global time uncertainty.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "State safety/liveness and fault/trust assumptions without universal progress claims.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Bound proof/testing claims and control replayable nondeterminism appropriately.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-10",
+      "title": "The ordering contract",
+      "chapters": [
+        10
+      ],
+      "concepts": [
+        "consistency-contracts",
+        "partition-tradeoffs",
+        "logical-identities",
+        "consensus-mechanisms",
+        "coordination-use"
+      ],
+      "prompt": "A design conflates serializable transactions with fresh cache reads. Random unique IDs determine privacy-update/content order. Independent regions each sell the final item during a partition while promising global no-oversell. Membership is replaced independently on nodes and a discovery watch is treated as permanent write ownership. Propose explicit contracts and tests. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Separate linearizability, serializability and real-time/causal ordering.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Identify incompatible partition-local acceptance and shared scarcity; offer explicit tradeoffs.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Distinguish identity/order requirements and safe consensus membership behavior.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Trace stale discovery/ownership and cross-channel history with proportional remedies.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-11",
+      "title": "Reproducible batch output",
+      "chapters": [
+        11
+      ],
+      "concepts": [
+        "batch-baseline",
+        "batch-storage",
+        "batch-orchestration",
+        "batch-dataflow",
+        "derived-publication"
+      ],
+      "prompt": "A daily 50MB job is assigned a cluster by default. It reads a changing object prefix and calls dictionary aggregation constant-memory. A dimension is broadcast from an average-size estimate. Retried attempts append results to live output, and partitions are published one by one. Some output trains a model using future labels. Design a bounded reproducible pipeline. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Evaluate sufficient local processing, cardinality memory and shuffle/join skew.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Pin object/input/code versions and actual storage semantics.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Separate resource/dependency scheduling, retry identity and complete publication.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Validate semantic outputs and ML lineage/leakage with fault controls.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-12",
+      "title": "A stream rebuild",
+      "chapters": [
+        12
+      ],
+      "concepts": [
+        "stream-delivery",
+        "cdc-handoff",
+        "stream-history",
+        "stream-time-joins",
+        "stream-recovery"
+      ],
+      "prompt": "A consumer falls behind log retention. Database-to-index writes are independent. Initial CDC snapshot has no log boundary. Replay enriches old invoices from compacted current tax values. Processing-midnight closes event-time windows, late events vanish, and input offsets commit before sink effects. Analyze queue/log, join/window and recovery semantics. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Specify retention, lag, fan-out/order and snapshot-log handoff.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Eliminate unsupported dual-write atomicity and distinguish events/CDC/compaction history.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Define event-time windows, lateness and historical stream/table join inputs.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Trace checkpoint/effect/offset boundaries with actual sink and replay scope.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-13",
+      "title": "Composing dataflow",
+      "chapters": [
+        13
+      ],
+      "concepts": [
+        "derived-dag",
+        "reprocessing-evolution",
+        "dataflow-clients",
+        "end-to-end-identity",
+        "integrity-audit"
+      ],
+      "prompt": "Two writable databases synchronize bidirectionally without conflict ownership. A replay of new derivation code writes directly to a live payment sink. Offline subscriptions resume from expired offsets. The same request ID with different transfer payload returns prior success. A hard overdraft limit is relaxed and called eventually equivalent after refunds. Review integration, evolution and correctness. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Define authoritative-derived DAG and required causal dependencies; consider integrated baseline.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Isolate versioned reprocessing/cutover and handle offline resnapshot/permissions.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Bind business intent identity to payload and trace external effects.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Separate immediate constraints from eventual integrity, timeliness and auditable repair.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "chapter-14",
+      "title": "A consequential scoring system",
+      "chapters": [
+        14
+      ],
+      "concepts": [
+        "human-purpose",
+        "bias-feedback",
+        "accountability",
+        "privacy-lifecycle",
+        "law-society"
+      ],
+      "prompt": "An application retains precise location forever for possible future scoring. It trains on only previously approved users and reports aggregate accuracy. A consent checkbox is mandatory to receive an essential service. Appeals reread the same uncorrected record. Deleting a profile leaves search exports and rebuildable logs; backups can restore it. The team declares compliance from encryption alone. Return a concrete recommendation/findings, necessary assumptions and a falsification plan. Identify correct existing protections where present. Do not invent workload, deployment guarantees or acceptable business tradeoffs.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Evaluate purpose, proportional collection, power and meaningful choice.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Analyze selection bias, subgroup error and feedback effects.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Provide accountable correction/appeal and propagate corrected outcomes.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Trace deletion/retention through copies/restores and distinguish technical evidence from current legal determination.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-review",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "harmless-retry",
+      "title": "Harmless Retry",
+      "chapters": [
+        1,
+        5
+      ],
+      "concepts": [
+        "distribution-necessity",
+        "rpc-outcomes",
+        "durable-workflows"
+      ],
+      "prompt": "A nightly script regenerates a local report by replacing one output file. Inputs are fixed. Repetition has no external effect or cost concern, failure is visible, and a retry the next day is acceptable. Should we introduce a durable workflow, distributed lock and permanent deduplication store? Explain what evidence would change your answer.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Accept the repeatable existing operation without inventing a critical invariant.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Avoid unnecessary coordination/durability infrastructure.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Identify limited observable checks or a concrete revisit trigger.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "State boundaries without absolute exactly-once claims.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-control",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "cosmetic-change",
+      "title": "Cosmetic Change",
+      "chapters": [
+        1,
+        2
+      ],
+      "concepts": [
+        "maintainability",
+        "service-boundaries"
+      ],
+      "prompt": "The only diff renames a button from Save to Save changes. It changes no event handler, schema, access rule or data path. The project asks whether a DDIA review or architecture record is required.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Recognize no consequential data change.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Avoid a mandatory DDIA panel or architecture document.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Keep the response proportionate.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "State scope without inventing unobserved implementation defects.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-control",
+      "status": "authored-not-run"
+    },
+    {
+      "id": "correct-admission",
+      "title": "Correct Admission",
+      "chapters": [
+        1,
+        8
+      ],
+      "concepts": [
+        "isolation-anomalies",
+        "transaction-boundaries",
+        "distribution-necessity"
+      ],
+      "prompt": "The supported SQLite service uses UPDATE stock SET remaining=remaining-1 WHERE sku=? AND remaining>0; checks rowcount; and inserts admission in the same transaction. Failed inserts roll back. Business requirements explicitly permit repeat customer requests and require only total admissions never exceed initial stock. Review whether an extra distributed lock or deduplication service is needed.",
+      "criteria": [
+        {
+          "id": "c1",
+          "requirement": "Recognize atomic conditional update plus related commit protects stated capacity.",
+          "max_score": 2
+        },
+        {
+          "id": "c2",
+          "requirement": "Do not invent a business-idempotency requirement explicitly excluded.",
+          "max_score": 2
+        },
+        {
+          "id": "c3",
+          "requirement": "Avoid an unnecessary distributed lock/service.",
+          "max_score": 2
+        },
+        {
+          "id": "c4",
+          "requirement": "Offer a relevant rollback/concurrency check without claiming PostgreSQL/distributed guarantees.",
+          "max_score": 2
+        }
+      ],
+      "evidence_kind": "reasoning-control",
+      "status": "authored-not-run"
+    }
+  ]
+}

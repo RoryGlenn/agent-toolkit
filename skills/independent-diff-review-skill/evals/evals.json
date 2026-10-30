@@ -1,0 +1,38 @@
+{
+  "skill_name": "independent-diff-review-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this change, advice only. Contract: a user may read only their own tenant records. Before: SELECT body FROM records WHERE tenant_id=? AND id=?. After: SELECT body FROM records WHERE id=?. The author says record IDs are usually unique. No executable repository or delegation tools are supplied.",
+      "expected_output": "A concrete authorization finding with honest static-only verification limits.",
+      "files": [],
+      "expectations": [
+        "Identifies cross-tenant disclosure when IDs collide or another tenant ID is requested.",
+        "Anchors the finding to the removed tenant predicate and recommends preserving authorization.",
+        "Discloses absent execution and independent delegation rather than claiming tests or agents ran."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Explain the difference between a branch and a commit in two sentences.",
+      "expected_output": "A short explanation, without a diff-review process.",
+      "files": [],
+      "expectations": [
+        "Explains branch and commit correctly.",
+        "Does not invent a diff or start independent review."
+      ],
+      "invocation": "implicit"
+    },
+    {
+      "id": 3,
+      "prompt": "Review this change, advice only. Contract: a user may read only their own tenant records. The query remains SELECT body FROM records WHERE tenant_id=? AND id=? using bound parameters and authenticated tenant identity. Only a local variable name changed. No tests or delegation tools are available.",
+      "expected_output": "No invented defect; scope and unverified checks stated.",
+      "files": [],
+      "expectations": [
+        "Does not invent a tenant-isolation or injection defect from the supplied correct query.",
+        "Reports the inspected scope and unavailable tests/delegation honestly.",
+        "Does not edit or broaden into unrelated architecture."
+      ]
+    }
+  ]
+}

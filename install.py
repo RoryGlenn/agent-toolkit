@@ -23,6 +23,13 @@ AGENTS = {
     "codex": {
         "documentation-skill": ["documentation-agent.toml"],
         "ddia-skill": ["ddia-agent.toml"],
+        "ddia-assess-skill": ["ddia-agent.toml"],
+        "ddia-design-skill": ["ddia-agent.toml"],
+        "ddia-review-skill": ["ddia-agent.toml"],
+        "ddia-validate-skill": ["ddia-agent.toml"],
+        "ddia-migrate-skill": ["ddia-agent.toml"],
+        "ddia-operate-skill": ["ddia-agent.toml"],
+        "ddia-explain-skill": ["ddia-agent.toml"],
         "software-design-skill": ["software-design-agent.toml"],
         "independent-diff-review-skill": ["adversarial-reviewer-agent.toml", "verifier-agent.toml"],
         "issue-to-tested-pr-skill": [
@@ -37,12 +44,10 @@ SKILL_ALIASES = {
     "doc-agent": "documentation-skill",
     "ddia-specialist": "ddia-skill",
     "software-design-specialist": "software-design-skill",
-    "book-to-agent": "book-to-agent-skill",
     "independent-diff-review": "independent-diff-review-skill",
     "issue-to-tested-pr": "issue-to-tested-pr-skill",
     "release-and-docs": "release-and-docs-skill",
     "simplify-or-delete": "simplify-or-delete-skill",
-    "recruiter-followup": "recruiter-followup-skill",
 }
 AGENT_ALIASES = {
     "codex": {
@@ -272,6 +277,12 @@ def plan_install(
     unknown = sorted(set(skills) - available.keys())
     if unknown:
         raise InstallError(f"Unknown skills: {', '.join(unknown)}")
+    from project_bootstrap import BootstrapError, resolve_skills
+
+    try:
+        skills = resolve_skills(skills, available)
+    except BootstrapError as error:
+        raise InstallError(str(error)) from error
     candidates = []
     for name in skills:
         candidates.append(Entry(f"{target}-skills", name, root / "skills" / name))

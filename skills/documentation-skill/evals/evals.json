@@ -1,0 +1,44 @@
+{
+  "skill_name": "documentation-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a getting-started guide under 450 words for a support analyst validating their first contact file with Roster. They can open a terminal but are new to Roster. Use the supplied notes, implementation and sample. Save outputs/guide.md. Run safe relevant checks and report actual results.",
+      "expected_output": "A usable accurate guide matching the supplied implementation, with observed sample behavior and no invented upload features.",
+      "files": [
+        "evals/draft/notes.md",
+        "evals/draft/roster.py",
+        "evals/draft/sample.csv"
+      ],
+      "expectations": [
+        "Guide uses supported --input and --preview commands and explains preview versus import.",
+        "Guide matches actual observed sample results and supplies a meaningful success condition.",
+        "Guide stays within 450 words and does not claim upload or deliverability checking exists."
+      ]
+    },
+    {
+      "id": 2,
+      "invocation": "implicit",
+      "prompt": "Translate the sentence \"The file is ready.\" into Spanish. Save only the translated sentence in outputs/translation.txt.",
+      "expected_output": "A correct short Spanish translation without a documentation workflow.",
+      "files": [],
+      "expectations": [
+        "The deliverable is a correct Spanish translation of the supplied sentence.",
+        "No documentation environment audit, source research, specialist delegation or unrelated deliverables are introduced."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write a concise complete reference for POST /pulse from evals/reference-contract.md. Save outputs/reference.md. The contract is the sole product evidence; do not invent unspecified authentication or limits.",
+      "expected_output": "Complete accurate parameter/response/error reference with unspecified facts left unspecified.",
+      "files": [
+        "evals/reference-contract.md"
+      ],
+      "expectations": [
+        "All four contract parameters and their supported type, required/default and range details are represented.",
+        "Success and error behavior match the supplied contract.",
+        "No unsupported authentication mechanism or unspecified parameter constraint is invented."
+      ]
+    }
+  ]
+}

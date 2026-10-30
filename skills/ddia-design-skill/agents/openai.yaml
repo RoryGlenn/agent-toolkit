@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Design Skill"
+  short_description: "DDIA design: evidence and engineering decisions"
+  default_prompt: "Use $ddia-design-skill for this data-system task."
