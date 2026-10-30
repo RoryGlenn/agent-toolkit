@@ -95,3 +95,12 @@ The earlier local four-task comparison tied baseline and specialist at 32/32. It
 source traceability, not better correctness. Preserve that result rather than treating this
 expanded corpus or fixture success as evidence of improvement. New measured trials belong
 in separately versioned evidence with exact input fingerprints, methods and limits.
+
+## Issue 8 forward reasoning pilot
+
+The [preserved one-trial pilot](pilots/issue-8/README.md) scored baseline 40/40,
+pre-redesign specialist 39/40, and redesigned specialist 40/40. It found a narrow completeness
+omission in the pre-redesign response and no demonstrated improvement over baseline. Raw
+requests, rubric, responses, source/snapshot fingerprints and independent scoring are included.
+This four-scenario bundled-response pilot is separate from the seventeen public suite cases;
+its partial blinding and unenforced tool/isolation controls limit the result.

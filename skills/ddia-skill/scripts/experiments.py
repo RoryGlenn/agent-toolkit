@@ -8,6 +8,7 @@ import json
 import sqlite3
 import tempfile
 import threading
+from contextlib import closing
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +17,7 @@ def admission(atomic: bool) -> dict[str, Any]:
     """Exercise two admissions against one unit using actual SQLite transactions."""
     with tempfile.TemporaryDirectory(prefix="ddia-admission-") as temporary:
         database = Path(temporary) / "inventory.sqlite"
-        with sqlite3.connect(database) as connection:
+        with closing(sqlite3.connect(database)) as connection, connection:
             connection.executescript(
                 "CREATE TABLE stock (remaining INTEGER NOT NULL); INSERT INTO stock VALUES (1);"
                 "CREATE TABLE admissions (identity TEXT PRIMARY KEY);"
@@ -52,7 +53,7 @@ def admission(atomic: bool) -> dict[str, Any]:
             thread.join(timeout=15)
         if errors or any(thread.is_alive() for thread in workers):
             raise RuntimeError(f"Admission experiment could not complete: {errors}")
-        with sqlite3.connect(database) as connection:
+        with closing(sqlite3.connect(database)) as connection:
             count = int(connection.execute("SELECT count(*) FROM admissions").fetchone()[0])
             remaining = int(connection.execute("SELECT remaining FROM stock").fetchone()[0])
         return {"admitted": count, "remaining": remaining, "invariant": count <= 1}

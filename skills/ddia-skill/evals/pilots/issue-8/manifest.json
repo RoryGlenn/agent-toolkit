@@ -1,0 +1,39 @@
+{
+  "schema": "ddia-forward-pilot/v1",
+  "created_at": "2026-10-30T00:03:20.284497+00:00",
+  "base_commit": "9d89ddc21b3955cf71320f81dfaa99c8d3d39ed8",
+  "model_control": "Same inherited model and reasoning settings; no override",
+  "trials_per_arm": 1,
+  "limits": [
+    "Author-created cases",
+    "Reasoning only",
+    "No production correctness or superiority claim",
+    "Four scenarios answered together in one response per arm",
+    "Response word limit matched; tool budget and host isolation were instructions, not enforced controls",
+    "No demonstrated improvement over baseline"
+  ],
+  "files": {
+    "requests.txt": "3d3e4233a597363dbbd1543b626f0eb4e1be2c42333b2e2ca1701d2ac8c6ae70",
+    "rubric.json": "0e42d0f75533cba2be38aeb860d1aef643446e086bc9d8e4df6a2ad628e6852b",
+    "independent-comparison.md": "2fa75d5008c09ea52414ce63a861f5ef2a3917b70fc81f8166035ecc55188a01",
+    "baseline.md": "98daa7a6891aa26d19ea23284a8a5769e5c7c869ca40ade63f7f4b32a11741f5",
+    "current.md": "976a7cde7c882f9bdb336d5980eba7291883ee150f9a25395fe6dab38732fe8c",
+    "independent-scores.json": "5cebe78830d869f5a1053ed0a47337c953a5e10fe09f8f1b053f9f409f1ec8d3",
+    "redesigned.md": "8e05a110ddb909287e7a767f484c0deb9a9e1ccf9366023299d99a1481e42e62"
+  },
+  "specialist_source_sha256": "c9b9e0c506024fcd0a73d0428fe9e8f307ba84cf54fbac8de433d72d91acc3d6",
+  "specialist_index_sha256": "83db822d4d68171fd9145be4d5eadb1d32cff2e0e38a8ab2a6690e72ccd9d112",
+  "redesigned_tree": "5c871972fde608a5ed26239fe7c0090dbc962e19",
+  "partial_blinding": "Arbitrary response labels; citations can reveal source access. Judge does not receive arm mapping.",
+  "arm_labels": {
+    "baseline": "Cedar",
+    "current": "Maple",
+    "redesigned": "Birch"
+  },
+  "scores": {
+    "baseline": 40,
+    "current": 39,
+    "redesigned": 40,
+    "maximum": 40
+  }
+}

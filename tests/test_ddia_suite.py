@@ -7,10 +7,13 @@ import importlib.util
 import io
 import json
 import shutil
+import sqlite3
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 from types import ModuleType
+from unittest.mock import patch
 
 import install
 import project_bootstrap
@@ -154,6 +157,24 @@ class DDIASuiteTests(unittest.TestCase):
                 result = experiments.run(name)
                 self.assertFalse(result["broken"]["invariant"])
                 self.assertTrue(result["sufficient"]["invariant"])
+
+    def test_admission_closes_setup_and_readback_connections(self) -> None:
+        """Repeated experiments release database handles outside transaction context scope."""
+        connect = sqlite3.connect
+        opened: list[sqlite3.Connection] = []
+
+        def track(database: Path, timeout: float = 5.0) -> sqlite3.Connection:
+            connection = connect(database, timeout=timeout)
+            if threading.current_thread() is threading.main_thread():
+                opened.append(connection)
+            return connection
+
+        with patch.object(experiments.sqlite3, "connect", side_effect=track):
+            experiments.run("atomic-admission")
+        self.assertTrue(opened)
+        for connection in opened:
+            with self.assertRaisesRegex(sqlite3.ProgrammingError, "closed database"):
+                connection.execute("SELECT 1")
 
     def make_plan(self) -> tuple[Path, dict[str, object]]:
         """Freeze a small repeated comparison from an explicit current package."""
