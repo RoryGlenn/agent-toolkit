@@ -3,7 +3,8 @@
 This is the historical pre-integration record for commit `4fa5d4e`. Its results and remaining-work
 list describe that revision, including the then-unimplemented integrated pipeline and native
 preflight failure. They are not current integrated-runner qualification or a report on later
-macOS repairs. The original JSON evidence remains unchanged.
+macOS repairs. The original JSON evidence remains unchanged. See the
+[current integrated verification record](integrated-2026-10-30.md) for later checks and blockers.
 
 This record supports the curator adapters, not completion of issue #5 or a model comparison.
 `linux-summary.json` contains sanitized exact commands, environment choices, source/test/runner

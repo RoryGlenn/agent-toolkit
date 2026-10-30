@@ -3,9 +3,10 @@
 The four public historical regressions for [issue #5](https://github.com/RoryGlenn/agent-toolkit/issues/5)
 extend the existing benchmark CLI, arm staging, native budgets, frozen artifacts and reports.
 This directory is **curator material containing answers**. It must never be mounted in an
-actor cell. No comparison study has been run. The archived [curator verification record](verification/README.md)
-states which pre-integration gates executed at `4fa5d4e`; it does not qualify the current integrated
-runner. Unavailable gates do not establish readiness.
+actor cell. No comparison study has been run. The [current integrated verification record](verification/integrated-2026-10-30.md)
+reports **unqualified**: the tested Linux host denied the required nested tmpfs mount before native
+and case qualification. The [archived curator record](verification/README.md) describes only
+pre-integration gates at `4fa5d4e`. Unavailable gates do not establish readiness.
 
 `catalog.json` pins the untouched parent, reference revision, digest of the upstream test-only
 patch, symptom task and known limitations. `prepare.py` reconstructs the curator worktrees

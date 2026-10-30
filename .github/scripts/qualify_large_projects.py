@@ -152,8 +152,14 @@ class Qualification:
                 if source.is_symlink() or not source.is_file():
                     raise ValueError(f"unsafe receipt: {source}")
                 relative = source.relative_to(self.root)
-                self.save(self.evidence / "receipts" / relative, json.loads(source.read_text()))
-                index[str(relative)] = {"sha256": sha(source), "bytes": source.stat().st_size}
+                exported = self.evidence / "receipts" / relative
+                self.save(exported, json.loads(source.read_text()))
+                index[str(relative)] = {
+                    "source_sha256": sha(source),
+                    "source_bytes": source.stat().st_size,
+                    "exported_sha256": sha(exported),
+                    "exported_bytes": exported.stat().st_size,
+                }
         self.save(self.evidence / "receipt-index.json", index)
 
 
