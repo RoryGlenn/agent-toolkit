@@ -1,0 +1,150 @@
+{
+  "schema": "agent-toolkit-authoring/v1",
+  "standard_version": "1.0.0-proposed",
+  "artifacts": [
+    {
+      "path": "skills/book-to-agent-skill/SKILL.md",
+      "basis": "Source-study and validation workflow; authoring standard T01-T06.",
+      "evidence": [
+        "skills/book-to-agent-skill/references/source-study-and-validation.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Exercise a supplied-book build and a missing-source case with independent review of attribution and coverage."
+    },
+    {
+      "path": "skills/ddia-skill/SKILL.md",
+      "basis": "DDIA Second Edition synthesis, local source retrieval, and data-system decision workflow.",
+      "evidence": [
+        "tests/test_ddia_book.py",
+        "benchmarks/README.md",
+        "benchmarks/cases.py"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Run matched DDIA cases and a correct-design negative control; inspect actual source reads and named-role events."
+    },
+    {
+      "path": "skills/documentation-skill/SKILL.md",
+      "basis": "Docs for Developers synthesis and reader task success.",
+      "evidence": [
+        "skills/documentation-skill/evals/README.md",
+        "tests/test_environment.py",
+        "benchmarks/README.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Exercise a fresh-reader task and a factual-review case; record human clarity review separately from executed examples."
+    },
+    {
+      "path": "skills/independent-diff-review-skill/SKILL.md",
+      "basis": "Existing independent engineering review workflow and caller ownership boundaries.",
+      "evidence": [],
+      "assessment": "not_assessed",
+      "next_check": "Exercise seeded-defect and correct-diff cases; check true findings, false positives, and review independence."
+    },
+    {
+      "path": "skills/issue-to-tested-pr-skill/SKILL.md",
+      "basis": "Existing one-writer implementation, review, verification, and PR workflow.",
+      "evidence": [],
+      "assessment": "not_assessed",
+      "next_check": "Exercise a bounded disposable change; verify role handoffs, acceptance evidence, and no unauthorized merge."
+    },
+    {
+      "path": "skills/recruiter-followup-skill/SKILL.md",
+      "basis": "User-specific recruiter triage, conversation reconciliation, and authorized reply workflow.",
+      "evidence": [],
+      "assessment": "not_assessed",
+      "next_check": "Use offline thread fixtures for later replies, duplicate channels, incomplete coverage, and ambiguous send outcomes; no live sends for evaluation."
+    },
+    {
+      "path": "skills/release-and-docs-skill/SKILL.md",
+      "basis": "Existing release and reader-facing package verification workflow.",
+      "evidence": [],
+      "assessment": "not_assessed",
+      "next_check": "Exercise a disposable archive with a packaging defect and a correct control; keep publication out of the fixture."
+    },
+    {
+      "path": "skills/simplify-or-delete-skill/SKILL.md",
+      "basis": "Existing outcome-focused complexity reduction workflow.",
+      "evidence": [],
+      "assessment": "not_assessed",
+      "next_check": "Compare a removable abstraction with a necessary one; inspect evidence and preservation of required behavior."
+    },
+    {
+      "path": "skills/software-design-skill/SKILL.md",
+      "basis": "A Philosophy of Software Design Second Edition synthesis and source retrieval.",
+      "evidence": [
+        "tests/test_software_design_book.py",
+        "benchmarks/README.md",
+        "benchmarks/cases.py"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Exercise API/caller-obligation cases and an existing good boundary; inspect independent design review and maintenance sequel."
+    },
+    {
+      "path": "agents/codex/adversarial-reviewer-agent.toml",
+      "basis": "Codex role schema S06 and existing independent review responsibility.",
+      "evidence": [
+        "skills/independent-diff-review-skill/SKILL.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Verify actual role loading, available model, read-only behavior, and useful findings on seeded and correct diffs."
+    },
+    {
+      "path": "agents/codex/ddia-agent.toml",
+      "basis": "Codex role schema S06 and ddia-skill delegation wrapper.",
+      "evidence": [
+        "skills/ddia-skill/SKILL.md",
+        "benchmarks/README.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Observe an actual ddia_agent invocation loading its intended skill and source, plus an unavailable-source fallback."
+    },
+    {
+      "path": "agents/codex/documentation-agent.toml",
+      "basis": "Codex role schema S06 and documentation-skill delegation wrapper.",
+      "evidence": [
+        "skills/documentation-skill/SKILL.md",
+        "skills/documentation-skill/evals/README.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Observe actual role execution and reference reads on a reader-task fixture; inspect resulting documentation."
+    },
+    {
+      "path": "agents/codex/implementation-owner-agent.toml",
+      "basis": "Codex role schema S06 and existing single-writer implementation responsibility.",
+      "evidence": [
+        "skills/issue-to-tested-pr-skill/SKILL.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Verify real role loading, available model, scoped edits, and acceptance checks in a disposable repository."
+    },
+    {
+      "path": "agents/codex/software-design-agent.toml",
+      "basis": "Codex role schema S06 and software-design-skill delegation wrapper.",
+      "evidence": [
+        "skills/software-design-skill/SKILL.md",
+        "benchmarks/README.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Observe actual role execution, source reads, and caller-cost analysis on a held-out API decision."
+    },
+    {
+      "path": "agents/codex/verifier-agent.toml",
+      "basis": "Codex role schema S06 and existing independent verification responsibility.",
+      "evidence": [
+        "skills/issue-to-tested-pr-skill/SKILL.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Verify real role loading and exact test evidence on failing and passing fixtures without product-source edits."
+    },
+    {
+      "path": "agents/copilot/documentation-agent.agent.md",
+      "basis": "Copilot role schema S05 and documentation-skill delegation wrapper.",
+      "evidence": [
+        "skills/documentation-skill/SKILL.md",
+        "skills/documentation-skill/evals/README.md"
+      ],
+      "assessment": "not_assessed",
+      "next_check": "Verify discovery and actual execution in a supported Copilot host; file checks cannot establish it."
+    }
+  ]
+}

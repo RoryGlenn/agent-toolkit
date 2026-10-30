@@ -1,0 +1,26 @@
+{
+  "skill_name": "{{skill_name}}",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "{{realistic_in_scope_request}}",
+      "expected_output": "{{observable_success_without_prescribing_implementation}}",
+      "files": [],
+      "assertions": ["{{checkable_outcome}}"]
+    },
+    {
+      "id": 2,
+      "prompt": "{{adjacent_request_that_should_not_implicitly_activate_the_skill}}",
+      "expected_output": "{{correct_result_without_unnecessary_specialist_work}}",
+      "files": [],
+      "assertions": ["{{observable_scope_boundary}}"]
+    },
+    {
+      "id": 3,
+      "prompt": "{{realistic_exception_or_failure_case}}",
+      "expected_output": "{{correct_recovery_or_qualified_result}}",
+      "files": [],
+      "assertions": ["{{checkable_failure_or_exception_behavior}}"]
+    }
+  ]
+}
