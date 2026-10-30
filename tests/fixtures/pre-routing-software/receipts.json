@@ -1,0 +1,38 @@
+{
+  "codex": {
+    "schema": "agent-toolkit-install/v1",
+    "state": "installed",
+    "home": "__HOME__",
+    "codex_home": "__HOME__/.codex",
+    "source": "__SOURCE__",
+    "entries": [
+      {
+        "area": "codex-skills",
+        "name": "software-design-skill",
+        "source": "__SOURCE__/skills/software-design-skill",
+        "backup": false
+      },
+      {
+        "area": "codex-agents",
+        "name": "software-design-agent.toml",
+        "source": "__SOURCE__/agents/codex/software-design-agent.toml",
+        "backup": false
+      }
+    ]
+  },
+  "copilot": {
+    "schema": "agent-toolkit-install/v1",
+    "state": "installed",
+    "home": "__HOME__",
+    "codex_home": "__HOME__/.codex",
+    "source": "__SOURCE__",
+    "entries": [
+      {
+        "area": "copilot-skills",
+        "name": "software-design-skill",
+        "source": "__SOURCE__/skills/software-design-skill",
+        "backup": false
+      }
+    ]
+  }
+}

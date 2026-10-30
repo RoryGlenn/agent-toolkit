@@ -5,6 +5,11 @@ description: Prepare or review a software release by verifying the exact package
 
 # Release and Docs Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Prove that the exact artifact users receive matches the reviewed source, documented behavior, and release claims.
 
 ## Inputs

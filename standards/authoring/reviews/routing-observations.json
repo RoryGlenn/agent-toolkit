@@ -1,0 +1,1428 @@
+{
+  "schema": "task-routing-observations/v1",
+  "source_baseline": "a143ea86a7a0e6fa4ce15ca3fecfe57b30aba308",
+  "platform": "macOS arm64",
+  "host": "Codex CLI 0.165.0",
+  "runtime_hashes": {
+    "skills/simplify-or-delete-skill/SKILL.md": "e17d3a9f815484a912f18b269c1400195d72efdcb822b27661e8f94c899a42d9",
+    "skills/ddia-review-skill/SKILL.md": "f1d7fd26e08baf211158c189f9e4a4d5e4d2f0dcf67c05cbf8652f28ba049dac",
+    "skills/independent-diff-review-skill/SKILL.md": "d3b22697c802b4b10af4173ab0d57088107e2eacb5eee30500e50ad690351f99",
+    "skills/ddia-operate-skill/SKILL.md": "38e176029708ca9dbcf9e19763a8099d2cfca2f3d3ff3678f0fffe1027a64992",
+    "skills/ddia-explain-skill/SKILL.md": "9bfee8bce34bd746ad1ca9fd2acbd7e8e9d8c9663d15dcc12e166925590a181f",
+    "skills/documentation-skill/SKILL.md": "94b7bcbb5755db1199d61580f20e0ab3602f054bc7f866e76fd21c803deb2bf0",
+    "skills/ddia-skill/SKILL.md": "bc1c5f3fb907173206360537892d90fda1116091e48f743364962b55ef12d013",
+    "skills/issue-to-tested-pr-skill/SKILL.md": "8a4c94f77ced91f1b9cfe45de1a8b6535c85930ef1c65fbd4b9fc64f06885cb5",
+    "skills/ddia-migrate-skill/SKILL.md": "b0f8077a47fc4901e8c8b2c609e74e5c5801948bcfbd7f634d1ddb492e7c3cdd",
+    "skills/software-design-skill/SKILL.md": "dcd947d581971024c3870d1d78a95b8fced1c2a587451eeda44fe4425f34c264",
+    "skills/release-and-docs-skill/SKILL.md": "533e30cc3c30abcce294fb0fb5f73692b8168b481990c60b5187b59e22f7980b",
+    "skills/ddia-design-skill/SKILL.md": "8e3e34fe0e351ffee0c292f4ccb9217fabc34acc1a721c8bcffbe7db9756c9c5",
+    "skills/ddia-validate-skill/SKILL.md": "d8cf529b70bc9161e8238ec23aa88fc9c528784626d9dbf1e56c8c499c9b6aa8",
+    "skills/task-routing-skill/SKILL.md": "cac5c86f197b564060cd7b21ae3d43eac1089ebe335eb43a832fd57f013fbff8",
+    "skills/ddia-assess-skill/SKILL.md": "6e68360c2e067f0193d65b7a87b9625d5ea7fcaab9579849ea6e4999717756f1",
+    "skills/ddia-assess-skill/agents/openai.yaml": "ddf038f4cb143d9e05ffbc0ffad3affd2208d0da67cf44be59a7fc55f56215c0",
+    "skills/task-routing-skill/agents/openai.yaml": "86bb7704d1cb339296063b690c258263cdfe29c0d01bb4d75f43089c59a74c1b",
+    "skills/ddia-validate-skill/agents/openai.yaml": "c07d5cc1b7f8a6b93f19337d483a635c1cd9de624832983507f83b861b84583a",
+    "skills/ddia-design-skill/agents/openai.yaml": "8f48a80e2e9ca8468210693e1e3a477c460a1d612ac4c1fc44c7302a4753e201",
+    "skills/software-design-skill/agents/openai.yaml": "be89cdae16049d9a20a1ac551f054901146dcedc25f37be66f7edbbd69066c48",
+    "skills/software-design-skill/scripts/__init__.py": "0a08de60a66de16968c45cf964be18a493d5c81d972fe67b7186057d309527a5",
+    "skills/software-design-skill/scripts/book.py": "cb952a30d45c5ce257f0dfc0cdc53c443bde2df1278d772d20cf1a309bf6cd27",
+    "skills/ddia-migrate-skill/agents/openai.yaml": "39593685953b95a8e7c4a02fae52e591dcdcb59677d2b25df8496cf39f99deff",
+    "skills/ddia-skill/references/routing.md": "0506e1b8e84af82f347abdfeff8985e665c2c94cd893ae77f4d7b983fdce8b7f",
+    "skills/ddia-skill/references/decision-process.md": "3ba9fdcc0e15dc32c6bb9aadf081a6b397fdcc748b606f85513fc9d598066bd5",
+    "skills/ddia-skill/references/coverage.json": "b237bce324157e8ae2420de5dafe14096ed76fb81e39a93ea0776e5ccafe45ca",
+    "skills/ddia-skill/agents/openai.yaml": "ede4591d04cabea96af8495757c0f9595fec45207ae9721b82b4e834c0b514ad",
+    "skills/ddia-skill/scripts/guide.py": "c828121c4422b84df66487dccc10401f417491d906706ce45c801d0bf3838b07",
+    "skills/ddia-skill/scripts/experiments.py": "33cfd8ccdc46977418534c45b90b333dd3abe973384f11c892a3e02bac0f21ee",
+    "skills/ddia-skill/scripts/book.py": "dad40b894f530f96ddb4816e472d9ef1c5649ccf9080dc5709f80ffce50d18b9",
+    "skills/ddia-skill/assets/data-contract.template.md": "6c3f9a8475a10eedcc68acfe2c17417f7f0e794c660261433f76dac99ff7ae5f",
+    "skills/ddia-skill/assets/handoff.template.md": "a9b49617e56a0aea6dab62d5933c5d9c8e757c93d5b2dbe512e9a6560029e6f2",
+    "skills/ddia-skill/assets/decision.template.md": "f9eeae04e4f4dfc503926bed5262fe14e7dcee3ac99133037ac8535dd59ca883",
+    "skills/ddia-skill/references/chapters/08.md": "bf8308847958c4aa4af8666792a39e030bf663235c469dc37c54c436c728f2ea",
+    "skills/ddia-skill/references/chapters/09.md": "37240fefced3f7ce7b51e99a402332688072e57e39a8b3f05c441395d9dd27d5",
+    "skills/ddia-skill/references/chapters/06.md": "5f845ffa94c4e6e87cf66fdb03352db1f41d3ac1eaf141e7f1c2a1e10f1d8245",
+    "skills/ddia-skill/references/chapters/12.md": "39d3311796cb98c9e9290362ca008d4fe4810781f4f94b1e5e71c90aacd129d8",
+    "skills/ddia-skill/references/chapters/02.md": "06ebd62e59774a5f54491756bbde0535108587f483638ab08f85ef19c14f7586",
+    "skills/ddia-skill/references/chapters/13.md": "48e7efa2e39eb124da0841bf0971fb4d2f78fecd42438988ad6f801a5dfeae40",
+    "skills/ddia-skill/references/chapters/03.md": "dc91f0a9cfc85cf936905694532d42c544f5ac5238ff1c71eb862b4104395b75",
+    "skills/ddia-skill/references/chapters/07.md": "3748580b742799c93c369a29a36d4265a8e2ab0d3704de91e7c3f95193d6ba3d",
+    "skills/ddia-skill/references/chapters/10.md": "87b614e8bd128f6e4e858924138a6e54171878d417ad04982dde9e7094724b70",
+    "skills/ddia-skill/references/chapters/14.md": "70189c0386e6d8becf85f23ad5e744f9fb2ff32fe2b115e69d4ebb5b26295439",
+    "skills/ddia-skill/references/chapters/04.md": "a718b134d74a090bfc20a074a867647c3b53a36ea5791ed0d17c4886e39e77f7",
+    "skills/ddia-skill/references/chapters/05.md": "389a554bef350969fec9bc143bd7ad489ccc4c0f387eea05cd6e4b15bd37af72",
+    "skills/ddia-skill/references/chapters/11.md": "a806ca186aa69286da62df3d1b63c758af6dd3f4b1833d6ec2e7ecb853d3aff7",
+    "skills/ddia-skill/references/chapters/01.md": "14fc5ae49ba55ebec698bc59c489dc6cf57281c809655c906e68cf41e7ddf3a3",
+    "skills/ddia-skill/references/workflows/validate.md": "49e157c7177fc1df23be71f9816fca4c183ddd9489ffe2fdaf6f3a6cd6b1958c",
+    "skills/ddia-skill/references/workflows/operate.md": "2374591dee8fe0114b7cd8b790f209d0136608086ff83f115c399a3158f08181",
+    "skills/ddia-skill/references/workflows/assess.md": "7e57ceb7508d8bf9f717a5b0d2e064fdd681197de422e2ea0c967ee0b12233ef",
+    "skills/ddia-skill/references/workflows/explain.md": "4973e1e1d575116471a8fda037575daf69b8e13e5fbee4838e7b4a22002e967d",
+    "skills/ddia-skill/references/workflows/migrate.md": "b7ec5f2927f77c9d869e00695ec0868cb8a76b43478a6c8196f6c3fead59e257",
+    "skills/ddia-skill/references/workflows/design.md": "8e2c5dd24028ea1594cd267c94bc4009202aa04fe2e053fef9a8a3cd1222a864",
+    "skills/ddia-skill/references/workflows/review.md": "d84963e4f37d34fb89b97402030bbab68a56725a6a00ace456131c847a081dfa",
+    "skills/documentation-skill/tooling/lychee.toml": "560a2415114b027e27f07f96c65367a28f0d49ba8e03b6cbe90a92c97a14bdba",
+    "skills/documentation-skill/tooling/.markdownlint-cli2.jsonc": "99256c638ffdbcd5a0cb3939098068cddc87d593fdeb39151f8a46d912970186",
+    "skills/documentation-skill/tooling/README.md": "64b7d380798c77ccb40234fe28b7ec18adbe4c2c25541002d2daea4f4fda3a4a",
+    "skills/documentation-skill/tooling/package-lock.json": "d504aa4970c0500fc48663e84f61e6854422855e405724298e476031b5765c72",
+    "skills/documentation-skill/tooling/package.json": "971c169a77acf54ee2f0e7f68074b1af61074c4f05e0c693554f1be07b407c2b",
+    "skills/documentation-skill/tooling/.vale.ini": "7639bb19b643055db0bd1813c8a43bda75570df7ab7f21e011212f0b78aff4c8",
+    "skills/documentation-skill/tooling/playwright.config.mjs": "e78fd08b0c72f8c65a8ef42198c4d8b3fb9149cc8a6ddb73f269c89f44babce8",
+    "skills/documentation-skill/references/content-patterns.md": "076cba45ee3b1fe60d7411e83ec77203ed83e04990c398d1a67f038791ef9290",
+    "skills/documentation-skill/references/book-foundation.md": "7aacbd8d6ca788ba92e2a37774fec1873808042eee070aa405a792a393b0551a",
+    "skills/documentation-skill/references/quality-and-maintenance.md": "089d8c3b64be630ddc1718bb929a8b384eab514a687ae39700669f995049750d",
+    "skills/documentation-skill/references/tool-routing.md": "4172c14199b564dabed304a80fb1bf48f21764354e8286066b2c3c799ff4adeb",
+    "skills/documentation-skill/agents/openai.yaml": "7f55bc5e1250efdf7410623e8fd48f28abe4e1203526d9c4e8a43332e48b26b9",
+    "skills/documentation-skill/scripts/check_environment.py": "b8e201aa8293c143973205cd5b882b8f7b3d637eb8aebb029307c054abb3b493",
+    "skills/documentation-skill/assets/project-context.template.md": "ffba45a274e2038f57550f5fe8b05b497bff030e75d1dc115cae5aca792c5f99",
+    "skills/documentation-skill/assets/example-check.template.md": "ca45817aef0784575037ad5ba95c68e88930df29152048af09bfe7e1a385b90f",
+    "skills/documentation-skill/tooling/site-tests/documentation.spec.mjs": "73d33398190eebb5f047e68acf86d8ca61258e8466a934089c60058335772893",
+    "skills/documentation-skill/tooling/styles/DocAgent/PlainLanguage.yml": "e0f3d6528aa624f2a45b5d9e27f16b91c5ced26e9635dad2c3a871bc26c7bb6f",
+    "skills/ddia-explain-skill/agents/openai.yaml": "ae9cbe915e81c54642a3c44842889a8ac1ee278f469d7a339e9cee4f861486dd",
+    "skills/ddia-operate-skill/agents/openai.yaml": "5b45f33efec6d4af59f920581bc587807eb331fed7c4f4cfde645d068ad00f1d",
+    "skills/ddia-review-skill/agents/openai.yaml": "996aafd4ed2df4f9ba2c151f23d8b74ced88564e3b9f16f3d57dde9a7bc916b0",
+    "agents/codex/software-design-agent.toml": "f4541a0559aea670fa55ce7bc7c2dafc6a4ac84802abc21ed67c37e3e00a786e",
+    "agents/codex/adversarial-reviewer-agent.toml": "7318cdb29d3e4932b870053e2fc6ed8fb2ba070ccbe2bef268409b010e7ea050",
+    "agents/codex/documentation-agent.toml": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0",
+    "agents/codex/verifier-agent.toml": "fa9f3615306b784e071dca0785f84f99e395e53410bc7239bbe908f8a09e840a",
+    "agents/codex/implementation-owner-agent.toml": "922010ffcb32091f8c1f3f91b49f06eea32d694b7350a49ad6f2286950b7ddc6",
+    "agents/codex/ddia-agent.toml": "dc45edadd59d19f978928abd9aee74fc7ddb6a317f8085da0f7e1f7c4eb3f538"
+  },
+  "cases_sha256": "c05eb85678c276f35174646b0cfc1f93b6454f171231380fc6b4bb0d602a0ea3",
+  "cohorts": [
+    {
+      "name": "codex-astra-final",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "seconds_per_turn": 180,
+      "attempts": [
+        {
+          "case": "docs-to-data",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 39.0837544590031,
+              "trace_sha256": "5e2a20b4e21d68bf505cca0ea5c54f2beb2d49917b5b248cbf54ba75c4aa61ff",
+              "prompt_sha256": "0bb2f2244bbaa6376ad027a7af3ddf214a3c1b167b7305fd6bf0655c82312b18",
+              "root_usage": {
+                "input_tokens": 85905,
+                "cached_input_tokens": 63488,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 878,
+                "reasoning_output_tokens": 91
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "docs-to-data",
+            "host_cohort": "codex-astra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Reads DDIA guidance directly or obtains an actual DDIA consultation.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              },
+              {
+                "check": "Explains replay after identity deletion can duplicate effects; distinguishes remote-provider effects from local transactions.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              },
+              {
+                "check": "Answers the data-safety question rather than writing an unrelated documentation plan.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "0eb90f912f1e990682661808fd80cecee6cf29ae5703d1c6f7b1f16823c63083",
+              "trace-0.jsonl_sha256": "5e2a20b4e21d68bf505cca0ea5c54f2beb2d49917b5b248cbf54ba75c4aa61ff"
+            }
+          },
+          "result_sha256": "0eb90f912f1e990682661808fd80cecee6cf29ae5703d1c6f7b1f16823c63083",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "data-to-docs",
+          "starting_role": "ddia_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 21.520109125005547,
+              "trace_sha256": "27b00fba1b1c9807f66b96b0e9da954576e1e38c8136cfed6a5a675c7c581ae5",
+              "prompt_sha256": "132d217263bd9677c3754a15117bf2b4da1a88b3742575520b2576e2e9f670db",
+              "root_usage": {
+                "input_tokens": 44816,
+                "cached_input_tokens": 13184,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 441,
+                "reasoning_output_tokens": 132
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "data-to-docs",
+            "host_cohort": "codex-astra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Reads documentation guidance directly or obtains actual documentation consultation.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              },
+              {
+                "check": "Gives the supported command, local-only meaning, expected fields and exit-code interpretation without invented setup or upload.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              },
+              {
+                "check": "Avoids an unrelated distributed-systems redesign and honors the prohibition on executing the report tool.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool.",
+              "skills_read": [
+                "documentation-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "e8ac7d7068287c796684186c0b10dc5de04450b636effa9bbf920bc6bf3d0543",
+              "trace-0.jsonl_sha256": "27b00fba1b1c9807f66b96b0e9da954576e1e38c8136cfed6a5a675c7c581ae5"
+            }
+          },
+          "result_sha256": "e8ac7d7068287c796684186c0b10dc5de04450b636effa9bbf920bc6bf3d0543",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "dc45edadd59d19f978928abd9aee74fc7ddb6a317f8085da0f7e1f7c4eb3f538"
+        },
+        {
+          "case": "general-to-data",
+          "starting_role": "general",
+          "root_role_mode": "general with actual generated AGENTS.md and project packages; evaluator files withheld",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 47.35060225000052,
+              "trace_sha256": "73620c0d2d0b50b85851f2115a24299f2651990b2557040ca331682bc7dac695",
+              "prompt_sha256": "950ab5ea31cc29c5959d220c263d642961989ac955f7ad07bbd73910ea00276e",
+              "root_usage": {
+                "input_tokens": 71136,
+                "cached_input_tokens": 48896,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 940,
+                "reasoning_output_tokens": 105
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "general-to-data",
+            "host_cohort": "codex-astra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "generated_project_guidance_to_skill",
+            "gates": [
+              {
+                "check": "Uses installed DDIA expertise through general project guidance.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              },
+              {
+                "check": "Distinguishes observed lag from a guarantee and offers authoritative reads or a verified position barrier.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              },
+              {
+                "check": "Does not claim nonexistent source reads or change runtime configuration.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              }
+            ],
+            "evidence": {
+              "summary": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "97b55c3ba627cb97fa5d5e4c04513f757520d47e21e254082f65ea7b55c1489b",
+              "trace-0.jsonl_sha256": "73620c0d2d0b50b85851f2115a24299f2651990b2557040ca331682bc7dac695"
+            }
+          },
+          "result_sha256": "97b55c3ba627cb97fa5d5e4c04513f757520d47e21e254082f65ea7b55c1489b",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "project_agents_sha256": "fa7f59ca84000077a016f100134dd78802f090b1223cbe85109bf4c957b10039"
+        },
+        {
+          "case": "consequential-consultation",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 85.02080183300131,
+              "trace_sha256": "8404db12993f3cf6138e828b7f34e138095a774ef89df2125086b6aefea76e29",
+              "prompt_sha256": "e5fee1600cd9d49cd97b9c55741eaff46ed96e6224303f6226d9703f06792838",
+              "root_usage": {
+                "input_tokens": 191179,
+                "cached_input_tokens": 151936,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1600,
+                "reasoning_output_tokens": 447
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "consequential-consultation",
+            "host_cohort": "codex-astra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "actual_child_and_skill",
+            "gates": [
+              {
+                "check": "When a compatible specialist and delegation tool are available, obtains an actual independent DDIA consultation rather than calling its own answer independent.",
+                "status": "passed",
+                "evidence": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed."
+              },
+              {
+                "check": "Passes the original question, advice-only scope, relevant facts and no further rerouting context, then synthesizes the returned findings.",
+                "status": "passed_with_evidence_limit",
+                "evidence": "Original question and scope are available through inherited parent context, child returns bounded data advice with no rerouting, and parent synthesizes it. Exact serialized no-further-rerouting assignment wording is encrypted and not independently verified."
+              },
+              {
+                "check": "Identifies replay identity risk without claiming local deduplication proves external exactly-once effects.",
+                "status": "passed",
+                "evidence": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed."
+              }
+            ],
+            "evidence": {
+              "summary": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [
+                {
+                  "role": "ddia_agent",
+                  "model": "gpt-6-astra",
+                  "effort": "high"
+                }
+              ],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes.",
+              "Child inherits parent history. Actual role, matching model, skill reads, bounded response, no descendants and parent synthesis are observed; the exact NEW_TASK payload is encrypted on disk, so its exact handoff wording is not independently inspectable."
+            ],
+            "identities": {
+              "result_sha256": "bc0f4591b139b2f360a6a907e089167bd711bcebd19c6e68a48b31e366da9cee",
+              "trace-0.jsonl_sha256": "8404db12993f3cf6138e828b7f34e138095a774ef89df2125086b6aefea76e29"
+            }
+          },
+          "result_sha256": "bc0f4591b139b2f360a6a907e089167bd711bcebd19c6e68a48b31e366da9cee",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "topic-change",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 6.2359078750014305,
+              "trace_sha256": "4e884223b461d1d52ca353f1239242f3179139a1d571c068a6f5baf45e541cf1",
+              "prompt_sha256": "2321fe77d62ea78cf560b25e2e319c0eda52e0a11c82a32853595b55799ea69c",
+              "root_usage": {
+                "input_tokens": 13161,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 70,
+                "reasoning_output_tokens": 45
+              },
+              "aggregate_tree_tokens": null
+            },
+            {
+              "index": 1,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 45.20433879199845,
+              "trace_sha256": "cb2f2a61993f39f22a75bcd03750cc70e0e4e08f582512655b731100a831d7aa",
+              "prompt_sha256": "b46e116e3b586374258ae562352800ec9e57e21e327ced8f1146bf81c5df6cff",
+              "root_usage": {
+                "input_tokens": 99298,
+                "cached_input_tokens": 60288,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 948,
+                "reasoning_output_tokens": 219
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "topic-change",
+            "host_cohort": "codex-astra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Uses two actual conversation turns and re-evaluates the changed outcome.",
+                "status": "passed",
+                "evidence": "Two actual resumed conversation turns: concise preview/import answer then routing/DDIA reads and qualified historical-replay identity assessment. Does not remain in first task or perform recovery."
+              },
+              {
+                "check": "Second response uses DDIA expertise and explains the replay identity failure.",
+                "status": "passed",
+                "evidence": "Two actual resumed conversation turns: concise preview/import answer then routing/DDIA reads and qualified historical-replay identity assessment. Does not remain in first task or perform recovery."
+              },
+              {
+                "check": "Does not remain trapped in the first documentation task or lose advice-only scope.",
+                "status": "passed",
+                "evidence": "Two actual resumed conversation turns: concise preview/import answer then routing/DDIA reads and qualified historical-replay identity assessment. Does not remain in first task or perform recovery."
+              }
+            ],
+            "evidence": {
+              "summary": "Two actual resumed conversation turns: concise preview/import answer then routing/DDIA reads and qualified historical-replay identity assessment. Does not remain in first task or perform recovery.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 2,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "06f396fa11211e1f0b5d0f940ab632a6ecc23ed2c71726bf0f237f0efe0fad0f",
+              "trace-0.jsonl_sha256": "4e884223b461d1d52ca353f1239242f3179139a1d571c068a6f5baf45e541cf1",
+              "trace-1.jsonl_sha256": "cb2f2a61993f39f22a75bcd03750cc70e0e4e08f582512655b731100a831d7aa"
+            }
+          },
+          "result_sha256": "06f396fa11211e1f0b5d0f940ab632a6ecc23ed2c71726bf0f237f0efe0fad0f",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        }
+      ]
+    },
+    {
+      "name": "codex-terra-final",
+      "model": "gpt-5.6-terra",
+      "effort": "high",
+      "seconds_per_turn": 180,
+      "attempts": [
+        {
+          "case": "docs-to-data",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 42.0351637499989,
+              "trace_sha256": "4527d9e21468b0f7e1323d8459e004d88c6eca458318d3b4796c2f9f4cdac0dd",
+              "prompt_sha256": "0bb2f2244bbaa6376ad027a7af3ddf214a3c1b167b7305fd6bf0655c82312b18",
+              "root_usage": {
+                "input_tokens": 72768,
+                "cached_input_tokens": 52992,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1527,
+                "reasoning_output_tokens": 605
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "docs-to-data",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Reads DDIA guidance directly or obtains an actual DDIA consultation.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              },
+              {
+                "check": "Explains replay after identity deletion can duplicate effects; distinguishes remote-provider effects from local transactions.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              },
+              {
+                "check": "Answers the data-safety question rather than writing an unrelated documentation plan.",
+                "status": "passed",
+                "evidence": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads actual DDIA guidance, shows commit/ack/delete/historical-replay duplicate effect, retains durable business identity, and separately qualifies external provider idempotency. Advice only, no product edits.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "4c88665b9f07530314d078fc1455df1710dddf18819627f9822abad1fc80408d",
+              "trace-0.jsonl_sha256": "4527d9e21468b0f7e1323d8459e004d88c6eca458318d3b4796c2f9f4cdac0dd"
+            }
+          },
+          "result_sha256": "4c88665b9f07530314d078fc1455df1710dddf18819627f9822abad1fc80408d",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "data-to-docs",
+          "starting_role": "ddia_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 21.051855792000424,
+              "trace_sha256": "11809f5c0c1f407fff77ddd4f108f3567a8e2180c07b3301653d4a2d8ad843aa",
+              "prompt_sha256": "132d217263bd9677c3754a15117bf2b4da1a88b3742575520b2576e2e9f670db",
+              "root_usage": {
+                "input_tokens": 43424,
+                "cached_input_tokens": 29952,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 727,
+                "reasoning_output_tokens": 323
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "data-to-docs",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Reads documentation guidance directly or obtains actual documentation consultation.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              },
+              {
+                "check": "Gives the supported command, local-only meaning, expected fields and exit-code interpretation without invented setup or upload.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              },
+              {
+                "check": "Avoids an unrelated distributed-systems redesign and honors the prohibition on executing the report tool.",
+                "status": "passed",
+                "evidence": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads actual documentation guidance after routing. Gives report check --input example.csv, local-only behavior, valid_rows/invalid_rows and exit 0/2 meanings; performs only permitted guidance/workspace inspection, never executes the report tool.",
+              "skills_read": [
+                "documentation-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "4192ebb28f830648cfa1da2db2a50cfdadc560555a0011df2aac4a35fb517101",
+              "trace-0.jsonl_sha256": "11809f5c0c1f407fff77ddd4f108f3567a8e2180c07b3301653d4a2d8ad843aa"
+            }
+          },
+          "result_sha256": "4192ebb28f830648cfa1da2db2a50cfdadc560555a0011df2aac4a35fb517101",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "dc45edadd59d19f978928abd9aee74fc7ddb6a317f8085da0f7e1f7c4eb3f538"
+        },
+        {
+          "case": "general-to-data",
+          "starting_role": "general",
+          "root_role_mode": "general with actual generated AGENTS.md and project packages; evaluator files withheld",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 42.83536945800006,
+              "trace_sha256": "df9cab002e19b6803d90a203c4c20b0e294b71fb9f2c16634e286b27f841a1c6",
+              "prompt_sha256": "950ab5ea31cc29c5959d220c263d642961989ac955f7ad07bbd73910ea00276e",
+              "root_usage": {
+                "input_tokens": 64746,
+                "cached_input_tokens": 46080,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1401,
+                "reasoning_output_tokens": 663
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "general-to-data",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "generated_project_guidance_to_skill",
+            "gates": [
+              {
+                "check": "Uses installed DDIA expertise through general project guidance.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              },
+              {
+                "check": "Distinguishes observed lag from a guarantee and offers authoritative reads or a verified position barrier.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              },
+              {
+                "check": "Does not claim nonexistent source reads or change runtime configuration.",
+                "status": "passed",
+                "evidence": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options."
+              }
+            ],
+            "evidence": {
+              "summary": "Actual generated project AGENTS.md appears in the native user context with project_doc_max_bytes=32768 and no selected-role developer override. Reads project DDIA files; distinguishes observed lag from guaranteed freshness and supplies authoritative-read/replication-position options.",
+              "skills_read": [
+                "ddia-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "921c4761d1d2dc99fa50608b62feb2157b98e31e570abe7bb09b256e585ef89f",
+              "trace-0.jsonl_sha256": "df9cab002e19b6803d90a203c4c20b0e294b71fb9f2c16634e286b27f841a1c6"
+            }
+          },
+          "result_sha256": "921c4761d1d2dc99fa50608b62feb2157b98e31e570abe7bb09b256e585ef89f",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "project_agents_sha256": "fa7f59ca84000077a016f100134dd78802f090b1223cbe85109bf4c957b10039"
+        },
+        {
+          "case": "consequential-consultation",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 85.58919954099838,
+              "trace_sha256": "4b595703f4d4a54e0eff1f1b916042491db8de57440371e679feb66970186b59",
+              "prompt_sha256": "e5fee1600cd9d49cd97b9c55741eaff46ed96e6224303f6226d9703f06792838",
+              "root_usage": {
+                "input_tokens": 108041,
+                "cached_input_tokens": 90624,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1351,
+                "reasoning_output_tokens": 326
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "consequential-consultation",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "actual_child_and_skill",
+            "gates": [
+              {
+                "check": "When a compatible specialist and delegation tool are available, obtains an actual independent DDIA consultation rather than calling its own answer independent.",
+                "status": "passed",
+                "evidence": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed."
+              },
+              {
+                "check": "Passes the original question, advice-only scope, relevant facts and no further rerouting context, then synthesizes the returned findings.",
+                "status": "passed_with_evidence_limit",
+                "evidence": "Original question and scope are available through inherited parent context, child returns bounded data advice with no rerouting, and parent synthesizes it. Exact serialized no-further-rerouting assignment wording is encrypted and not independently verified."
+              },
+              {
+                "check": "Identifies replay identity risk without claiming local deduplication proves external exactly-once effects.",
+                "status": "passed",
+                "evidence": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed."
+              }
+            ],
+            "evidence": {
+              "summary": "A real ddia_agent child with matching parent model/effort completed and independently read the DDIA skill. Parent awaited and synthesized the advice-only replay/identity finding with external-payment qualifications; no grandchild or mutation observed.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [
+                {
+                  "role": "ddia_agent",
+                  "model": "gpt-5.6-terra",
+                  "effort": "high"
+                }
+              ],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes.",
+              "Child inherits parent history. Actual role, matching model, skill reads, bounded response, no descendants and parent synthesis are observed; the exact NEW_TASK payload is encrypted on disk, so its exact handoff wording is not independently inspectable."
+            ],
+            "identities": {
+              "result_sha256": "3e9af3cf1cb7e9727d97247c419b6f2b69d1af36a2f591437dfd853de2bfd8db",
+              "trace-0.jsonl_sha256": "4b595703f4d4a54e0eff1f1b916042491db8de57440371e679feb66970186b59"
+            }
+          },
+          "result_sha256": "3e9af3cf1cb7e9727d97247c419b6f2b69d1af36a2f591437dfd853de2bfd8db",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "mixed-recovery-guide",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 75.74402233400178,
+              "trace_sha256": "76033068fcd7df7dca8b1744031cf44f565da8392c740039c004d30d26a29201",
+              "prompt_sha256": "814451f4d8c949d957d70dd67d491f0019211b7b02e2b84e818834f1f3aaebe1",
+              "root_usage": {
+                "input_tokens": 104658,
+                "cached_input_tokens": 79360,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 2522,
+                "reasoning_output_tokens": 816
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "mixed-recovery-guide",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Combines reader-focused steps with DDIA recovery/identity analysis.",
+                "status": "passed",
+                "evidence": "Reads documentation and DDIA guidance; flags arbitrary offsets, erased identity and unknown recovery/provider state before checklist. Preserves identity, restores in isolation, reconciles and validates before reopening. No recovery action executed."
+              },
+              {
+                "check": "Flags deletion of deduplication state and unknown replay bounds before irreversible reopening.",
+                "status": "passed",
+                "evidence": "Reads documentation and DDIA guidance; flags arbitrary offsets, erased identity and unknown recovery/provider state before checklist. Preserves identity, restores in isolation, reconciles and validates before reopening. No recovery action executed."
+              },
+              {
+                "check": "Keeps one owner, avoids a delegation loop, and performs no recovery actions.",
+                "status": "passed",
+                "evidence": "Reads documentation and DDIA guidance; flags arbitrary offsets, erased identity and unknown recovery/provider state before checklist. Preserves identity, restores in isolation, reconciles and validates before reopening. No recovery action executed."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads documentation and DDIA guidance; flags arbitrary offsets, erased identity and unknown recovery/provider state before checklist. Preserves identity, restores in isolation, reconciles and validates before reopening. No recovery action executed.",
+              "skills_read": [
+                "ddia-skill",
+                "documentation-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "6c7d88dca88d8ba495e16659583a596478c47f090f54e994ba38a3e2e86cc0fd",
+              "trace-0.jsonl_sha256": "76033068fcd7df7dca8b1744031cf44f565da8392c740039c004d30d26a29201"
+            }
+          },
+          "result_sha256": "6c7d88dca88d8ba495e16659583a596478c47f090f54e994ba38a3e2e86cc0fd",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "trivial",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 4.932753667002544,
+              "trace_sha256": "c24428dfbeaa77f28eb4e64bd03b0cca390737886e48e10eb2bd21b501945bcf",
+              "prompt_sha256": "8bb39cef2c43806a968f8bdddb7dec5e9bef8c84af5fbb65d6aef4584334ac03",
+              "root_usage": {
+                "input_tokens": 11989,
+                "cached_input_tokens": 0,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 24,
+                "reasoning_output_tokens": 13
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "trivial",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "not_needed",
+            "gates": [
+              {
+                "check": "Answers apple, maple, zebra.",
+                "status": "passed",
+                "evidence": "Exactly apple, maple, zebra; no skill reads, child dispatch or domain workflow."
+              },
+              {
+                "check": "Does not launch a specialist, read unrelated domain references, or start an audit.",
+                "status": "passed",
+                "evidence": "Exactly apple, maple, zebra; no skill reads, child dispatch or domain workflow."
+              }
+            ],
+            "evidence": {
+              "summary": "Exactly apple, maple, zebra; no skill reads, child dispatch or domain workflow.",
+              "skills_read": [],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "2470879cf347629864444928752ed47ff9fce299392748cd4d89b0316fc94068",
+              "trace-0.jsonl_sha256": "c24428dfbeaa77f28eb4e64bd03b0cca390737886e48e10eb2bd21b501945bcf"
+            }
+          },
+          "result_sha256": "2470879cf347629864444928752ed47ff9fce299392748cd4d89b0316fc94068",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "no-delegation",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 51.46747258299729,
+              "trace_sha256": "de64556ba56b47ddaf51f7ecfbc13254898b820dcb2b97a08390f2dc67b115e6",
+              "prompt_sha256": "652b3cc73fb7998c293383d74579c46b09a21be6b68b57407157b1cfc3763e87",
+              "root_usage": {
+                "input_tokens": 83704,
+                "cached_input_tokens": 60160,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1557,
+                "reasoning_output_tokens": 393
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "no-delegation",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Uses installed DDIA guidance directly with no child dispatch.",
+                "status": "passed",
+                "evidence": "Reads DDIA directly with no child dispatch; explains pause/lease expiry and resource-side atomic fencing including newer-token enforcement timing. No deployment or claimed specialist worker."
+              },
+              {
+                "check": "Explains stale owner and resource-enforced token rejection.",
+                "status": "passed",
+                "evidence": "Reads DDIA directly with no child dispatch; explains pause/lease expiry and resource-side atomic fencing including newer-token enforcement timing. No deployment or claimed specialist worker."
+              },
+              {
+                "check": "Does not deploy a lock service or claim a separate specialist ran.",
+                "status": "passed",
+                "evidence": "Reads DDIA directly with no child dispatch; explains pause/lease expiry and resource-side atomic fencing including newer-token enforcement timing. No deployment or claimed specialist worker."
+              }
+            ],
+            "evidence": {
+              "summary": "Reads DDIA directly with no child dispatch; explains pause/lease expiry and resource-side atomic fencing including newer-token enforcement timing. No deployment or claimed specialist worker.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "b1ac75006e23f46f6b8629e1584e820a352b99dbe7394106210f844e18e093e3",
+              "trace-0.jsonl_sha256": "de64556ba56b47ddaf51f7ecfbc13254898b820dcb2b97a08390f2dc67b115e6"
+            }
+          },
+          "result_sha256": "b1ac75006e23f46f6b8629e1584e820a352b99dbe7394106210f844e18e093e3",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "missing-role",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 56.85516858300252,
+              "trace_sha256": "f5995cae1b42a7c45d5b2b4c65ee95fb69be5442df287f4f00150f29305e23be",
+              "prompt_sha256": "45593e84362990197160d737ae6a9948bcbb737437d03c3573cfd1cf6f1bc6b4",
+              "root_usage": {
+                "input_tokens": 68570,
+                "cached_input_tokens": 46080,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 1675,
+                "reasoning_output_tokens": 599
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "missing-role",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "passed_observed_case",
+            "outcome": "passed",
+            "routing": "direct_skill_observed",
+            "gates": [
+              {
+                "check": "Uses direct DDIA skill fallback and does not invent a dispatched DDIA role.",
+                "status": "passed",
+                "evidence": "Target DDIA role is withheld; actual direct DDIA skill/procedure reads support timeout ambiguity, stable intent identity, provider retention and reconciliation. No invented role dispatch."
+              },
+              {
+                "check": "Distinguishes remote commit uncertainty, identity retention and reconciliation.",
+                "status": "passed",
+                "evidence": "Target DDIA role is withheld; actual direct DDIA skill/procedure reads support timeout ambiguity, stable intent identity, provider retention and reconciliation. No invented role dispatch."
+              }
+            ],
+            "evidence": {
+              "summary": "Target DDIA role is withheld; actual direct DDIA skill/procedure reads support timeout ambiguity, stable intent identity, provider retention and reconciliation. No invented role dispatch.",
+              "skills_read": [
+                "ddia-skill",
+                "task-routing-skill"
+              ],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes."
+            ],
+            "identities": {
+              "result_sha256": "622d50695959ee721432d42f40ec36dfe0214aa6aac1317937fba375eb326f0e",
+              "trace-0.jsonl_sha256": "f5995cae1b42a7c45d5b2b4c65ee95fb69be5442df287f4f00150f29305e23be"
+            }
+          },
+          "result_sha256": "622d50695959ee721432d42f40ec36dfe0214aa6aac1317937fba375eb326f0e",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        },
+        {
+          "case": "missing-skill",
+          "starting_role": "documentation_agent",
+          "root_role_mode": "exact role instructions loaded as root developer_instructions",
+          "status": "completed",
+          "credential_removed": true,
+          "turns": [
+            {
+              "index": 0,
+              "returncode": 0,
+              "timed_out": false,
+              "seconds": 5.690634167003736,
+              "trace_sha256": "449d97993d3950ff832782a2e3eab687b81d1ac5661f59ed3187513063f66b5a",
+              "prompt_sha256": "aa981c7f166c184df374e16060d96016be228dc78daa528c218c912eba64a6df",
+              "root_usage": {
+                "input_tokens": 10860,
+                "cached_input_tokens": 2816,
+                "cache_write_input_tokens": 0,
+                "output_tokens": 179,
+                "reasoning_output_tokens": 102
+              },
+              "aggregate_tree_tokens": null
+            }
+          ],
+          "grade": {
+            "schema": "routing-independent-grading/v1",
+            "case": "missing-skill",
+            "host_cohort": "codex-terra-final",
+            "runtime_scope": "final Codex-only snapshot-codex",
+            "reviewer": "independent adoption_review agent",
+            "verdict": "partial_fallback_not_established",
+            "outcome": "partial",
+            "routing": "general_answer_without_capability_disclosure",
+            "gates": [
+              {
+                "check": "Identifies unavailable DDIA package/role if claiming specialist access; does not invent reads or dispatch.",
+                "status": "passed_no_fabricated_access",
+                "evidence": "No skill or agent read/dispatch is claimed; no tool calls occur."
+              },
+              {
+                "check": "Gives bounded general reasoning with assumptions rather than installing capabilities or expanding permissions.",
+                "status": "partial",
+                "evidence": "Correctly answers no, but protocol examples are underspecified and no missing-capability disclosure is made; no installation/permission changes occur."
+              }
+            ],
+            "evidence": {
+              "summary": "No tools or specialist-access claims; gives a short general answer rejecting quorum overlap alone. It does not discover/disclose the unavailable DDIA skill. Examples of timestamps plus read-repair or leader/lease omit protocol assumptions necessary for a full guarantee.",
+              "skills_read": [],
+              "turns": 1,
+              "children": [],
+              "evaluation_fixture_reads_observed": false,
+              "product_command_execution_or_mutation_observed": false
+            },
+            "limits": [
+              "One public development case on this model; no general reliability or superiority claim.",
+              "Selected specialist root uses exact role developer instructions, not a native visible-picker selection; general case instead uses actual generated project AGENTS.md.",
+              "No original-book verification inferred from synthesized reference reads.",
+              "Scope assessed from recorded root/child tool actions, not production-system outcomes.",
+              "Terse quorum examples are not proof of a linearizable protocol; do not score a useful general answer as demonstrated missing-skill routing."
+            ],
+            "identities": {
+              "result_sha256": "0790625ebb8945dc3a3f12b211983e0d22f52313c0ac0454b1ced17668ac2f57",
+              "trace-0.jsonl_sha256": "449d97993d3950ff832782a2e3eab687b81d1ac5661f59ed3187513063f66b5a"
+            }
+          },
+          "result_sha256": "0790625ebb8945dc3a3f12b211983e0d22f52313c0ac0454b1ced17668ac2f57",
+          "isolation_checks": [
+            {
+              "allowed_read": true,
+              "allowed_write": true,
+              "allowed_git_version": true,
+              "allowed_git_diff": true,
+              "isolated_git_config": true,
+              "denied_read_0": true,
+              "denied_read_1": true,
+              "denied_read_2": true,
+              "denied_write": true,
+              "denied_hardlink": true,
+              "denied_network": true
+            }
+          ],
+          "root_role_sha256": "7f703acc348420a78336864199ab7190f18313b1f008b7b1846000b396096cb0"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Public development cases with one attempt per model/case; no universal routing or reliability claim.",
+    "Most starting roles use verbatim role instructions in a root developer-instruction profile, not a visible agent picker. General cases use actual generated project AGENTS.md.",
+    "Actual successful specialist child dispatch is separately observed. Children inherit parent history; exact encrypted assignment text is not independently inspected.",
+    "Root token observations are not aggregate descendant usage; cost remains unknown.",
+    "The partial missing-skill case is retained, not counted as a passing fallback.",
+    "Copilot role work and trials were superseded by the user request for Codex-only agent definitions; no current Copilot named-agent or GUI claim."
+  ],
+  "preceding_fault_control": {
+    "scope": "Preceding snapshot with broader host catalog; not final-runtime evidence.",
+    "grade": {
+      "schema": "routing-independent-grading/v1",
+      "case": "failed-consultation",
+      "host_cohort": "codex-astra",
+      "reviewer": "independent adoption_review agent",
+      "verdict": "passed_observed_case",
+      "outcome": "passed",
+      "routing": "failed_consultation_then_direct_skill",
+      "gates": [
+        {
+          "check": "Preserves the failed attempt and uses available direct guidance without repeated blind retries.",
+          "passed": true,
+          "evidence": "Persisted native child session records one ddia_agent attempt using the intentionally unsupported model, terminating with model_not_found. Root then reads shared DDIA skill/procedures/references and gives useful direct analysis; no repeated spawn or replacement model observed."
+        },
+        {
+          "check": "Reports unavailable independent evidence and never turns the failure into a successful dispatch claim.",
+          "passed": true,
+          "evidence": "Root explicitly reports unsupported-model consultation failure and direct-guidance fallback. It does not claim the failed specialist produced an independent assessment; final advice qualifies absent product code and unrun tests."
+        }
+      ],
+      "evidence": {
+        "root_role_selection": "Exact role developer instructions loaded at root, not native named-root dispatch.",
+        "child_delegation": {
+          "attempts": 1,
+          "successful_consultations": 0,
+          "failure": "model_not_found for controlled unsupported child model"
+        },
+        "scope": "No actor source edits, recovery actions, evaluation-fixture reads or original-book consultation claim observed."
+      },
+      "limits": [
+        "One public initial-runtime case; no general reliability or superiority claim.",
+        "Failure case establishes actual failed child creation and honest fallback, not successful independent specialist output."
+      ],
+      "identities": {
+        "result_sha256": "7563381026533460a9ccb855920e65713ff043ff57ac16ce374485bbce31ef95",
+        "trace-0.jsonl_sha256": "880694d36e44accd65d6234d5f221847936d0195d1dee47a61f3271acad0b832"
+      }
+    },
+    "snapshot_sha256": "4154c64ef297f3052907215faf7cc31b5412b38ea47257dbc3db75bf066d872b"
+  }
+}

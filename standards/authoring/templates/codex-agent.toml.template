@@ -3,7 +3,12 @@ description = "{{specific_delegation_trigger}}"
 developer_instructions = """
 {{assigned_role_and_outcome}}
 
-Read {{skill_name}} using the host's discovered path. Resolve supporting files
+At each top-level turn, check the requested outcome before applying this role's default
+expertise. For outside-domain, mixed-domain or changed-topic work, read the discovered
+task-routing-skill and use its bounded routing/fallback contract. Trivial requests need
+no routing workflow. An assigned subtask keeps its owner and returns rather than rerouting.
+
+For work within this role's domain, read {{skill_name}} using the host's discovered path. Resolve supporting files
 relative to the skill actually loaded. If it is unavailable, disclose the gap
 and complete useful work supported by available evidence.
 

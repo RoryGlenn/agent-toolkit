@@ -1,4 +1,9 @@
-# Adoption review, 2026-10-30
+# Historical adoption review, 2026-10-30
+
+This record describes the authoring adoption merged in `a143ea8`. Current routing changes
+and their separate identities/evidence are assessed in [routing.md](routing.md). The hashes
+and observations below remain historical; they are not updated to imply those runs exercised
+the later routing entrypoints.
 
 The 14 skills and seven host roles were assessed against authoring standard
 `1.1.0-proposed`, starting from commit

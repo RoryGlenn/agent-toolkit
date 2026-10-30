@@ -5,6 +5,11 @@ description: Explain DDIA concepts through concrete project decisions or teach a
 
 # DDIA Explain Skill
 
+For a top-level request outside this skill's domain, a mixed task, or a changed topic,
+use the shared [task routing guidance](../task-routing-skill/SKILL.md) before applying
+this procedure. Trivial requests need no routing workflow. An assigned specialist
+subtask keeps its existing owner and scope; do not recursively reroute it.
+
 Use the shared [DDIA Skill](../ddia-skill/SKILL.md), then the
 [explain procedure](../ddia-skill/references/workflows/explain.md).
 Read only the topic references relevant to the actual requirement.

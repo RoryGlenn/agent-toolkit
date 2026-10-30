@@ -28,10 +28,17 @@ DEFAULT_SKILLS = (
     "simplify-or-delete-skill",
 )
 DDIA_WORKFLOWS = ("assess", "design", "review", "validate", "migrate", "operate", "explain")
-SKILL_DEPENDENCIES = {f"ddia-{mode}-skill": ("ddia-skill",) for mode in DDIA_WORKFLOWS}
+ROUTING_SKILL = "task-routing-skill"
+SKILL_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    skill: (ROUTING_SKILL,) for skill in DEFAULT_SKILLS
+}
+SKILL_DEPENDENCIES.update(
+    {f"ddia-{mode}-skill": ("ddia-skill", ROUTING_SKILL) for mode in DDIA_WORKFLOWS}
+)
 HOST_DIRECTORIES = {"codex": ".codex/agents", "copilot": ".github/agents"}
 INHERITED_SETTINGS = {"model", "model_reasoning_effort", "sandbox_mode"}
 ROUTES = {
+    ROUTING_SKILL: "Outside-domain, mixed-domain and changed-topic task routing",
     "documentation-skill": "Documentation, explanations, and reader task success",
     "ddia-skill": "Consequential data architecture, transactions, retries, and recovery",
     "software-design-skill": "Consequential module boundaries, APIs, and maintenance complexity",
@@ -161,6 +168,21 @@ def instruction_block(skills: list[str]) -> bytes:
     for skill in skills:
         purpose = ROUTES.get(skill, "Use when the skill's stated task applies")
         lines.append(f"- {purpose}: [{skill}](.agents/skills/{skill}/SKILL.md).")
+    if ROUTING_SKILL in skills:
+        lines.extend(
+            [
+                "",
+                "At each user turn, route by the current requested outcome, not the selected",
+                "agent's default persona. For outside-domain, mixed-domain or changed-topic work,",
+                "read .agents/skills/task-routing-skill/SKILL.md. Use only installed capabilities:",
+                "simple questions can load the relevant skill directly; consequential bounded",
+                "analysis can consult an available specialist. Keep one owner, preserve explicit",
+                "no-delegation and edit constraints, and report unavailable capabilities honestly.",
+                "An assigned subtask returns to its owner rather than recursively rerouting.",
+                "Trivial requests need no routing workflow. "
+                "Delegation does not change the UI picker.",
+            ]
+        )
     if "ddia-skill" in skills:
         lines.extend(
             [
@@ -191,8 +213,8 @@ def instruction_block(skills: list[str]) -> bytes:
             "",
             "Name future reusable instruction packages <task-or-domain>-skill, matching their",
             "directory and SKILL.md name; display names end in Skill. Name Codex definitions",
-            "<role-or-domain>-agent.toml with matching snake_case ..._agent identifiers, and",
-            "Copilot definitions <role-or-domain>-agent.agent.md with display names ending Agent.",
+            "<role-or-domain>-agent.toml with matching snake_case ..._agent identifiers.",
+            "Named roles use only Codex TOML; other hosts can use portable skills directly.",
             "Specialist describes expertise, not an artifact type. Keep host-required SKILL.md",
             "and skill UI metadata agents/openai.yaml filenames unchanged.",
             BLOCK_END.decode(),
@@ -472,7 +494,10 @@ def bootstrap(
         raise BootstrapError(f"Unknown or empty skill selection: {selected}")
     if not hosts or any(host not in HOST_DIRECTORIES for host in hosts):
         raise BootstrapError(f"Unknown host selection: {hosts}")
-    if previous and (selected != previous["skills"] or hosts != previous["hosts"]):
+    # Version one stores the full selection, not requested roots. Preserve every old
+    # package while permitting only newly required dependencies during explicit update.
+    expected_selection = resolve_skills(previous["skills"], available) if previous else selected
+    if previous and (selected != expected_selection or hosts != previous["hosts"]):
         raise BootstrapError(
             "Changing project skills or hosts is not supported by this manifest version. "
             "Keep the recorded selection; manage a deliberate reconfiguration through project Git."
