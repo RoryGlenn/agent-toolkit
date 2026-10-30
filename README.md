@@ -18,9 +18,8 @@ python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-projec
 The default engineering selection includes `documentation-skill`, `ddia-skill`,
 `software-design-skill`, `independent-diff-review-skill`, `issue-to-tested-pr-skill`,
 `release-and-docs-skill`, and `simplify-or-delete-skill`. It supports both Codex and Copilot.
-`book-to-agent-skill` and `recruiter-followup-skill` are opt-in; use repeated `--skill` flags
-for an explicit selection or `--all` for the entire collection. Select one host with
-`--target codex` or `--target copilot`.
+Use repeated `--skill` flags for an explicit selection or `--all` for the entire
+collection. Select one host with `--target codex` or `--target copilot`.
 
 For example, a documentation-only Codex project:
 
@@ -132,9 +131,7 @@ metadata and does not define a separate worker. `python3 install.py check` enfor
 directory/frontmatter names, agent filenames and runtime names, and agent associations.
 
 “Specialist” describes expertise in prose; it is not an artifact type or naming suffix.
-A workflow skill can use shared agents or run without a dedicated agent. In
-`book-to-agent-skill`, “agent” describes what the workflow builds; the final `-skill`
-identifies the artifact you invoke.
+A workflow skill can use shared agents or run without a dedicated agent.
 
 For example, these Codex prompts use the same guidance in different ways:
 
@@ -183,12 +180,10 @@ select these optional entry points when separate workflow discovery is useful.
 
 | Skill | Use it for | Codex roles installed | Copilot roles installed |
 | --- | --- | --- | --- |
-| [book-to-agent-skill](skills/book-to-agent-skill/SKILL.md) | Study a book and build a grounded specialist skill or agent. The workflow itself has no factory role. | None | None |
 | [independent-diff-review-skill](skills/independent-diff-review-skill/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. | [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) | None |
 | [issue-to-tested-pr-skill](skills/issue-to-tested-pr-skill/SKILL.md) | Implementation by one writer, followed by independent review and verification. | [implementation_owner_agent](agents/codex/implementation-owner-agent.toml), [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) | None |
 | [release-and-docs-skill](skills/release-and-docs-skill/SKILL.md) | Package, installation, upgrade, and release-documentation verification. | None | None |
 | [simplify-or-delete-skill](skills/simplify-or-delete-skill/SKILL.md) | Proposals to reduce unnecessary complexity. | None | None |
-| [recruiter-followup-skill](skills/recruiter-followup-skill/SKILL.md) | Recruiter triage, response audits, and requested replies. | None | None |
 
 The writer, reviewer, and verifier are shared engineering roles. Selecting both engineering
 workflows installs their shared roles once. On hosts without named custom roles, those
@@ -242,7 +237,7 @@ python3 install.py install --target copilot --skill documentation-skill
 
 Select skills with `--skill`; their associated roles are included automatically, as shown
 in the catalog above. You do not need to install each role separately. For example,
-selecting `book-to-agent-skill` installs only that workflow skill, while selecting `ddia-skill`
+selecting `release-and-docs-skill` installs only that workflow skill, while selecting `ddia-skill`
 for Codex installs its skill and the `ddia_agent` role.
 
 | Target | Skills | Agent definitions |
@@ -384,23 +379,6 @@ search, source/index tampering, safe image materialization, and selected install
 These checks establish retrieval and packaging behavior. Actual role execution and judgment
 need a separate host/behavior check; they do not follow from a valid TOML file alone.
 
-## Book to Agent Skill
-
-Install with `python3 install.py install --target codex --skill book-to-agent-skill`, then use:
-
-> Use $book-to-agent-skill with `/path/to/book.epub` to create a specialist for [the work you want it to do], following my existing agent setup.
-
-This is a coordinating skill; it installs no additional named agent. It reuses the existing
-creator, reader, installer, and engineering workflows. It guides source identification and
-full agreed-scope reading, synthesis of principles and qualifications, a compact operational
-skill, an optional specialist role, and independent behavioral checks. The source format is
-inspected before choosing retrieval tools; books with different layouts need not share a parser.
-
-The workflow distinguishes extraction from substantive reading, useful advice from successful
-file creation, and host discovery from actual role execution. Original books and detailed
-personal studies stay outside the shared package by default. It preserves existing agents
-and settings and does not authorize publication or additional permissions.
-
 ## Existing installations and restore
 
 When upgrading from names without type suffixes, keep the old checkout/version available
@@ -409,7 +387,7 @@ and agent hard links depend on their source paths; renaming the live checkout fi
 break old skill discovery and historical receipt checks. If replacing a checkout in
 place, restore its previous installation before replacing it.
 
-Old `--skill` selectors remain accepted with a deprecation message. For example,
+Supported legacy `--skill` selectors remain accepted with a deprecation message. For example,
 `--skill doc-agent` selects `documentation-skill`; `ddia-specialist` and
 `software-design-specialist` select `ddia-skill` and `software-design-skill`. Other previous
 selectors gain `-skill`. `list` shows only canonical names. These are installer aliases,
@@ -513,7 +491,7 @@ This toolkit is the maintained source for the collected skills and agent definit
 - *Designing Data-Intensive Applications*, Second Edition, by Martin Kleppmann and Chris Riccomini (O'Reilly Media, 2026), is included as the DDIA specialist's source. Its original copyright notices remain in the EPUB; inclusion does not assign the book a new license.
 - The software-design specialist uses an original synthesis of *A Philosophy of Software Design*, Second Edition, by John K. Ousterhout (Yaknyam Press, 2021). Its personal EPUB and detailed reading notes are kept outside this repository; the skill retrieves them locally and does not redistribute the source.
 - Four engineering skills and three Codex roles came from the `RoryGlenn/RoryGlenn` profile repository. Their previous installation also managed global guidance, configuration, and `codex-lanes`; those remain outside this toolkit. The workflow can use native Git worktrees when that helper is unavailable.
-- The Codex docs wrapper and `recruiter-followup-skill` came from Rory's local custom configuration.
+- The Codex docs wrapper came from Rory's local custom configuration.
 - The disabled `hatch-pet` installation is excluded because its provenance and overlap with the installed Work Pets plugin need separate resolution. Bundled and third-party plugin skills are not copied.
 
 This repository has no redistribution license assigned. Review provenance and choose licensing before publishing it for others.

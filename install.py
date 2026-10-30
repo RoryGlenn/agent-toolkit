@@ -44,12 +44,10 @@ SKILL_ALIASES = {
     "doc-agent": "documentation-skill",
     "ddia-specialist": "ddia-skill",
     "software-design-specialist": "software-design-skill",
-    "book-to-agent": "book-to-agent-skill",
     "independent-diff-review": "independent-diff-review-skill",
     "issue-to-tested-pr": "issue-to-tested-pr-skill",
     "release-and-docs": "release-and-docs-skill",
     "simplify-or-delete": "simplify-or-delete-skill",
-    "recruiter-followup": "recruiter-followup-skill",
 }
 AGENT_ALIASES = {
     "codex": {

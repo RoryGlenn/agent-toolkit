@@ -70,15 +70,6 @@
       "next_check": "Verify discovery and actual execution in a supported Copilot host; file checks cannot establish it."
     },
     {
-      "path": "skills/book-to-agent-skill/SKILL.md",
-      "basis": "Source-study and validation workflow; authoring standard T01-T06.",
-      "evidence": [
-        "skills/book-to-agent-skill/references/source-study-and-validation.md"
-      ],
-      "assessment": "not_assessed",
-      "next_check": "Exercise a supplied-book build and a missing-source case with independent review of attribution and coverage."
-    },
-    {
       "path": "skills/ddia-assess-skill/SKILL.md",
       "basis": "DDIA Second Edition and shared ddia-skill assess procedure.",
       "evidence": [
@@ -193,13 +184,6 @@
       "evidence": [],
       "assessment": "not_assessed",
       "next_check": "Exercise a bounded disposable change; verify role handoffs, acceptance evidence, and no unauthorized merge."
-    },
-    {
-      "path": "skills/recruiter-followup-skill/SKILL.md",
-      "basis": "User-specific recruiter triage, conversation reconciliation, and authorized reply workflow.",
-      "evidence": [],
-      "assessment": "not_assessed",
-      "next_check": "Use offline thread fixtures for later replies, duplicate channels, incomplete coverage, and ambiguous send outcomes; no live sends for evaluation."
     },
     {
       "path": "skills/release-and-docs-skill/SKILL.md",

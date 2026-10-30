@@ -100,8 +100,7 @@ class ProjectBootstrapTests(unittest.TestCase):
                 self.assertEqual(path.stat().st_nlink, 1)
         instructions = (self.app / "AGENTS.md").read_text()
         self.assertIn(".agents/skills/issue-to-tested-pr-skill/SKILL.md", instructions)
-        self.assertNotIn("recruiter-followup-skill", instructions)
-        self.assertNotIn("book-to-agent-skill", instructions)
+        self.assertNotIn("ddia-assess-skill", instructions)
         self.assertNotIn("Toolkit contributions", instructions)
         manifest = self.manifest()
         self.assertEqual(manifest["hosts"], ["codex", "copilot"])
@@ -148,8 +147,8 @@ class ProjectBootstrapTests(unittest.TestCase):
             self.apply(target="both", update=True)
         self.assertEqual(self.snapshot(), before)
 
-    def test_explicit_nonengineering_skills_and_cli_defaults(self) -> None:
-        """The CLI supports opt-in tasks while a skill-only selection creates no host wrappers."""
+    def test_explicit_skill_only_selection_and_cli_defaults(self) -> None:
+        """An explicit skill-only CLI selection creates its routes without host wrappers."""
         result = subprocess.run(
             [
                 sys.executable,
@@ -158,9 +157,9 @@ class ProjectBootstrapTests(unittest.TestCase):
                 "--project",
                 str(self.app),
                 "--skill",
-                "book-to-agent-skill",
+                "release-and-docs-skill",
                 "--skill",
-                "recruiter-followup-skill",
+                "simplify-or-delete-skill",
             ],
             capture_output=True,
             text=True,
@@ -169,9 +168,9 @@ class ProjectBootstrapTests(unittest.TestCase):
         self.assertFalse((self.app / ".codex").exists())
         self.assertFalse((self.app / ".github").exists())
         self.assertEqual(
-            self.manifest()["skills"], ["book-to-agent-skill", "recruiter-followup-skill"]
+            self.manifest()["skills"], ["release-and-docs-skill", "simplify-or-delete-skill"]
         )
-        self.assertIn("book-to-agent-skill", (self.app / "AGENTS.md").read_text())
+        self.assertIn("release-and-docs-skill", (self.app / "AGENTS.md").read_text())
 
     def test_relocated_project_runs_its_helper_after_source_removal(self) -> None:
         """A project clone/copy can use its files without the toolkit checkout or original path."""

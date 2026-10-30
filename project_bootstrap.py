@@ -39,8 +39,6 @@ ROUTES = {
     "issue-to-tested-pr-skill": "Accepted nontrivial implementation, fixes, and refactoring",
     "release-and-docs-skill": "Release, package, and documentation verification",
     "simplify-or-delete-skill": "Evidence-backed reduction of unnecessary complexity",
-    "book-to-agent-skill": "Create or improve a skill or agent grounded in a supplied book",
-    "recruiter-followup-skill": "Requested recruiter triage and follow-up",
 }
 ROUTES.update(
     {
