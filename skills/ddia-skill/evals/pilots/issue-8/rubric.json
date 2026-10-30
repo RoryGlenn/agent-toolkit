@@ -1,0 +1,52 @@
+{
+  "schema": "ddia-forward-pilot/v1",
+  "issue": 8,
+  "source": "Fresh author-created scenarios, one response per arm; not a benchmark superiority claim.",
+  "arms": [
+    "baseline",
+    "current",
+    "redesigned"
+  ],
+  "score_scale": {
+    "0": "Absent or materially incorrect",
+    "1": "Partial or ambiguous",
+    "2": "Clear, correct and applicable"
+  },
+  "criteria": {
+    "A": [
+      "Retains a simple existing PostgreSQL/cron design absent a demonstrated unmet requirement.",
+      "Evaluates duplicate harm and team operating burden instead of universally requiring dedupe/locks.",
+      "Names proportionate observable failure handling without asserting an unprovided mechanism is mandatory.",
+      "Gives measurable workload/reliability/product triggers for revisiting the design.",
+      "Separates supplied measurements from unknown restore/reliability evidence."
+    ],
+    "B": [
+      "Shows both regions confirming the last seat during a partition violates no-oversell.",
+      "Explains convergence/LWW cannot preserve already-issued confirmations.",
+      "Explains quorum/coordination cannot guarantee immediate acceptance on both sides through arbitrary partitions.",
+      "Offers realistic coordinated ownership, preallocated rights, or provisional acceptance choices with limitations.",
+      "Requires explicit product tradeoff rather than silently weakening an invariant or promising impossible availability."
+    ],
+    "C": [
+      "Uses effective-dated historical tariffs at measurement event time, retaining correction/replay history.",
+      "Handles specified 48-hour lateness without silently discarding billable events; addresses completeness/late corrections.",
+      "Aligns business dedupe identity and retention with 90-day replay and in-flight deliveries; uses sink constraints appropriately.",
+      "Recognizes calculation-version uniqueness alone can double bill across versions; proposes controlled replacement/reconciliation/deltas.",
+      "Provides recoverable staged recalculation/publication and verification of crash/replay/late-event outcomes."
+    ],
+    "D": [
+      "Traces deletion through search/vector copies, archives, training derivatives and backups.",
+      "Preserves deletion knowledge outside rolled-back restore state and reapplies it before exposing/rebuilding restored data.",
+      "Addresses asynchronous deletion visibility/access controls and observable completion/failure recovery.",
+      "Distinguishes policy/retention/model-remediation choices from established engineering guarantees.",
+      "Does not claim legal compliance and identifies missing legal/business retention decisions."
+    ]
+  },
+  "separate_traceability": "Record actual supporting references and retrieval use separately; do not penalize baseline for lacking source access.",
+  "limits": [
+    "One trial per arm",
+    "Author-supplied cases and rubric",
+    "Partial blinding possible because source citations reveal arm",
+    "Reasoning-only pilot, no production load/broker/disaster-recovery behavior"
+  ]
+}

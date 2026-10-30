@@ -1,0 +1,1891 @@
+{
+  "schema": "ddia-capabilities/v1",
+  "edition": 2,
+  "source_sha256": "c9b9e0c506024fcd0a73d0428fe9e8f307ba84cf54fbac8de433d72d91acc3d6",
+  "scope": "Original engineering guidance spanning all 14 substantive chapters. Coverage is at concept-cluster level; it does not claim every bibliography, figure or external source was independently verified.",
+  "workflows": [
+    "assess",
+    "design",
+    "review",
+    "validate",
+    "migrate",
+    "operate",
+    "explain"
+  ],
+  "concepts": [
+    {
+      "id": "workload-separation",
+      "chapter": 1,
+      "title": "Operational and analytical workloads",
+      "reference": "references/chapters/01.md",
+      "heading": "operational-and-analytical-workloads",
+      "source_refs": [
+        "OEBPS/ch01.html#sec_introduction_analytics",
+        "OEBPS/ch01.html#sec_introduction_dwh"
+      ],
+      "workflows": [
+        "assess",
+        "design"
+      ],
+      "example": "workload-separation: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-01"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "authority-derived",
+      "chapter": 1,
+      "title": "Systems of record and rebuildable state",
+      "reference": "references/chapters/01.md",
+      "heading": "systems-of-record-and-rebuildable-state",
+      "source_refs": [
+        "OEBPS/ch01.html#sec_introduction_derived",
+        "OEBPS/ch01.html#sec_introduction_compliance"
+      ],
+      "workflows": [
+        "assess",
+        "design"
+      ],
+      "example": "authority-derived: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-01"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "cloud-operations",
+      "chapter": 1,
+      "title": "Managed services and storage/compute separation",
+      "reference": "references/chapters/01.md",
+      "heading": "managed-services-and-storagecompute-separation",
+      "source_refs": [
+        "OEBPS/ch01.html#sec_introduction_cloud_tradeoffs",
+        "OEBPS/ch01.html#sec_introduction_storage_compute"
+      ],
+      "workflows": [
+        "assess",
+        "design"
+      ],
+      "example": "cloud-operations: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-01"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "distribution-necessity",
+      "chapter": 1,
+      "title": "Single-node versus distributed architecture",
+      "reference": "references/chapters/01.md",
+      "heading": "single-node-versus-distributed-architecture",
+      "source_refs": [
+        "OEBPS/ch01.html#sec_introduction_distributed",
+        "OEBPS/ch01.html#sec_introduction_dist_sys_problems"
+      ],
+      "workflows": [
+        "assess",
+        "design"
+      ],
+      "example": "distribution-necessity: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-01"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "service-boundaries",
+      "chapter": 1,
+      "title": "Microservices, serverless and team boundaries",
+      "reference": "references/chapters/01.md",
+      "heading": "microservices-serverless-and-team-boundaries",
+      "source_refs": [
+        "OEBPS/ch01.html#sec_introduction_microservices",
+        "OEBPS/ch01.html#sec_introduction_operations"
+      ],
+      "workflows": [
+        "assess",
+        "design"
+      ],
+      "example": "service-boundaries: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-01"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "load-shape",
+      "chapter": 2,
+      "title": "Workload, skew and materialization",
+      "reference": "references/chapters/02.md",
+      "heading": "workload-skew-and-materialization",
+      "source_refs": [
+        "OEBPS/ch02.html#sec_introduction_materializing",
+        "OEBPS/ch02.html#id33"
+      ],
+      "workflows": [
+        "assess",
+        "design",
+        "operate"
+      ],
+      "example": "load-shape: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-02"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "performance-objectives",
+      "chapter": 2,
+      "title": "Latency distributions and useful objectives",
+      "reference": "references/chapters/02.md",
+      "heading": "latency-distributions-and-useful-objectives",
+      "source_refs": [
+        "OEBPS/ch02.html#sec_introduction_percentiles",
+        "OEBPS/ch02.html#sidebar_percentiles"
+      ],
+      "workflows": [
+        "assess",
+        "design",
+        "operate"
+      ],
+      "example": "performance-objectives: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-02"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "overload",
+      "chapter": 2,
+      "title": "Overload, retry amplification and backpressure",
+      "reference": "references/chapters/02.md",
+      "heading": "overload-retry-amplification-and-backpressure",
+      "source_refs": [
+        "OEBPS/ch02.html#sidebar_metastable",
+        "OEBPS/ch02.html#sec_introduction_slo_sla"
+      ],
+      "workflows": [
+        "assess",
+        "design",
+        "operate"
+      ],
+      "example": "overload: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-02"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "reliability-recovery",
+      "chapter": 2,
+      "title": "Fault models and recovery objectives",
+      "reference": "references/chapters/02.md",
+      "heading": "fault-models-and-recovery-objectives",
+      "source_refs": [
+        "OEBPS/ch02.html#sec_introduction_reliability",
+        "OEBPS/ch02.html#sec_introduction_hardware_faults"
+      ],
+      "workflows": [
+        "assess",
+        "design",
+        "operate"
+      ],
+      "example": "reliability-recovery: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-02"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "maintainability",
+      "chapter": 2,
+      "title": "Operability, simplicity and evolvability",
+      "reference": "references/chapters/02.md",
+      "heading": "operability-simplicity-and-evolvability",
+      "source_refs": [
+        "OEBPS/ch02.html#sec_introduction_maintainability",
+        "OEBPS/ch02.html#sec_introduction_evolvability"
+      ],
+      "workflows": [
+        "assess",
+        "design",
+        "operate"
+      ],
+      "example": "maintainability: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-02"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "aggregate-models",
+      "chapter": 3,
+      "title": "Relations, documents and locality",
+      "reference": "references/chapters/03.md",
+      "heading": "relations-documents-and-locality",
+      "source_refs": [
+        "OEBPS/ch03.html#sec_datamodels_history",
+        "OEBPS/ch03.html#sec_datamodels_document_summary"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "explain"
+      ],
+      "example": "aggregate-models: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-03"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "denormalization",
+      "chapter": 3,
+      "title": "Denormalization and analytical schemas",
+      "reference": "references/chapters/03.md",
+      "heading": "denormalization-and-analytical-schemas",
+      "source_refs": [
+        "OEBPS/ch03.html#sec_datamodels_normalization",
+        "OEBPS/ch03.html#sec_datamodels_analytics"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "explain"
+      ],
+      "example": "denormalization: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-03"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "graph-queries",
+      "chapter": 3,
+      "title": "Graphs, recursive queries and language choice",
+      "reference": "references/chapters/03.md",
+      "heading": "graphs-recursive-queries-and-language-choice",
+      "source_refs": [
+        "OEBPS/ch03.html#sec_datamodels_graph",
+        "OEBPS/ch03.html#id62",
+        "OEBPS/ch03.html#id63"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "explain"
+      ],
+      "example": "graph-queries: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-03"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "event-models",
+      "chapter": 3,
+      "title": "Event sourcing and CQRS",
+      "reference": "references/chapters/03.md",
+      "heading": "event-sourcing-and-cqrs",
+      "source_refs": [
+        "OEBPS/ch03.html#sec_datamodels_events",
+        "OEBPS/ch03.html#sec_datamodels_normalization"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "explain"
+      ],
+      "example": "event-models: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-03"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "analytical-shapes",
+      "chapter": 3,
+      "title": "DataFrames, matrices and arrays",
+      "reference": "references/chapters/03.md",
+      "heading": "dataframes-matrices-and-arrays",
+      "source_refs": [
+        "OEBPS/ch03.html#sec_datamodels_dataframes",
+        "OEBPS/ch03.html#sec_datamodels_analytics"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "explain"
+      ],
+      "example": "analytical-shapes: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-03"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "storage-engines",
+      "chapter": 4,
+      "title": "Logs, B-trees and LSM tradeoffs",
+      "reference": "references/chapters/04.md",
+      "heading": "logs-b-trees-and-lsm-tradeoffs",
+      "source_refs": [
+        "OEBPS/ch04.html#sec_storage_log_structured",
+        "OEBPS/ch04.html#sec_storage_btree_lsm_comparison"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "validate"
+      ],
+      "example": "storage-engines: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-04"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "indexes",
+      "chapter": 4,
+      "title": "Secondary, multicolumn and covering indexes",
+      "reference": "references/chapters/04.md",
+      "heading": "secondary-multicolumn-and-covering-indexes",
+      "source_refs": [
+        "OEBPS/ch04.html#sec_storage_index_multicolumn",
+        "OEBPS/ch04.html#sec_storage_index_heap"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "validate"
+      ],
+      "example": "indexes: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-04"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "columnar",
+      "chapter": 4,
+      "title": "Columnar storage and analytical execution",
+      "reference": "references/chapters/04.md",
+      "heading": "columnar-storage-and-analytical-execution",
+      "source_refs": [
+        "OEBPS/ch04.html#sec_storage_column",
+        "OEBPS/ch04.html#sec_storage_vectorized",
+        "OEBPS/ch04.html#sec_storage_materialized_views"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "validate"
+      ],
+      "example": "columnar: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-04"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "search-indexes",
+      "chapter": 4,
+      "title": "Full-text and multidimensional search",
+      "reference": "references/chapters/04.md",
+      "heading": "full-text-and-multidimensional-search",
+      "source_refs": [
+        "OEBPS/ch04.html#sec_storage_multidimensional",
+        "OEBPS/ch04.html#sec_storage_full_text"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "validate"
+      ],
+      "example": "search-indexes: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-04"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "vector-search",
+      "chapter": 4,
+      "title": "Vector embeddings and approximate retrieval",
+      "reference": "references/chapters/04.md",
+      "heading": "vector-embeddings-and-approximate-retrieval",
+      "source_refs": [
+        "OEBPS/ch04.html#id94",
+        "OEBPS/ch04.html#sec_storage_full_text"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "validate"
+      ],
+      "example": "vector-search: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-04"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "compatibility",
+      "chapter": 5,
+      "title": "Writer-reader compatibility and rolling evolution",
+      "reference": "references/chapters/05.md",
+      "heading": "writer-reader-compatibility-and-rolling-evolution",
+      "source_refs": [
+        "OEBPS/ch05.html#sec_encoding_dataflow_db",
+        "OEBPS/ch05.html#id110",
+        "OEBPS/ch05.html#id111"
+      ],
+      "workflows": [
+        "migrate",
+        "review",
+        "design"
+      ],
+      "example": "compatibility: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-05"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "schema-roundtrip"
+      ]
+    },
+    {
+      "id": "encoding-types",
+      "chapter": 5,
+      "title": "Encoding formats and numeric fidelity",
+      "reference": "references/chapters/05.md",
+      "heading": "encoding-formats-and-numeric-fidelity",
+      "source_refs": [
+        "OEBPS/ch05.html#id98",
+        "OEBPS/ch05.html#sec_encoding_json"
+      ],
+      "workflows": [
+        "migrate",
+        "review",
+        "design"
+      ],
+      "example": "encoding-types: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-05"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "schema-formats",
+      "chapter": 5,
+      "title": "Protocol Buffers and Avro evolution",
+      "reference": "references/chapters/05.md",
+      "heading": "protocol-buffers-and-avro-evolution",
+      "source_refs": [
+        "OEBPS/ch05.html#sec_encoding_protobuf",
+        "OEBPS/ch05.html#sec_encoding_avro"
+      ],
+      "workflows": [
+        "migrate",
+        "review",
+        "design"
+      ],
+      "example": "schema-formats: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-05"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "rpc-outcomes",
+      "chapter": 5,
+      "title": "RPC, services and ambiguous outcomes",
+      "reference": "references/chapters/05.md",
+      "heading": "rpc-services-and-ambiguous-outcomes",
+      "source_refs": [
+        "OEBPS/ch05.html#sec_problems_with_rpc",
+        "OEBPS/ch05.html#sec_encoding_dataflow_rpc"
+      ],
+      "workflows": [
+        "migrate",
+        "review",
+        "design"
+      ],
+      "example": "rpc-outcomes: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-05"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "durable-workflows",
+      "chapter": 5,
+      "title": "Durable workflows and event-driven contracts",
+      "reference": "references/chapters/05.md",
+      "heading": "durable-workflows-and-event-driven-contracts",
+      "source_refs": [
+        "OEBPS/ch05.html#sec_encoding_dataflow_workflows",
+        "OEBPS/ch05.html#sec_encoding_dataflow_msg"
+      ],
+      "workflows": [
+        "migrate",
+        "review",
+        "design"
+      ],
+      "example": "durable-workflows: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-05"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "replication-durability",
+      "chapter": 6,
+      "title": "Leader acknowledgements, bootstrap and failover",
+      "reference": "references/chapters/06.md",
+      "heading": "leader-acknowledgements-bootstrap-and-failover",
+      "source_refs": [
+        "OEBPS/ch06.html#sec_replication_sync_async",
+        "OEBPS/ch06.html#sec_replication_new_replica",
+        "OEBPS/ch06.html#sec_replication_failover"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "operate"
+      ],
+      "example": "replication-durability: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-06"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "replication-reads",
+      "chapter": 6,
+      "title": "Read-your-writes, monotonic and prefix reads",
+      "reference": "references/chapters/06.md",
+      "heading": "read-your-writes-monotonic-and-prefix-reads",
+      "source_refs": [
+        "OEBPS/ch06.html#sec_replication_ryw",
+        "OEBPS/ch06.html#sec_replication_monotonic_reads",
+        "OEBPS/ch06.html#sec_replication_consistent_prefix"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "operate"
+      ],
+      "example": "replication-reads: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-06"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "multi-leader-sync",
+      "chapter": 6,
+      "title": "Multi-leader and local-first synchronization",
+      "reference": "references/chapters/06.md",
+      "heading": "multi-leader-and-local-first-synchronization",
+      "source_refs": [
+        "OEBPS/ch06.html#sec_replication_multi_leader",
+        "OEBPS/ch06.html#sec_replication_offline_clients"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "operate"
+      ],
+      "example": "multi-leader-sync: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-06"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "conflict-resolution",
+      "chapter": 6,
+      "title": "Conflict semantics, causal versions and CRDTs",
+      "reference": "references/chapters/06.md",
+      "heading": "conflict-semantics-causal-versions-and-crdts",
+      "source_refs": [
+        "OEBPS/ch06.html#sec_replication_write_conflicts",
+        "OEBPS/ch06.html#sec_replication_crdts",
+        "OEBPS/ch06.html#sec_replication_concurrent"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "operate"
+      ],
+      "example": "conflict-resolution: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-06"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "leaderless-quorums",
+      "chapter": 6,
+      "title": "Leaderless quorums and repair",
+      "reference": "references/chapters/06.md",
+      "heading": "leaderless-quorums-and-repair",
+      "source_refs": [
+        "OEBPS/ch06.html#sec_replication_quorum_condition",
+        "OEBPS/ch06.html#sec_replication_quorum_limitations",
+        "OEBPS/ch06.html#sec_replication_read_repair"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "operate"
+      ],
+      "example": "leaderless-quorums: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-06"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "sharding-need",
+      "chapter": 7,
+      "title": "Sharding need and multitenancy",
+      "reference": "references/chapters/07.md",
+      "heading": "sharding-need-and-multitenancy",
+      "source_refs": [
+        "OEBPS/ch07.html#sec_sharding_reasons",
+        "OEBPS/ch07.html#sec_sharding_multitenancy"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "operate"
+      ],
+      "example": "sharding-need: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-07"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "shard-keys",
+      "chapter": 7,
+      "title": "Range, hash and composite keys",
+      "reference": "references/chapters/07.md",
+      "heading": "range-hash-and-composite-keys",
+      "source_refs": [
+        "OEBPS/ch07.html#sec_sharding_key_range",
+        "OEBPS/ch07.html#sec_sharding_hash"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "operate"
+      ],
+      "example": "shard-keys: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-07"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "hotspots",
+      "chapter": 7,
+      "title": "Hot keys and secondary effects",
+      "reference": "references/chapters/07.md",
+      "heading": "hot-keys-and-secondary-effects",
+      "source_refs": [
+        "OEBPS/ch07.html#sec_sharding_skew",
+        "OEBPS/ch07.html#sec_sharding_secondary_indexes"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "operate"
+      ],
+      "example": "hotspots: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-07"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "rebalancing",
+      "chapter": 7,
+      "title": "Rebalancing and routing",
+      "reference": "references/chapters/07.md",
+      "heading": "rebalancing-and-routing",
+      "source_refs": [
+        "OEBPS/ch07.html#id164",
+        "OEBPS/ch07.html#sec_sharding_operations",
+        "OEBPS/ch07.html#sec_sharding_routing"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "operate"
+      ],
+      "example": "rebalancing: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-07"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "distributed-indexes",
+      "chapter": 7,
+      "title": "Local and global secondary indexes",
+      "reference": "references/chapters/07.md",
+      "heading": "local-and-global-secondary-indexes",
+      "source_refs": [
+        "OEBPS/ch07.html#id171",
+        "OEBPS/ch07.html#id172"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "operate"
+      ],
+      "example": "distributed-indexes: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-07"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "transaction-boundaries",
+      "chapter": 8,
+      "title": "ACID meanings and multi-object atomicity",
+      "reference": "references/chapters/08.md",
+      "heading": "acid-meanings-and-multi-object-atomicity",
+      "source_refs": [
+        "OEBPS/ch08.html#sec_transactions_acid",
+        "OEBPS/ch08.html#sec_transactions_multi_object"
+      ],
+      "workflows": [
+        "review",
+        "validate",
+        "design"
+      ],
+      "example": "transaction-boundaries: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-08"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "atomic-admission"
+      ]
+    },
+    {
+      "id": "isolation-anomalies",
+      "chapter": 8,
+      "title": "Read committed, snapshots and lost updates",
+      "reference": "references/chapters/08.md",
+      "heading": "read-committed-snapshots-and-lost-updates",
+      "source_refs": [
+        "OEBPS/ch08.html#sec_transactions_snapshot_isolation",
+        "OEBPS/ch08.html#sec_transactions_lost_update",
+        "OEBPS/ch08.html#sec_transactions_read_committed",
+        "OEBPS/ch08.html#id187",
+        "OEBPS/ch08.html#sec_transactions_dirty_write"
+      ],
+      "workflows": [
+        "review",
+        "validate",
+        "design"
+      ],
+      "example": "isolation-anomalies: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-08"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "atomic-admission"
+      ]
+    },
+    {
+      "id": "write-skew",
+      "chapter": 8,
+      "title": "Predicate invariants and serializability",
+      "reference": "references/chapters/08.md",
+      "heading": "predicate-invariants-and-serializability",
+      "source_refs": [
+        "OEBPS/ch08.html#sec_transactions_write_skew",
+        "OEBPS/ch08.html#sec_transactions_phantom",
+        "OEBPS/ch08.html#sec_transactions_ssi",
+        "OEBPS/ch08.html#sec_transactions_serial",
+        "OEBPS/ch08.html#sec_transactions_2pl",
+        "OEBPS/ch08.html#sec_transactions_2pl_predicate",
+        "OEBPS/ch08.html#sec_transactions_2pl_range"
+      ],
+      "workflows": [
+        "review",
+        "validate",
+        "design"
+      ],
+      "example": "write-skew: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-08"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "distributed-transactions",
+      "chapter": 8,
+      "title": "Atomic commit and coordinator recovery",
+      "reference": "references/chapters/08.md",
+      "heading": "atomic-commit-and-coordinator-recovery",
+      "source_refs": [
+        "OEBPS/ch08.html#sec_transactions_2pc",
+        "OEBPS/ch08.html#sec_transactions_xa",
+        "OEBPS/ch08.html#sec_transactions_internal"
+      ],
+      "workflows": [
+        "review",
+        "validate",
+        "design"
+      ],
+      "example": "distributed-transactions: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-08"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "message-atomicity",
+      "chapter": 8,
+      "title": "Message identity, effect, acknowledgement and retention",
+      "reference": "references/chapters/08.md",
+      "heading": "message-identity-effect-acknowledgement-and-retention",
+      "source_refs": [
+        "OEBPS/ch08.html#sec_transactions_exactly_once",
+        "OEBPS/ch08.html#id225"
+      ],
+      "workflows": [
+        "review",
+        "validate",
+        "design"
+      ],
+      "example": "message-atomicity: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-08"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "message-replay"
+      ]
+    },
+    {
+      "id": "ambiguous-failure",
+      "chapter": 9,
+      "title": "Networks, partial failure and timeouts",
+      "reference": "references/chapters/09.md",
+      "heading": "networks-partial-failure-and-timeouts",
+      "source_refs": [
+        "OEBPS/ch09.html#sec_distributed_partial_failure",
+        "OEBPS/ch09.html#sec_distributed_tcp",
+        "OEBPS/ch09.html#sec_distributed_queueing"
+      ],
+      "workflows": [
+        "validate",
+        "review",
+        "operate"
+      ],
+      "example": "ambiguous-failure: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-09"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "clock-assumptions",
+      "chapter": 9,
+      "title": "Wall time, monotonic clocks and uncertainty",
+      "reference": "references/chapters/09.md",
+      "heading": "wall-time-monotonic-clocks-and-uncertainty",
+      "source_refs": [
+        "OEBPS/ch09.html#sec_distributed_monotonic_timeofday",
+        "OEBPS/ch09.html#sec_distributed_clocks_relying"
+      ],
+      "workflows": [
+        "validate",
+        "review",
+        "operate"
+      ],
+      "example": "clock-assumptions: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-09"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "leases-fencing",
+      "chapter": 9,
+      "title": "Leases, pauses and resource-enforced fencing",
+      "reference": "references/chapters/09.md",
+      "heading": "leases-pauses-and-resource-enforced-fencing",
+      "source_refs": [
+        "OEBPS/ch09.html#sec_distributed_lock_fencing",
+        "OEBPS/ch09.html#sec_distributed_fencing_tokens"
+      ],
+      "workflows": [
+        "validate",
+        "review",
+        "operate"
+      ],
+      "example": "leases-fencing: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-09"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "lease-fencing"
+      ]
+    },
+    {
+      "id": "failure-models",
+      "chapter": 9,
+      "title": "Safety, liveness and Byzantine assumptions",
+      "reference": "references/chapters/09.md",
+      "heading": "safety-liveness-and-byzantine-assumptions",
+      "source_refs": [
+        "OEBPS/ch09.html#sec_distributed_byzantine",
+        "OEBPS/ch09.html#sec_distributed_system_model",
+        "OEBPS/ch09.html#sec_distributed_safety_liveness"
+      ],
+      "workflows": [
+        "validate",
+        "review",
+        "operate"
+      ],
+      "example": "failure-models: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-09"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "formal-testing",
+      "chapter": 9,
+      "title": "Formal models, fault injection and deterministic simulation",
+      "reference": "references/chapters/09.md",
+      "heading": "formal-models-fault-injection-and-deterministic-simulation",
+      "source_refs": [
+        "OEBPS/ch09.html#sec_distributed_formal",
+        "OEBPS/ch09.html#id257",
+        "OEBPS/ch09.html#sec_deterministic_simulation_testing"
+      ],
+      "workflows": [
+        "validate",
+        "review",
+        "operate"
+      ],
+      "example": "formal-testing: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-09"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "consistency-contracts",
+      "chapter": 10,
+      "title": "Linearizability, serializability and real-time order",
+      "reference": "references/chapters/10.md",
+      "heading": "linearizability-serializability-and-real-time-order",
+      "source_refs": [
+        "OEBPS/ch10.html#sec_consistency_lin_definition",
+        "OEBPS/ch10.html#sidebar_consistency_serializability"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "consistency-contracts: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-10"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "partition-tradeoffs",
+      "chapter": 10,
+      "title": "Partition behavior and cross-channel causality",
+      "reference": "references/chapters/10.md",
+      "heading": "partition-behavior-and-cross-channel-causality",
+      "source_refs": [
+        "OEBPS/ch10.html#sec_consistency_cap",
+        "OEBPS/ch10.html#sec_consistency_multi_channel"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "partition-tradeoffs: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-10"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "logical-identities",
+      "chapter": 10,
+      "title": "Logical clocks and ID generator requirements",
+      "reference": "references/chapters/10.md",
+      "heading": "logical-clocks-and-id-generator-requirements",
+      "source_refs": [
+        "OEBPS/ch10.html#sec_consistency_timestamps",
+        "OEBPS/ch10.html#sec_consistency_linearizable_id"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "logical-identities: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-10"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "consensus-mechanisms",
+      "chapter": 10,
+      "title": "Consensus, shared logs and membership",
+      "reference": "references/chapters/10.md",
+      "heading": "consensus-shared-logs-and-membership",
+      "source_refs": [
+        "OEBPS/ch10.html#sec_consistency_faces",
+        "OEBPS/ch10.html#sec_consistency_consensus_leader",
+        "OEBPS/ch10.html#id283"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "consensus-mechanisms: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-10"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "coordination-use",
+      "chapter": 10,
+      "title": "Coordination services and operational boundaries",
+      "reference": "references/chapters/10.md",
+      "heading": "coordination-services-and-operational-boundaries",
+      "source_refs": [
+        "OEBPS/ch10.html#sec_consistency_coordination",
+        "OEBPS/ch10.html#id286",
+        "OEBPS/ch10.html#id287"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "coordination-use: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-10"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "batch-baseline",
+      "chapter": 11,
+      "title": "Local pipelines, sorting and memory bounds",
+      "reference": "references/chapters/11.md",
+      "heading": "local-pipelines-sorting-and-memory-bounds",
+      "source_refs": [
+        "OEBPS/ch11.html#sec_batch_unix",
+        "OEBPS/ch11.html#id292"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "migrate"
+      ],
+      "example": "batch-baseline: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-11"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "batch-storage",
+      "chapter": 11,
+      "title": "Filesystems, object stores and reproducible inputs",
+      "reference": "references/chapters/11.md",
+      "heading": "filesystems-object-stores-and-reproducible-inputs",
+      "source_refs": [
+        "OEBPS/ch11.html#sec_batch_dfs",
+        "OEBPS/ch11.html#id295"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "migrate"
+      ],
+      "example": "batch-storage: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-11"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "batch-orchestration",
+      "chapter": 11,
+      "title": "Resource scheduling, dependencies and retries",
+      "reference": "references/chapters/11.md",
+      "heading": "resource-scheduling-dependencies-and-retries",
+      "source_refs": [
+        "OEBPS/ch11.html#id296",
+        "OEBPS/ch11.html#sec_batch_workflows",
+        "OEBPS/ch11.html#id299"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "migrate"
+      ],
+      "example": "batch-orchestration: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-11"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "batch-dataflow",
+      "chapter": 11,
+      "title": "Shuffles, joins, grouping and skew",
+      "reference": "references/chapters/11.md",
+      "heading": "shuffles-joins-grouping-and-skew",
+      "source_refs": [
+        "OEBPS/ch11.html#sec_batch_dataflow",
+        "OEBPS/ch11.html#sec_shuffle",
+        "OEBPS/ch11.html#sec_batch_join"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "migrate"
+      ],
+      "example": "batch-dataflow: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-11"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "derived-publication",
+      "chapter": 11,
+      "title": "ETL, ML and serving complete derived output",
+      "reference": "references/chapters/11.md",
+      "heading": "etl-ml-and-serving-complete-derived-output",
+      "source_refs": [
+        "OEBPS/ch11.html#sec_batch_output",
+        "OEBPS/ch11.html#id308",
+        "OEBPS/ch11.html#sec_batch_serving_derived"
+      ],
+      "workflows": [
+        "design",
+        "operate",
+        "migrate"
+      ],
+      "example": "derived-publication: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-11"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "complete-publication"
+      ]
+    },
+    {
+      "id": "stream-delivery",
+      "chapter": 12,
+      "title": "Queues, logs, retention and backpressure",
+      "reference": "references/chapters/12.md",
+      "heading": "queues-logs-retention-and-backpressure",
+      "source_refs": [
+        "OEBPS/ch12.html#sec_stream_logs_vs_messaging",
+        "OEBPS/ch12.html#sec_stream_log_offsets",
+        "OEBPS/ch12.html#sec_stream_disk_usage"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "stream-delivery: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-12"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "cdc-handoff",
+      "chapter": 12,
+      "title": "CDC, outbox and snapshot-log handoff",
+      "reference": "references/chapters/12.md",
+      "heading": "cdc-outbox-and-snapshot-log-handoff",
+      "source_refs": [
+        "OEBPS/ch12.html#sec_stream_sync",
+        "OEBPS/ch12.html#sec_stream_cdc",
+        "OEBPS/ch12.html#sec_stream_cdc_snapshot"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "cdc-handoff: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-12"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "stream-history",
+      "chapter": 12,
+      "title": "Events, CDC, compaction and immutability",
+      "reference": "references/chapters/12.md",
+      "heading": "events-cdc-compaction-and-immutability",
+      "source_refs": [
+        "OEBPS/ch12.html#sec_stream_event_sourcing",
+        "OEBPS/ch12.html#sec_stream_log_compaction",
+        "OEBPS/ch12.html#sec_stream_immutability_limitations"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "stream-history: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-12"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "temporal-join"
+      ]
+    },
+    {
+      "id": "stream-time-joins",
+      "chapter": 12,
+      "title": "Event time, windows and temporal joins",
+      "reference": "references/chapters/12.md",
+      "heading": "event-time-windows-and-temporal-joins",
+      "source_refs": [
+        "OEBPS/ch12.html#sec_stream_time",
+        "OEBPS/ch12.html#id344",
+        "OEBPS/ch12.html#sec_stream_table_joins",
+        "OEBPS/ch12.html#sec_stream_join_time",
+        "OEBPS/ch12.html#id444",
+        "OEBPS/ch12.html#id346"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "stream-time-joins: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-12"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "temporal-join"
+      ]
+    },
+    {
+      "id": "stream-recovery",
+      "chapter": 12,
+      "title": "Checkpoints, effects and state recovery",
+      "reference": "references/chapters/12.md",
+      "heading": "checkpoints-effects-and-state-recovery",
+      "source_refs": [
+        "OEBPS/ch12.html#sec_stream_fault_tolerance",
+        "OEBPS/ch12.html#sec_stream_atomic_commit",
+        "OEBPS/ch12.html#sec_stream_state_fault_tolerance",
+        "OEBPS/ch12.html#sec_stream_uses",
+        "OEBPS/ch12.html#sec_stream_ivm",
+        "OEBPS/ch12.html#id339"
+      ],
+      "workflows": [
+        "design",
+        "review",
+        "validate"
+      ],
+      "example": "stream-recovery: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-12"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "derived-dag",
+      "chapter": 13,
+      "title": "Authoritative-derived DAGs and causal order",
+      "reference": "references/chapters/13.md",
+      "heading": "authoritative-derived-dags-and-causal-order",
+      "source_refs": [
+        "OEBPS/ch13.html#sec_future_integration",
+        "OEBPS/ch13.html#sec_future_capture_causality"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "review"
+      ],
+      "example": "derived-dag: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-13"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "reprocessing-evolution",
+      "chapter": 13,
+      "title": "Reprocessing and batch/stream convergence",
+      "reference": "references/chapters/13.md",
+      "heading": "reprocessing-and-batchstream-convergence",
+      "source_refs": [
+        "OEBPS/ch13.html#sec_future_batch_streaming",
+        "OEBPS/ch13.html#sec_future_reprocessing"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "review"
+      ],
+      "example": "reprocessing-evolution: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-13"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "dataflow-clients",
+      "chapter": 13,
+      "title": "Dataflow composition and observing derived state",
+      "reference": "references/chapters/13.md",
+      "heading": "dataflow-composition-and-observing-derived-state",
+      "source_refs": [
+        "OEBPS/ch13.html#sec_future_dataflow",
+        "OEBPS/ch13.html#sec_future_observing",
+        "OEBPS/ch13.html#id366"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "review"
+      ],
+      "example": "dataflow-clients: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-13"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "end-to-end-identity",
+      "chapter": 13,
+      "title": "Intent identity and end-to-end correctness",
+      "reference": "references/chapters/13.md",
+      "heading": "intent-identity-and-end-to-end-correctness",
+      "source_refs": [
+        "OEBPS/ch13.html#sec_future_end_to_end",
+        "OEBPS/ch13.html#id374",
+        "OEBPS/ch13.html#sec_future_constraints"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "review"
+      ],
+      "example": "end-to-end-identity: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-13"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "payload-identity"
+      ]
+    },
+    {
+      "id": "integrity-audit",
+      "chapter": 13,
+      "title": "Integrity, timeliness and reconciliation",
+      "reference": "references/chapters/13.md",
+      "heading": "integrity-timeliness-and-reconciliation",
+      "source_refs": [
+        "OEBPS/ch13.html#sec_future_integrity",
+        "OEBPS/ch13.html#sec_future_verification"
+      ],
+      "workflows": [
+        "design",
+        "migrate",
+        "review"
+      ],
+      "example": "integrity-audit: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-13"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "human-purpose",
+      "chapter": 14,
+      "title": "Purpose, affected people and proportional data use",
+      "reference": "references/chapters/14.md",
+      "heading": "purpose-affected-people-and-proportional-data-use",
+      "source_refs": [
+        "OEBPS/ch14.html#id393",
+        "OEBPS/ch14.html#id396"
+      ],
+      "workflows": [
+        "assess",
+        "review",
+        "operate"
+      ],
+      "example": "human-purpose: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-14"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "bias-feedback",
+      "chapter": 14,
+      "title": "Prediction errors, discrimination and feedback loops",
+      "reference": "references/chapters/14.md",
+      "heading": "prediction-errors-discrimination-and-feedback-loops",
+      "source_refs": [
+        "OEBPS/ch14.html#id389",
+        "OEBPS/ch14.html#id390",
+        "OEBPS/ch14.html#id392"
+      ],
+      "workflows": [
+        "assess",
+        "review",
+        "operate"
+      ],
+      "example": "bias-feedback: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-14"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "accountability",
+      "chapter": 14,
+      "title": "Correction, explanation and appeal",
+      "reference": "references/chapters/14.md",
+      "heading": "correction-explanation-and-appeal",
+      "source_refs": [
+        "OEBPS/ch14.html#id391",
+        "OEBPS/ch14.html#id395"
+      ],
+      "workflows": [
+        "assess",
+        "review",
+        "operate"
+      ],
+      "example": "accountability: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-14"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    },
+    {
+      "id": "privacy-lifecycle",
+      "chapter": 14,
+      "title": "Retention, deletion and derived copies",
+      "reference": "references/chapters/14.md",
+      "heading": "retention-deletion-and-derived-copies",
+      "source_refs": [
+        "OEBPS/ch14.html#id394",
+        "OEBPS/ch14.html#id460"
+      ],
+      "workflows": [
+        "assess",
+        "review",
+        "operate"
+      ],
+      "example": "privacy-lifecycle: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-14"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": [
+        "deletion-rebuild"
+      ]
+    },
+    {
+      "id": "law-society",
+      "chapter": 14,
+      "title": "Jurisdiction, responsibility and governance limits",
+      "reference": "references/chapters/14.md",
+      "heading": "jurisdiction-responsibility-and-governance-limits",
+      "source_refs": [
+        "OEBPS/ch14.html#sec_future_legislation",
+        "OEBPS/ch14.html#id397"
+      ],
+      "workflows": [
+        "assess",
+        "review",
+        "operate"
+      ],
+      "example": "law-society: incorrect/sufficient examples in reference",
+      "evaluation_cases": [
+        "chapter-14"
+      ],
+      "status": {
+        "guidance": "authored",
+        "source_locators": "validated",
+        "behavior": "not-measured"
+      },
+      "experiments": []
+    }
+  ]
+}

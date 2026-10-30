@@ -1,0 +1,4 @@
+interface:
+  display_name: "DDIA Explain Skill"
+  short_description: "DDIA explain: evidence and engineering decisions"
+  default_prompt: "Use $ddia-explain-skill for this data-system task."

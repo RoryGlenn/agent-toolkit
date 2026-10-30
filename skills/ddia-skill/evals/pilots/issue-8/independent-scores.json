@@ -1,0 +1,865 @@
+{
+  "schema": "ddia-forward-pilot-independent/v1",
+  "issue": 8,
+  "scope": "Independent blinded evaluation using only requests.txt, rubric.json, and blinded/Cedar.md, blinded/Maple.md, blinded/Birch.md. No other pilot files, product repository, source text, web, specialist skills, or arm identities were consulted.",
+  "scoring_method": "Frozen 20-criterion rubric; 0 absent/materially incorrect, 1 partial/ambiguous, 2 clear/correct/applicable. Scores concern response content; citation presence does not contribute to or subtract from rubric scores.",
+  "responses": {
+    "Cedar": {
+      "total": 40,
+      "max_total": 40,
+      "subtotals": {
+        "A": 10,
+        "B": 10,
+        "C": 10,
+        "D": 10
+      },
+      "per_criterion": [
+        {
+          "id": "A1",
+          "criterion": "Retains a simple existing PostgreSQL/cron design absent a demonstrated unmet requirement.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Keep PostgreSQL and the cron job.",
+            "The supplied load, latency, and export duration show no capacity problem."
+          ],
+          "rationale": "Directly retains the existing design based on supplied capacity evidence."
+        },
+        {
+          "id": "A2",
+          "criterion": "Evaluates duplicate harm and team operating burden instead of universally requiring dedupe/locks.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Duplicate exports have negligible cost",
+            "especially for a two-person team unfamiliar with them.",
+            "Add overlap prevention only if concurrent executions cause meaningful load or publication errors."
+          ],
+          "rationale": "Evaluates actual duplicate harm and operator burden; makes coordination conditional."
+        },
+        {
+          "id": "A3",
+          "criterion": "Names proportionate observable failure handling without asserting an unprovided mechanism is mandatory.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "visible last-success time, failure alerts, bounded retries, execution logs, and a documented rerun procedure",
+            "Generate to a temporary artifact and publish atomically if readers could otherwise receive incomplete CSVs."
+          ],
+          "rationale": "Names observable operational controls and an explicitly conditional publication improvement."
+        },
+        {
+          "id": "A4",
+          "criterion": "Gives measurable workload/reliability/product triggers for revisiting the design.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "measured workloads exceed capacity, missed work must survive long outages, many dependent stages need durable retries, or exports trigger consequential external effects"
+          ],
+          "rationale": "Gives testable workload, recovery, workflow and business-effect triggers; recommends smaller alternatives first."
+        },
+        {
+          "id": "A5",
+          "criterion": "Separates supplied measurements from unknown restore/reliability evidence.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Neither is established as currently occurring.",
+            "Unknowns include export freshness expectations, delivery commitments, concurrent export demand, consumer behavior, and recovery expectations.",
+            "Existing backups do not establish successful restoration."
+          ],
+          "rationale": "Clearly separates given performance facts, hypothetical failures and missing recovery evidence."
+        },
+        {
+          "id": "B1",
+          "criterion": "Shows both regions confirming the last seat during a partition violates no-oversell.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "both regional databases show one seat; the link fails; each region confirms a different customer. Two customers now have a confirmed claim on one seat."
+          ],
+          "rationale": "Provides the required concrete partition counterexample."
+        },
+        {
+          "id": "B2",
+          "criterion": "Explains convergence/LWW cannot preserve already-issued confirmations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Last-write-wins can discard one database record afterward, but cannot make the earlier confirmation cease to have happened."
+          ],
+          "rationale": "Correctly assesses confirmation history rather than only reconciled state."
+        },
+        {
+          "id": "B3",
+          "criterion": "Explains quorum/coordination cannot guarantee immediate acceptance on both sides through arbitrary partitions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "A partition prevents every disconnected region from independently obtaining that coordination.",
+            "independent grants violate exclusion; refusing grants sacrifices availability."
+          ],
+          "rationale": "Explains the coordination boundary for both quorums and locks."
+        },
+        {
+          "id": "B4",
+          "criterion": "Offers realistic coordinated ownership, preallocated rights, or provisional acceptance choices with limitations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "use one authoritative allocation decision",
+            "Accept requests locally as pending",
+            "Preallocate exclusive inventory rights.",
+            "the single remaining seat belongs to at most one region."
+          ],
+          "rationale": "Offers realistic alternatives and explicitly states their availability or semantic limitations."
+        },
+        {
+          "id": "B5",
+          "criterion": "Requires explicit product tradeoff rather than silently weakening an invariant or promising impossible availability.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Product must approve the pending semantics and customer experience.",
+            "Permit overselling and compensation, explicitly changing the safety requirement.",
+            "No implementation can remove that tradeoff."
+          ],
+          "rationale": "Requires product agreement and does not silently substitute pending acceptance for confirmation."
+        },
+        {
+          "id": "C1",
+          "criterion": "Uses effective-dated historical tariffs at measurement event time, retaining correction/replay history.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "tariff for its tenant/device class whose effective interval contains its event timestamp",
+            "Define timestamp boundaries, missing tariffs, overlapping updates, and retroactive tariff corrections.",
+            "Preserve the tariff preceding the replay window as well."
+          ],
+          "rationale": "Correct historical join, replay boundary coverage and correction semantics."
+        },
+        {
+          "id": "C2",
+          "criterion": "Handles specified 48-hour lateness without silently discarding billable events; addresses completeness/late corrections.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Use a lateness allowance covering 48 hours, with an explicit route for later or invalid events.",
+            "Watermarks may finalize provisional results; they should not silently discard billable measurements.",
+            "Reconcile event coverage"
+          ],
+          "rationale": "Supports the stated lateness and explicitly addresses exceptional events and completeness."
+        },
+        {
+          "id": "C3",
+          "criterion": "Aligns business dedupe identity and retention with 90-day replay and in-flight deliveries; uses sink constraints appropriately.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Preserve event identity as `(tenant, event ID)`",
+            "sink’s `(tenant, event ID, calculation version)` uniqueness constraint, including across replay and checkpoint recovery.",
+            "Retain dedupe state for the replay horizon if correctness depends on it; durable sink uniqueness can make shorter processing-state retention safe.",
+            "Acknowledge source progress only after durable writes"
+          ],
+          "rationale": "Distinguishes durable sink correctness from local state retention and covers replay plus delivery/checkpoint recovery."
+        },
+        {
+          "id": "C4",
+          "criterion": "Recognizes calculation-version uniqueness alone can double bill across versions; proposes controlled replacement/reconciliation/deltas.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "atomically activate the replacement version for that interval",
+            "Readers must select the active version rather than sum all versions.",
+            "Already issued bills may need linked adjustments rather than replacement"
+          ],
+          "rationale": "Explicitly prevents charging all calculation versions and accounts for already issued bills."
+        },
+        {
+          "id": "C5",
+          "criterion": "Provides recoverable staged recalculation/publication and verification of crash/replay/late-event outcomes.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Recompute the affected interval into staging using an explicit input cutoff.",
+            "Coordinate late arrivals and concurrent processing across activation so coverage has no gaps or duplicates.",
+            "crash-after-write, concurrent replay/live ingestion, and publication failure"
+          ],
+          "rationale": "Stages and validates recalculation, controls cutover, and tests relevant recovery outcomes."
+        },
+        {
+          "id": "D1",
+          "criterion": "Traces deletion through search/vector copies, archives, training derivatives and backups.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "search, vector retrieval, training datasets, or a restored system",
+            "delete the current row, restore last month’s database, then rebuild indexes from an archive containing the message",
+            "For immutable archives and backups"
+          ],
+          "rationale": "Traces all requested copy classes and supplies a concrete resurrection sequence."
+        },
+        {
+          "id": "D2",
+          "criterion": "Preserves deletion knowledge outside rolled-back restore state and reapplies it before exposing/rebuilding restored data.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "durable deletion registry, independent of database rollback",
+            "apply all applicable deletions to restored rows, filter archived events during rebuild, and verify derived stores before enabling service.",
+            "Do not restore the registry to the backup’s older state."
+          ],
+          "rationale": "Correctly preserves newer deletion knowledge and gates restored service on its application."
+        },
+        {
+          "id": "D3",
+          "criterion": "Addresses asynchronous deletion visibility/access controls and observable completion/failure recovery.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "block serving while asynchronous removals catch up",
+            "in-flight workers consult deletion state so delayed work cannot reinsert content",
+            "Record completion per destination and retry failures."
+          ],
+          "rationale": "Provides immediate suppression, anti-resurrection checks and observable retryable cleanup."
+        },
+        {
+          "id": "D4",
+          "criterion": "Distinguishes policy/retention/model-remediation choices from established engineering guarantees.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "first establish the required deletion and retention policy",
+            "Removing examples does not establish that previously trained models have forgotten them; model retraining, unlearning, and use restrictions need separate decisions and validation."
+          ],
+          "rationale": "Explicitly separates dataset removal, retained copies and model remediation from guaranteed erasure."
+        },
+        {
+          "id": "D5",
+          "criterion": "Does not claim legal compliance and identifies missing legal/business retention decisions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Policy must define deletion scope, deadlines, exceptions, backup/archive retention, audit evidence, and treatment of trained models.",
+            "No jurisdiction or policy is supplied, so this plan makes no legal-compliance claim."
+          ],
+          "rationale": "Identifies missing policy decisions and explicitly avoids a legal-compliance claim."
+        }
+      ]
+    },
+    "Maple": {
+      "total": 39,
+      "max_total": 40,
+      "subtotals": {
+        "A": 10,
+        "B": 10,
+        "C": 10,
+        "D": 9
+      },
+      "per_criterion": [
+        {
+          "id": "A1",
+          "criterion": "Retains a simple existing PostgreSQL/cron design absent a demonstrated unmet requirement.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Keep PostgreSQL and the export cron.",
+            "The supplied workload meets its latency target with substantial headroom"
+          ],
+          "rationale": "Directly recommends retaining the existing architecture based on supplied measurements."
+        },
+        {
+          "id": "A2",
+          "criterion": "Evaluates duplicate harm and team operating burden instead of universally requiring dedupe/locks.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "duplicate read-only exports have negligible cost",
+            "Three unfamiliar services introduce deployment, recovery, monitoring, and coordination work",
+            "add overlap suppression only if measurements show overlap causes harm."
+          ],
+          "rationale": "Weighs harmless duplicate work and actual operating burden, without mandating a lock."
+        },
+        {
+          "id": "A3",
+          "criterion": "Names proportionate observable failure handling without asserting an unprovided mechanism is mandatory.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "bounded export timeout, failure alerts, last-success visibility, a short rerun/recovery runbook",
+            "Generate to a temporary artifact and publish only after success"
+          ],
+          "rationale": "Gives concrete, observable and proportionate failure handling."
+        },
+        {
+          "id": "A4",
+          "criterion": "Gives measurable workload/reliability/product triggers for revisiting the design.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "an export completion/freshness deadline the script cannot meet, sustained database contention, many independent consumers requiring replay",
+            "First measure duration, failures, resource use, and missed deadlines."
+          ],
+          "rationale": "Connects measurable deadlines/contention and concrete product capabilities to revisiting the design."
+        },
+        {
+          "id": "A5",
+          "criterion": "Separates supplied measurements from unknown restore/reliability evidence.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Nothing supplied establishes an existing correctness defect.",
+            "Define whether an export needs a consistent database snapshot",
+            "an exercised database restore",
+            "Restore a backup and run an export from it."
+          ],
+          "rationale": "Distinguishes supplied performance evidence from missing correctness/recovery requirements and calls for actual restore evidence."
+        },
+        {
+          "id": "B1",
+          "criterion": "Shows both regions confirming the last seat during a partition violates no-oversell.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Region A confirms Alice; independently, B confirms Bob.",
+            "Neither can distinguish this execution from one where it receives the only request."
+          ],
+          "rationale": "Gives the explicit conflicting-confirmations execution and its information constraint."
+        },
+        {
+          "id": "B2",
+          "criterion": "Explains convergence/LWW cannot preserve already-issued confirmations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Last-write-wins later retaining Alice's row cannot undo Bob's confirmation: the business invariant was already violated."
+          ],
+          "rationale": "Correctly states why convergence does not repair an already issued confirmation."
+        },
+        {
+          "id": "B3",
+          "criterion": "Explains quorum/coordination cannot guarantee immediate acceptance on both sides through arbitrary partitions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Globally intersecting quorums can provide coordination only by making a disconnected side unable to obtain the required quorum.",
+            "Independent regional quorums can both succeed",
+            "A globally exclusive lock has the same availability boundary"
+          ],
+          "rationale": "Correctly distinguishes global coordination from independently successful regional protocols."
+        },
+        {
+          "id": "B4",
+          "criterion": "Offers realistic coordinated ownership, preallocated rights, or provisional acceptance choices with limitations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "serialize seat allocation through an authoritative coordinator and atomic inventory check/reservation",
+            "accept requests as pending",
+            "Preallocate exclusive inventory rights",
+            "at most one region owns its right."
+          ],
+          "rationale": "Offers coordinated, pending and rights-based choices with their limitations."
+        },
+        {
+          "id": "B5",
+          "criterion": "Requires explicit product tradeoff rather than silently weakening an invariant or promising impossible availability.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Realistic choices require a product decision",
+            "A pending acknowledgment must not promise a confirmed seat.",
+            "explicitly permit overselling and compensation."
+          ],
+          "rationale": "Requires an explicit change in product semantics where needed."
+        },
+        {
+          "id": "C1",
+          "criterion": "Uses effective-dated historical tariffs at measurement event time, retaining correction/replay history.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "greatest effective timestamp no later than its event timestamp, within tenant/device class",
+            "including the tariff effective before its earliest timestamp",
+            "Define equal-timestamp conflicts, missing tariffs, timestamp validity, and tariff corrections."
+          ],
+          "rationale": "Correct temporal selection and sufficient historical/correction inputs for replay."
+        },
+        {
+          "id": "C2",
+          "criterion": "Handles specified 48-hour lateness without silently discarding billable events; addresses completeness/late corrections.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Accept the full 48-hour lateness, with corrections or delayed finalization",
+            "Route exceptional arrivals for explicit reconciliation.",
+            "Validate completeness"
+          ],
+          "rationale": "Supports required lateness, exceptional late reconciliation and coverage validation."
+        },
+        {
+          "id": "C3",
+          "criterion": "Aligns business dedupe identity and retention with 90-day replay and in-flight deliveries; uses sink constraints appropriately.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "atomic sink uniqueness on tenant/event/calculation-version can still prevent duplicate rows within one version",
+            "Keep durable dedupe at the sink throughout every supported retry/replay interval",
+            "atomically enforce uniqueness with the charge write.",
+            "Persist accepted output before acknowledging input"
+          ],
+          "rationale": "Uses the correct business key and sink enforcement, retaining protection through replay and in-flight retry recovery."
+        },
+        {
+          "id": "C4",
+          "criterion": "Recognizes calculation-version uniqueness alone can double bill across versions; proposes controlled replacement/reconciliation/deltas.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Readers must select that version rather than sum every appended version.",
+            "Already issued charges require auditable, idempotent adjustments or reversals; publishing a new version must not charge everything again."
+          ],
+          "rationale": "Explicitly addresses cross-version double billing and already issued charges."
+        },
+        {
+          "id": "C5",
+          "criterion": "Provides recoverable staged recalculation/publication and verification of crash/replay/late-event outcomes.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Recalculate into an isolated calculation-version using pinned input boundaries, tariff history, code, and rounding rules.",
+            "Catch up concurrent/late inputs through an explicit cutover boundary, then atomically publish an active-version manifest",
+            "Retain rollback metadata.",
+            "crashes before/after sink commit and publication"
+          ],
+          "rationale": "Recoverable staged recalculation with validation, late/live catch-up, controlled publication and meaningful crash tests."
+        },
+        {
+          "id": "D1",
+          "criterion": "Traces deletion through search/vector copies, archives, training derivatives and backups.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "leaves searchable text, vectors, and training examples accessible",
+            "Restoring a month-old database can restore the row; rebuilding from an unfiltered archive can resurrect deleted messages",
+            "Backups need explicit retention/access rules"
+          ],
+          "rationale": "Addresses all requested copy classes and a concrete restore/replay resurrection path."
+        },
+        {
+          "id": "D2",
+          "criterion": "Preserves deletion knowledge outside rolled-back restore state and reapplies it before exposing/rebuilding restored data.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "deletion ledger outside the database's rollback boundary",
+            "Restore into quarantine. Apply the current deletion ledger to restored rows, filter archive replay",
+            "verify absence before reopening access.",
+            "Protect the ledger itself against rollback and loss."
+          ],
+          "rationale": "Preserves current deletion knowledge beyond rollback and applies it before restored service exposure."
+        },
+        {
+          "id": "D3",
+          "criterion": "Addresses asynchronous deletion visibility/access controls and observable completion/failure recovery.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "transactional outbox or equivalent reliable handoff, idempotent consumers, and per-store acknowledgments",
+            "Block serving deleted content immediately through an authoritative suppression check",
+            "Reconcile stores periodically to catch missed events."
+          ],
+          "rationale": "Detailed access gating and reliable, observable asynchronous deletion recovery."
+        },
+        {
+          "id": "D4",
+          "criterion": "Distinguishes policy/retention/model-remediation choices from established engineering guarantees.",
+          "score": 1,
+          "max_score": 2,
+          "evidence": [
+            "Purge search/vector entries and regenerate or filter affected training datasets using lineage.",
+            "Policy must decide deletion deadlines, scope, exceptions/holds, archive and backup retention, acceptable interim inaccessibility, and treatment of previously generated training artifacts."
+          ],
+          "rationale": "Separates retention and training-artifact policy choices, but does not explicitly distinguish deleting training examples from removing information from already trained models. 'Training artifacts' is ambiguous; no explicit model-remediation limit or decision is stated."
+        },
+        {
+          "id": "D5",
+          "criterion": "Does not claim legal compliance and identifies missing legal/business retention decisions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "No jurisdiction or policy was supplied, so this is an engineering plan, not a compliance conclusion.",
+            "Policy must decide deletion deadlines, scope, exceptions/holds, archive and backup retention"
+          ],
+          "rationale": "Explicitly avoids a legal claim and identifies missing business/legal retention choices."
+        }
+      ]
+    },
+    "Birch": {
+      "total": 40,
+      "max_total": 40,
+      "subtotals": {
+        "A": 10,
+        "B": 10,
+        "C": 10,
+        "D": 10
+      },
+      "per_criterion": [
+        {
+          "id": "A1",
+          "criterion": "Retains a simple existing PostgreSQL/cron design absent a demonstrated unmet requirement.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Keep PostgreSQL and cron.",
+            "The supplied workload meets its latency target with substantial headroom"
+          ],
+          "rationale": "Clearly retains the existing architecture based on the supplied facts."
+        },
+        {
+          "id": "A2",
+          "criterion": "Evaluates duplicate harm and team operating burden instead of universally requiring dedupe/locks.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "harmless duplicate execution establish no need for distributed coordination",
+            "Two operators learning three systems would gain dependencies and recovery work",
+            "Given the stated cost and read-only behavior, that is acceptable"
+          ],
+          "rationale": "Assesses real duplicate consequences and operating burden rather than imposing universal coordination."
+        },
+        {
+          "id": "A3",
+          "criterion": "Names proportionate observable failure handling without asserting an unprovided mechanism is mandatory.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Add only missing basics: recorded last successful export, duration/error reporting, an alert when an export is overdue, bounded retry, and a short rerun procedure.",
+            "If users consume files during generation, publish a completed temporary file atomically"
+          ],
+          "rationale": "Proportionate observable handling, explicitly conditional on actual consumer behavior."
+        },
+        {
+          "id": "A4",
+          "criterion": "Gives measurable workload/reliability/product triggers for revisiting the design.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "export freshness/recovery objectives, missed-run consequences, measured interference with API traffic",
+            "multiple independent consumers needing retained replay",
+            "adopt a new service only when those fail a demonstrated requirement"
+          ],
+          "rationale": "Names measurable workload/recovery/product triggers and requires a demonstrated unmet requirement."
+        },
+        {
+          "id": "A5",
+          "criterion": "Separates supplied measurements from unknown restore/reliability evidence.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Unknowns that could change the decision",
+            "A successful backup job alone does not demonstrate restoration; conduct a restore drill against an agreed recovery objective."
+          ],
+          "rationale": "Distinguishes known load/performance and harmless duplicate effects from missing reliability/restore evidence."
+        },
+        {
+          "id": "B1",
+          "criterion": "Shows both regions confirming the last seat during a partition violates no-oversell.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Region A confirms Alice; region B, unable to distinguish this history from one where A received no request, confirms Bob. Two confirmations now exist."
+          ],
+          "rationale": "Explicit partition execution demonstrates the invariant violation."
+        },
+        {
+          "id": "B2",
+          "criterion": "Explains convergence/LWW cannot preserve already-issued confirmations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Last-write-wins may later erase one booking, but cannot undo the already issued confirmation or satisfy “ever.”"
+          ],
+          "rationale": "Correctly treats external confirmation history as the invariant."
+        },
+        {
+          "id": "B3",
+          "criterion": "Explains quorum/coordination cannot guarantee immediate acceptance on both sides through arbitrary partitions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "A correctly shared coordination service or intersecting quorum cannot allow both disconnected sides to independently authorize the same final unit.",
+            "Some requests must wait or fail.",
+            "Independent regional quorums/locks do not provide global exclusion."
+          ],
+          "rationale": "Explains why neither global coordination nor independent regional locks can deliver the requested availability and safety together."
+        },
+        {
+          "id": "B4",
+          "criterion": "Offers realistic coordinated ownership, preallocated rights, or provisional acceptance choices with limitations.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "designate an authority per seat, or use a coordinated conditional reservation",
+            "explicitly pending",
+            "Preallocate exclusive inventory rights and coordinate transfers",
+            "the last seat can belong to at most one region."
+          ],
+          "rationale": "Realistic alternatives with clear authority, pending and rights limitations."
+        },
+        {
+          "id": "B5",
+          "criterion": "Requires explicit product tradeoff rather than silently weakening an invariant or promising impossible availability.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Realistic product choices",
+            "This changes immediate reservation semantics.",
+            "Allow overselling and compensation only if product explicitly relaxes the invariant. Refunds do not preserve the original requirement."
+          ],
+          "rationale": "Demands explicit product tradeoffs and does not hide weakened semantics."
+        },
+        {
+          "id": "C1",
+          "criterion": "Uses effective-dated historical tariffs at measurement event time, retaining correction/replay history.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "greatest effective timestamp at or before the measurement, with explicit boundary/tie rules",
+            "Retain historical tariffs, including the predecessor needed at the replay window's beginning.",
+            "delayed tariff updates and retroactive corrections"
+          ],
+          "rationale": "Correct event-time tariff selection, historical retention and reference-data correction considerations."
+        },
+        {
+          "id": "C2",
+          "criterion": "Handles specified 48-hour lateness without silently discarding billable events; addresses completeness/late corrections.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Support at least 48 hours' lateness, with sufficient retained inputs/state and a correction path.",
+            "Replay must bypass inappropriate live watermarks.",
+            "quarantine unresolved events rather than guess"
+          ],
+          "rationale": "Supports required lateness and replay without silent loss, with a concrete unresolved-event route."
+        },
+        {
+          "id": "C3",
+          "criterion": "Aligns business dedupe identity and retention with 90-day replay and in-flight deliveries; uses sink constraints appropriately.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Retain raw measurements and reference history for the complete 90-day replay plus delivery/recovery margins",
+            "sink uniqueness on `(tenant,event,calculation-version)` atomically with each charge write, retaining it across all permitted retries/replays.",
+            "durable uniqueness can make seven-day local dedupe merely an optimization."
+          ],
+          "rationale": "Correct identity and durable sink enforcement with explicit replay/delivery margins and a distinction between local optimization and business correctness."
+        },
+        {
+          "id": "C4",
+          "criterion": "Recognizes calculation-version uniqueness alone can double bill across versions; proposes controlled replacement/reconciliation/deltas.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Uniqueness permits different calculation versions; it does not prevent charging both.",
+            "readers never sum old and new versions",
+            "Already issued invoices/payments need explicit audited delta adjustments, with stable effect IDs and reconciliation"
+          ],
+          "rationale": "Explicitly addresses cross-version double billing, controlled replacement and financial effect reconciliation."
+        },
+        {
+          "id": "C5",
+          "criterion": "Provides recoverable staged recalculation/publication and verification of crash/replay/late-event outcomes.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "isolated, versioned candidate ledger using pinned inputs, tariff history and code",
+            "catch up concurrent ingestion through a recorded boundary",
+            "Atomically publish an approved version/manifest",
+            "Keep rollback available.",
+            "crashes around sink commit, concurrent catch-up and interrupted publication"
+          ],
+          "rationale": "Recoverable staging, coverage/amount reconciliation, late/live cutover and appropriate crash/replay verification."
+        },
+        {
+          "id": "D1",
+          "criterion": "Traces deletion through search/vector copies, archives, training derivatives and backups.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "lineage through rows, index documents, vector chunks, archives, datasets, exports/caches and backups",
+            "restore last month's database; replay the immutable archive; the message reappears in rebuilt indexes."
+          ],
+          "rationale": "Traces the required copies and concrete resurrection sequence."
+        },
+        {
+          "id": "D2",
+          "criterion": "Preserves deletion knowledge outside rolled-back restore state and reapplies it before exposing/rebuilding restored data.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "deletion registry outside rollback to an older backup",
+            "Load the current deletion registry before serving or rebuilding, filter archived events, reapply deletions",
+            "catch concurrent deletion requests through a cutover barrier before reopening access"
+          ],
+          "rationale": "Keeps current deletion knowledge and explicitly handles restore/cutover exposure."
+        },
+        {
+          "id": "D3",
+          "criterion": "Addresses asynchronous deletion visibility/access controls and observable completion/failure recovery.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Assign an owner and observable completion state to every copy.",
+            "Block deleted messages at every serving path while asynchronous purges complete.",
+            "reject stale inserts/replays using deletion generations or equivalent ordering checks. Reconcile missed notifications."
+          ],
+          "rationale": "Observable per-copy completion, serving suppression, stale-write protection and recovery."
+        },
+        {
+          "id": "D4",
+          "criterion": "Distinguishes policy/retention/model-remediation choices from established engineering guarantees.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "A tombstone prevents reuse but does not erase archived plaintext.",
+            "whether existing trained models require retraining or other remediation is a separate decision, not something dataset deletion proves."
+          ],
+          "rationale": "Explicit engineering/policy distinction for retained data, physical erasure and model remediation."
+        },
+        {
+          "id": "D5",
+          "criterion": "Does not claim legal compliance and identifies missing legal/business retention decisions.",
+          "score": 2,
+          "max_score": 2,
+          "evidence": [
+            "Product, privacy and legal owners must define scope, deadlines, jurisdiction, retention exceptions, backup access/expiry, model obligations and user-facing promises.",
+            "this is an engineering plan, not a compliance claim."
+          ],
+          "rationale": "Identifies missing legal/business decisions and expressly avoids claiming compliance."
+        }
+      ]
+    }
+  },
+  "meaningful_omissions": [
+    {
+      "response": "Maple",
+      "criterion": "D4",
+      "finding": "Does not explicitly discuss already trained models or state that deleting dataset examples cannot establish model forgetting. Its reference to 'previously generated training artifacts' leaves model remediation ambiguous.",
+      "impact": "A completeness gap under the frozen rubric, not an established legal or production defect."
+    }
+  ],
+  "material_errors": "No material incorrect systems-design claim identified in the allowed response texts. Full marks mean criteria were explicitly met, not that implementation or operational behavior was demonstrated.",
+  "source_traceability": {
+    "evaluation": "Recorded separately; no scoring penalty for absent source access. Source content and citation accuracy were not verified. Retrieval use cannot be established from response prose alone.",
+    "Cedar": {
+      "references": [],
+      "retrieval_use": "Not observable in permitted materials; response supplies no source citations.",
+      "assessment": "Recommendations and concrete counterexamples are inspectable in the response, but no external source locator is supplied."
+    },
+    "Maple": {
+      "references": [
+        {
+          "scenario": "A",
+          "source": "DDIA 2e",
+          "title": "Simplicity: Managing Complexity",
+          "locator": "OEBPS/ch02.html#id38"
+        },
+        {
+          "scenario": "B",
+          "source": "DDIA 2e",
+          "title": "The CAP theorem",
+          "locator": "OEBPS/ch10.html#sec_consistency_cap"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Time dependence of joins",
+          "locator": "OEBPS/ch12.html#sec_stream_join_time"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Handling straggler events",
+          "locator": "OEBPS/ch12.html#id343"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Idempotence",
+          "locator": "OEBPS/ch12.html#sec_stream_idempotence"
+        },
+        {
+          "scenario": "D",
+          "source": "DDIA 2e",
+          "title": "Limitations of immutability",
+          "locator": "OEBPS/ch12.html#sec_stream_immutability_limitations"
+        }
+      ],
+      "retrieval_use": "Not observable in permitted materials; response provides source locators and explicitly labels applied reasoning/deductions.",
+      "assessment": "Source locators improve potential traceability, but neither their correctness nor actual retrieval was independently checked."
+    },
+    "Birch": {
+      "references": [
+        {
+          "scenario": "A",
+          "source": "DDIA 2e",
+          "title": "Problems with Distributed Systems",
+          "locator": "OEBPS/ch01.html#sec_introduction_dist_sys_problems"
+        },
+        {
+          "scenario": "B",
+          "source": "DDIA 2e",
+          "title": "The CAP theorem",
+          "locator": "OEBPS/ch10.html#sec_consistency_cap"
+        },
+        {
+          "scenario": "B",
+          "source": "DDIA 2e",
+          "title": "Dealing with Conflicting Writes",
+          "locator": "OEBPS/ch06.html#sec_replication_write_conflicts"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Time dependence of joins",
+          "locator": "OEBPS/ch12.html#sec_stream_join_time"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Handling straggler events",
+          "locator": "OEBPS/ch12.html#id343"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Uniquely identifying requests",
+          "locator": "OEBPS/ch13.html#id374"
+        },
+        {
+          "scenario": "C",
+          "source": "DDIA 2e",
+          "title": "Reprocessing data for application evolution",
+          "locator": "OEBPS/ch13.html#sec_future_reprocessing"
+        },
+        {
+          "scenario": "D",
+          "source": "DDIA 2e",
+          "title": "Limitations of immutability",
+          "locator": "OEBPS/ch12.html#sec_stream_immutability_limitations"
+        }
+      ],
+      "retrieval_use": "Not observable in permitted materials; response supplies source-principle locators and labels recommendations as applied reasoning.",
+      "assessment": "Source locators improve potential traceability, but neither their correctness nor actual retrieval was independently checked."
+    }
+  },
+  "limitations": [
+    "One trial per arm; no repeatability estimate.",
+    "Tasks and rubric were author-created, not an independently sampled benchmark.",
+    "Reasoning-only evaluation: no production, load, broker, billing-sink, or disaster-recovery behavior was exercised.",
+    "Only partial blinding: citations may reveal source access. Arm identities were not inferred or assigned.",
+    "Rubric totals are near the ceiling and do not capture every difference in engineering detail.",
+    "No statistical or production superiority claim is supported."
+  ]
+}
