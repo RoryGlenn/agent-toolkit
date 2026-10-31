@@ -1,0 +1,3 @@
+# Preserve the exact bytes of frozen patches and the upstream license notice.
+experiments/openspec-pilot/evidence/*.patch -whitespace
+docs/openspec/OPENSPEC-LICENSE -whitespace

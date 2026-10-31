@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "2026-10-31-add-bootstrap-integrity-check",
+      "type": "change",
+      "valid": true,
+      "issues": [],
+      "durationMs": 14
+    },
+    {
+      "id": "2026-10-31-add-json-catalog",
+      "type": "change",
+      "valid": true,
+      "issues": [],
+      "durationMs": 0
+    },
+    {
+      "id": "2026-10-31-personal-install-status",
+      "type": "change",
+      "valid": false,
+      "issues": [
+        {
+          "level": "ERROR",
+          "path": "tasks.md",
+          "message": "1 incomplete task (1/2 completed)"
+        }
+      ],
+      "durationMs": 1
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 3,
+      "passed": 2,
+      "failed": 1
+    },
+    "byType": {
+      "change": {
+        "items": 3,
+        "passed": 2,
+        "failed": 1
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+    "source": "nearest"
+  }
+}

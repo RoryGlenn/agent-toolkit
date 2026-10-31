@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "source_commit": "0b36e7d4e95300b16a713edf831c8613dba46b69",
+  "openspec_version": "1.16.0",
+  "source_tree": "173fc826479ad7859d34d106a525b62ba1725a58",
+  "created_at": "2026-10-31T16:12:22.986Z",
+  "repetitions": 1,
+  "conditions": [
+    "current-toolkit",
+    "current-toolkit-plus-openspec"
+  ],
+  "cases": [
+    {
+      "id": "catalog-json",
+      "request": "Add opt-in machine-readable catalog output through `python3 install.py list --json`. Preserve the existing human-readable list output. JSON stdout must contain exactly one object with `schema_version: 1` and a `skills` list sorted by name. Each skill entry has `name`, `description`, direct `dependencies` (sorted skill names), and `roles` mapping each supported host to its sorted actual runtime role names. Use the current validated inventory and associations rather than a second catalog; skill-only hosts have empty role lists. Emit no prose/banner on JSON stdout. The operation is read-only and must not create user configuration or installation directories. Document usage and add meaningful behavior tests. Preserve existing commands and required repository checks.",
+      "baseline_slot": "a",
+      "openspec_slot": "b"
+    },
+    {
+      "id": "project-check",
+      "request": "Add a read-only integrity inspection mode: `python3 install.py bootstrap --project PATH --check`. It validates the installed project's recorded ownership manifest, managed file contents, and managed AGENTS.md routing block. Print an understandable result and exit 0 for an intact installation; return nonzero and identify missing/edited managed files, a modified/missing managed routing block, malformed or unsafe manifests, or an unbootstrapped target. Preserve unrelated project files and instructions; edits outside the managed AGENTS.md block and extra unowned files must not count as drift. Do not create a missing target, write bytecode there, update files, rewrite the manifest, stage commits, or install anything. This checks integrity against recorded ownership, not whether current toolkit sources offer upgrades: changed current source content alone must not make an intact installation fail. Reject --check combined with --update, --dry-run, --skill, --all, or --target. Document the distinction and add meaningful behavior and non-mutation tests. Preserve existing bootstrap behavior and required repository checks.",
+      "baseline_slot": "b",
+      "openspec_slot": "a"
+    },
+    {
+      "id": "personal-status",
+      "request": "Add read-only personal-installation inspection: `python3 install.py status --target codex|copilot (--skill NAME ... | --all) --home PATH [--codex-home PATH] [--json]`. Follow the existing install command's selection, aliases, dependency closure, and explicit-home semantics. Report every expected selected skill/role destination as `current`, `missing`, or `different`. Current means the actual intended linkage is verified: skills are symlinks to the current source directory; Codex roles are regular hard links sharing the current source inode. Report an existing foreign entry, copied/detached role, stale hard link after atomic source replacement, or Codex role symlink as different, even if bytes happen to match. Do not infer that different entries are safe to overwrite or distinguish outdated owned content from user edits without evidence. The operation must not write, create directories/receipts, replace links, or repair files. Use human-readable output by default; --json emits exactly one object with `schema_version: 1` and sorted `entries`, each containing `area`, `name`, and `state`. Exit 0 only when every expected entry is current; nonzero for any missing/different entries or invalid input. Copilot remains skill-only. Document usage and limitations and add meaningful behavior/non-mutation tests. Preserve existing install/restore behavior and repository checks.",
+      "baseline_slot": "a",
+      "openspec_slot": "b"
+    }
+  ],
+  "limits": [
+    "Pilot: one attempt per case/condition, no general superiority claim.",
+    "Fresh-context collaborator agents inherit the same parent model and reasoning settings; exact provider revision/aggregate token usage may be unavailable.",
+    "Separate writable checkouts and explicit scope instructions; actor/evaluator filesystem isolation is not enforced by this host.",
+    "Requirements identical between paired arms. The treatment adds upstream workflows and persistent planning artifacts.",
+    "Root controller grades frozen first attempts and records any subsequent fixes separately.",
+    "Feature prototypes are for inspection; no production merge or release is requested."
+  ]
+}

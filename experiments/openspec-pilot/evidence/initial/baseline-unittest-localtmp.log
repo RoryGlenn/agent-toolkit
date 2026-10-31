@@ -1,0 +1,38 @@
+======================================================================
+ERROR: test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 263, in test_native_git_inside_repository_stops_parent_discovery
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 302, in test_native_grader_cannot_overwrite_protected_alias_target
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+----------------------------------------------------------------------
+Ran 203 tests in 39.350s
+
+FAILED (errors=2)

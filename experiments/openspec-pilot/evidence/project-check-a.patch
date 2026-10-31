@@ -1,0 +1,328 @@
+diff --git a/README.md b/README.md
+index 9f19133..e5c8d51 100644
+--- a/README.md
++++ b/README.md
+@@ -85,6 +85,26 @@ dirty, and always fingerprints the exact rendered project content. An archive ha
+ Git revision; a dirty checkout is not represented as an exact released commit. The manifest
+ contains no source, home, or application absolute paths.
+ 
++### Check a project's recorded integrity
++
++```bash
++python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project --check
++```
++
++This read-only check returns zero and reports an intact installation when the manifest,
++recorded managed file contents, and marked `AGENTS.md` routing block are intact. It returns
++nonzero and identifies missing or edited managed content, a modified or missing routing
++block, an invalid or unsafe manifest, or an unbootstrapped target. Symlinks and special
++files in managed paths are rejected. It does not create a missing target, write bytecode
++there, update files or the manifest, install anything, or stage changes.
++
++The check verifies the recorded installation, not available upgrades. Changes to the
++current toolkit source do not cause drift, and current skill packages need not be present.
++Extra unowned files and changes outside the managed `AGENTS.md` block are allowed. The
++manifest is the project's integrity record, not a signed proof against deliberate changes
++to both the content and its recorded hashes. `--check` cannot be combined with `--update`,
++`--dry-run`, `--skill`, `--all`, or `--target`. Use `--update --dry-run` to preview upgrades.
++
+ ### Update a project's layer
+ 
+ An unchanged repeat command is a no-op. Omitted skills and target reuse the existing
+diff --git a/install.py b/install.py
+index bef2874..08a6c9e 100644
+--- a/install.py
++++ b/install.py
+@@ -653,9 +653,35 @@ def main(argv: list[str] | None = None) -> int:
+     project_selection.add_argument("--all", action="store_true")
+     project.add_argument("--update", action="store_true")
+     project.add_argument("--dry-run", action="store_true")
++    project.add_argument(
++        "--check", action="store_true", help="Verify recorded project integrity without changes."
++    )
+     args = parser.parse_args(argv)
++    if args.command == "bootstrap" and args.check:
++        incompatible = [
++            flag
++            for flag, value in (
++                ("--update", args.update),
++                ("--dry-run", args.dry_run),
++                ("--skill", args.skills),
++                ("--all", args.all),
++                ("--target", args.target),
++            )
++            if value
++        ]
++        if incompatible:
++            parser.error("--check cannot be combined with " + ", ".join(incompatible))
+     try:
+-        if args.command == "restore":
++        if args.command == "bootstrap" and args.check:
++            previous_bytecode = sys.dont_write_bytecode
++            try:
++                sys.dont_write_bytecode = True
++                from project_bootstrap import check_integrity
++
++                check_integrity(args.project)
++            finally:
++                sys.dont_write_bytecode = previous_bytecode
++        elif args.command == "restore":
+             restore(args.receipt.expanduser().absolute(), dry_run=args.dry_run)
+         else:
+             skills = inventory(ROOT)
+diff --git a/project_bootstrap.py b/project_bootstrap.py
+index dd1aae4..717cfe7 100644
+--- a/project_bootstrap.py
++++ b/project_bootstrap.py
+@@ -285,9 +285,21 @@ def source_identity(root: Path, files: dict[str, FileState], block: bytes) -> di
+     return {"commit": commit, "dirty": dirty, "content_sha256": fingerprint}
+ 
+ 
+-def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, Any]:
++def validate_manifest(content: bytes, available: dict[str, str] | None = None) -> dict[str, Any]:
+     """Validate relative ownership records before trusting any destination path."""
+-    data = json.loads(content)
++
++    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
++        result: dict[str, Any] = {}
++        for key, value in pairs:
++            if key in result:
++                raise BootstrapError(f"Duplicate key in project manifest: {key!r}")
++            result[key] = value
++        return result
++
++    try:
++        data = json.loads(content, object_pairs_hook=unique_object)
++    except (UnicodeError, json.JSONDecodeError) as error:
++        raise BootstrapError(f"Malformed project toolkit manifest: {error}") from error
+     if not isinstance(data, dict) or data.get("schema") != SCHEMA:
+         raise BootstrapError("Unsupported project toolkit manifest.")
+     for key, allowed in (("skills", available), ("hosts", HOST_DIRECTORIES)):
+@@ -295,7 +307,15 @@ def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, An
+         if (
+             not isinstance(names, list)
+             or not names
+-            or any(not isinstance(name, str) or name not in allowed for name in names)
++            or any(
++                not isinstance(name, str)
++                or (
++                    name not in allowed
++                    if allowed is not None
++                    else re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*-skill", name) is None
++                )
++                for name in names
++            )
+             or names != sorted(set(names))
+         ):
+             raise BootstrapError(f"Invalid or unavailable {key} in project manifest.")
+@@ -335,9 +355,60 @@ def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, An
+     block_hash = data.get("agents_block_sha256")
+     if not isinstance(block_hash, str) or re.fullmatch(r"[0-9a-f]{64}", block_hash) is None:
+         raise BootstrapError("Invalid AGENTS.md block hash in project manifest.")
++    source = data.get("source")
++    if (
++        not isinstance(source, dict)
++        or "commit" not in source
++        or (
++            source["commit"] is not None
++            and (
++                not isinstance(source["commit"], str)
++                or re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", source["commit"]) is None
++            )
++        )
++        or "dirty" not in source
++        or (source["dirty"] is not None and not isinstance(source["dirty"], bool))
++        or not isinstance(source.get("content_sha256"), str)
++        or re.fullmatch(r"[0-9a-f]{64}", source["content_sha256"]) is None
++    ):
++        raise BootstrapError("Invalid source provenance in project manifest.")
+     return data
+ 
+ 
++def check_integrity(project: Path) -> None:
++    """Verify recorded project content without loading current sources or planning writes."""
++    project = Path(os.path.abspath(project.expanduser()))
++    check_ancestors(project)
++    manifest = read_file(project / MANIFEST)
++    if manifest is None:
++        raise BootstrapError(f"Project is not bootstrapped; missing {MANIFEST}: {project}")
++    previous = validate_manifest(manifest.content)
++    problems = []
++    for name, fingerprint in sorted(previous["files"].items()):
++        try:
++            current = read_file(project / name)
++            if current is None:
++                problems.append(f"Missing managed file: {name}")
++            elif digest(current.content) != fingerprint:
++                problems.append(f"Edited managed file: {name}")
++        except (OSError, BootstrapError) as error:
++            problems.append(f"Unsafe or unreadable managed file {name}: {error}")
++    try:
++        agents = read_file(project / "AGENTS.md")
++        span = block_span(agents.content) if agents else None
++        if agents is None or span is None:
++            problems.append("Missing managed AGENTS.md routing block.")
++        elif digest(agents.content[span[0] : span[1]]) != previous["agents_block_sha256"]:
++            problems.append("Edited managed AGENTS.md routing block.")
++    except (OSError, BootstrapError) as error:
++        problems.append(f"Invalid managed AGENTS.md routing block: {error}")
++    if problems:
++        raise BootstrapError("Project toolkit integrity check failed:\n" + "\n".join(problems))
++    print(
++        f"Project toolkit integrity intact: {len(previous['files'])} managed files and AGENTS.md."
++    )
++
++
+ def collect_files(
+     root: Path,
+     skills: list[str],
+diff --git a/tests/test_project_bootstrap.py b/tests/test_project_bootstrap.py
+index 1fa83c6..a65b74f 100644
+--- a/tests/test_project_bootstrap.py
++++ b/tests/test_project_bootstrap.py
+@@ -113,6 +113,145 @@ class ProjectBootstrapTests(unittest.TestCase):
+         self.assertIsNone(manifest["source"]["dirty"])
+         self.assertEqual(len(manifest["source"]["content_sha256"]), 64)
+ 
++    def check_cli(self, *options: str, intact: bool = True) -> subprocess.CompletedProcess[str]:
++        """Run the real check command and assert it never changes target entries."""
++        before = self.snapshot()
++        result = subprocess.run(
++            [
++                sys.executable,
++                str(self.source / "install.py"),
++                "bootstrap",
++                "--project",
++                str(self.app),
++                "--check",
++                *options,
++            ],
++            capture_output=True,
++            text=True,
++        )
++        self.assertEqual(self.snapshot(), before)
++        if intact:
++            self.assertEqual(result.returncode, 0, result.stderr)
++            self.assertIn("integrity intact", result.stdout)
++        else:
++            self.assertNotEqual(result.returncode, 0, result.stdout)
++        return result
++
++    def test_check_ignores_source_changes_and_unowned_project_content(self) -> None:
++        """Recorded hashes survive new source, removed packages, and unrelated local edits."""
++        self.apply(skills=["documentation-skill"], target="codex")
++        instructions = self.app / "AGENTS.md"
++        instructions.write_bytes(b"team prefix\n" + instructions.read_bytes() + b"\nteam suffix\n")
++        (self.app / ".agents/skills/documentation-skill/team-notes.txt").write_text("local notes")
++        source = self.source / "skills/documentation-skill/SKILL.md"
++        source.write_bytes(source.read_bytes() + b"\nNew source release.\n")
++        self.check_cli()
++        shutil.rmtree(self.source / "skills")
++        shutil.rmtree(self.source / "agents")
++        self.check_cli()
++
++    def test_check_reports_missing_and_edited_managed_files(self) -> None:
++        """Every failing owned file is identified while all target state is retained."""
++        self.apply(skills=["documentation-skill"], target="codex")
++        names = list(self.manifest()["files"])
++        (self.app / names[0]).unlink()
++        (self.app / names[1]).write_bytes(b"edited")
++        result = self.check_cli(intact=False)
++        self.assertIn(f"Missing managed file: {names[0]}", result.stderr)
++        self.assertIn(f"Edited managed file: {names[1]}", result.stderr)
++
++    def test_check_reports_invalid_routing_blocks(self) -> None:
++        """Missing, edited, duplicate, and partial routing blocks fail without writes."""
++        self.apply(skills=["documentation-skill"])
++        instructions = self.app / "AGENTS.md"
++        original = instructions.read_bytes()
++        for content in (
++            b"team instructions only\n",
++            original.replace(b"Shared engineering", b"Edited engineering"),
++            original + original,
++            original.replace(project.BLOCK_END, b""),
++        ):
++            with self.subTest(content=content[:40]):
++                instructions.write_bytes(content)
++                self.assertIn("AGENTS.md", self.check_cli(intact=False).stderr)
++        instructions.unlink()
++        self.assertIn("AGENTS.md", self.check_cli(intact=False).stderr)
++
++    def test_check_rejects_unbootstrapped_targets_without_creating_them(self) -> None:
++        """Checking a missing or existing unbootstrapped project is a read-only failure."""
++        self.assertIn("not bootstrapped", self.check_cli(intact=False).stderr)
++        self.assertFalse(self.app.exists())
++        self.app.mkdir()
++        (self.app / "AGENTS.md").write_text("team instructions")
++        self.assertIn("not bootstrapped", self.check_cli(intact=False).stderr)
++
++    def test_check_rejects_malformed_and_unsafe_manifests(self) -> None:
++        """Malformed records and all unsafe ownership paths fail before destination reads."""
++        self.apply(skills=["documentation-skill"], target="codex")
++        path = self.app / project.MANIFEST
++        original = path.read_bytes()
++        records = [b"not json", b"\xff", b"[]", b'{"schema": 1, "schema": 2}']
++        for field, value in (
++            ("schema", "unknown"),
++            ("skills", ["../outside-skill"]),
++            ("hosts", ["unknown"]),
++            ("files", {"../../outside": "0" * 64}),
++            ("files", {"/absolute": "0" * 64}),
++            ("files", {".agents/skills/documentation-skill/../escape": "0" * 64}),
++            ("files", {".agents/skills/documentation-skill/SKILL.md": "bad"}),
++            ("agents_block_sha256", "bad"),
++            ("source", {}),
++        ):
++            manifest = json.loads(original)
++            manifest[field] = value
++            records.append(json.dumps(manifest).encode())
++        for content in records:
++            with self.subTest(content=content[:80]):
++                path.write_bytes(content)
++                result = self.check_cli(intact=False)
++                self.assertIn("manifest", result.stderr)
++                self.assertNotIn("Traceback", result.stderr)
++
++    def test_check_rejects_incompatible_flags_without_writes(self) -> None:
++        """Check never silently ignores selection or mutation flags."""
++        for options in (
++            ("--update",),
++            ("--dry-run",),
++            ("--skill", "documentation-skill"),
++            ("--all",),
++            ("--target", "codex"),
++        ):
++            with self.subTest(options=options):
++                self.assertIn(
++                    "--check cannot be combined", self.check_cli(*options, intact=False).stderr
++                )
++                self.assertFalse(self.app.exists())
++
++    def test_check_refuses_symlinked_managed_paths(self) -> None:
++        """A managed file or directory symlink cannot authorize traversal outside the target."""
++        self.apply(skills=["documentation-skill"], target="codex")
++        name = next(iter(self.manifest()["files"]))
++        owned = self.app / name
++        external = self.base / "external"
++        external.write_bytes(owned.read_bytes())
++        owned.unlink()
++        owned.symlink_to(external)
++        self.assertIn(name, self.check_cli(intact=False).stderr)
++        self.assertEqual(external.read_bytes(), owned.read_bytes())
++
++    def test_check_nested_source_does_not_write_bytecode_in_target(self) -> None:
++        """A vendored checker import creates no caches on either success or failure."""
++        self.app.mkdir()
++        nested = self.app / "vendor/toolkit"
++        nested.parent.mkdir()
++        self.source.rename(nested)
++        self.source = nested
++        self.apply(skills=["documentation-skill"])
++        self.check_cli()
++        (self.app / "AGENTS.md").unlink()
++        self.check_cli(intact=False)
++        self.assertFalse(list(self.app.rglob("*.pyc")))
++
+     def test_role_rendering_inherits_settings_and_preserves_all_other_fields(self) -> None:
+         """Copied Codex roles preserve instructions but inherit the collaborator's host settings."""
+         self.apply()

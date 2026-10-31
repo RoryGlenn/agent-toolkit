@@ -1,0 +1,15 @@
+{
+  "version": "1.16.0",
+  "distribution": "https://github.com/Fission-AI/OpenSpec/releases/download/v1.16.0/openspec-linux-x64.tar.gz",
+  "distribution_sha256": "f27fb2ff5c6c4aafb207cb0b797189215adb3a1150d4b4600a2d6a0b6e192ae1",
+  "generated_files": {
+    ".agents/skills/.openspec-target": "243b0dc9b847e66c440dca985e10fe0ce9e29c379b018ddd5747ba8948f84cc8",
+    ".agents/skills/openspec-apply-change/SKILL.md": "c190210594f5b0c6b76f1b23d8ea261f94987adeed727ac0864b732ef7cdea75",
+    ".agents/skills/openspec-archive-change/SKILL.md": "c3df5c96f8e829ed16952689de041d215b7d5749b0b261b1531c685d4ee68bed",
+    ".agents/skills/openspec-explore/SKILL.md": "0c97108351cff3bc0b84b53c173cfa6615b5fbcb67742140940bd7f2858e6231",
+    ".agents/skills/openspec-propose/SKILL.md": "3649c686b6afa5743998ae468cae29d343726fb5f27b657fc8bdd66b5a4ea1de",
+    ".agents/skills/openspec-sync-specs/SKILL.md": "6f951016a31d8400669573a1d154bb7275b71aee31e0891b1565c942b0df4a4f",
+    ".agents/skills/openspec-update-change/SKILL.md": "06eec5a4cc52f1ec436cdde3a0207b1ceafc3f1d8c7f6cbb853f3f648c0dbbee"
+  },
+  "ownership": "Upstream-generated skills are not part of the toolkit catalog or bootstrap ownership manifest."
+}

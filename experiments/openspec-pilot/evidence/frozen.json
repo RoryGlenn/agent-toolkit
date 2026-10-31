@@ -1,0 +1,82 @@
+[
+  {
+    "case": "catalog-json",
+    "slot": "a",
+    "condition": "current-toolkit",
+    "patch_sha256": "cce69434133d2569667167bf7659b870067270ae76d4ef7faab0b84163733d48",
+    "patch_bytes": 10292,
+    "frozen_at": "2026-10-31T16:16:47.911133+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "tests/test_install.py"
+    ]
+  },
+  {
+    "case": "catalog-json",
+    "slot": "b",
+    "condition": "current-toolkit-plus-openspec",
+    "patch_sha256": "470996f4406619a862eaca23a5929853ab6e3e135fd8ba7ff0af51f2b22a1a07",
+    "patch_bytes": 11630,
+    "frozen_at": "2026-10-31T16:16:47.941699+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "tests/test_install.py"
+    ]
+  },
+  {
+    "case": "project-check",
+    "slot": "a",
+    "condition": "current-toolkit-plus-openspec",
+    "patch_sha256": "1b70b05c70d451b8591ca962a815f33300139d49d1cb5c7ca3953e537c70fac4",
+    "patch_bytes": 15600,
+    "frozen_at": "2026-10-31T16:16:47.972647+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "project_bootstrap.py",
+      "tests/test_project_bootstrap.py"
+    ]
+  },
+  {
+    "case": "project-check",
+    "slot": "b",
+    "condition": "current-toolkit",
+    "patch_sha256": "5032312d01023eab61b0b36dd0aa7b89b86763a2136f3238c4fc59091fefd9d7",
+    "patch_bytes": 16310,
+    "frozen_at": "2026-10-31T16:16:48.000774+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "project_bootstrap.py",
+      "tests/test_project_bootstrap.py"
+    ]
+  },
+  {
+    "case": "personal-status",
+    "slot": "a",
+    "condition": "current-toolkit",
+    "patch_sha256": "90820a8c1590956b5525bc1ec041d48812c7a96d25b8051c381b28c3999dd973",
+    "patch_bytes": 23378,
+    "frozen_at": "2026-10-31T16:16:48.030704+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "tests/test_install.py"
+    ]
+  },
+  {
+    "case": "personal-status",
+    "slot": "b",
+    "condition": "current-toolkit-plus-openspec",
+    "patch_sha256": "a0ffa152bf8c12f21666cacc7cf61e7b40c5bf2359452840438c88957963723f",
+    "patch_bytes": 24419,
+    "frozen_at": "2026-10-31T16:16:48.065532+00:00",
+    "files": [
+      "README.md",
+      "install.py",
+      "tests/test_install.py"
+    ]
+  }
+]
