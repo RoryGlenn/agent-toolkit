@@ -1,0 +1,50 @@
+[
+  {
+    "case": "catalog-json",
+    "slot": "a",
+    "condition": "current-toolkit",
+    "planning_files": 0,
+    "planning_lines": 0,
+    "planning_bytes": 0
+  },
+  {
+    "case": "catalog-json",
+    "slot": "b",
+    "condition": "current-toolkit-plus-openspec",
+    "planning_files": 5,
+    "planning_lines": 117,
+    "planning_bytes": 6530
+  },
+  {
+    "case": "project-check",
+    "slot": "b",
+    "condition": "current-toolkit",
+    "planning_files": 0,
+    "planning_lines": 0,
+    "planning_bytes": 0
+  },
+  {
+    "case": "project-check",
+    "slot": "a",
+    "condition": "current-toolkit-plus-openspec",
+    "planning_files": 5,
+    "planning_lines": 125,
+    "planning_bytes": 7058
+  },
+  {
+    "case": "personal-status",
+    "slot": "a",
+    "condition": "current-toolkit",
+    "planning_files": 0,
+    "planning_lines": 0,
+    "planning_bytes": 0
+  },
+  {
+    "case": "personal-status",
+    "slot": "b",
+    "condition": "current-toolkit-plus-openspec",
+    "planning_files": 5,
+    "planning_lines": 113,
+    "planning_bytes": 6944
+  }
+]

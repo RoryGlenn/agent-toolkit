@@ -285,9 +285,21 @@ def source_identity(root: Path, files: dict[str, FileState], block: bytes) -> di
     return {"commit": commit, "dirty": dirty, "content_sha256": fingerprint}
 
 
-def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, Any]:
+def validate_manifest(content: bytes, available: dict[str, str] | None = None) -> dict[str, Any]:
     """Validate relative ownership records before trusting any destination path."""
-    data = json.loads(content)
+
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise BootstrapError(f"Duplicate key in project manifest: {key!r}")
+            result[key] = value
+        return result
+
+    try:
+        data = json.loads(content, object_pairs_hook=unique_object)
+    except (UnicodeError, json.JSONDecodeError) as error:
+        raise BootstrapError(f"Malformed project toolkit manifest: {error}") from error
     if not isinstance(data, dict) or data.get("schema") != SCHEMA:
         raise BootstrapError("Unsupported project toolkit manifest.")
     for key, allowed in (("skills", available), ("hosts", HOST_DIRECTORIES)):
@@ -295,7 +307,15 @@ def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, An
         if (
             not isinstance(names, list)
             or not names
-            or any(not isinstance(name, str) or name not in allowed for name in names)
+            or any(
+                not isinstance(name, str)
+                or (
+                    name not in allowed
+                    if allowed is not None
+                    else re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*-skill", name) is None
+                )
+                for name in names
+            )
             or names != sorted(set(names))
         ):
             raise BootstrapError(f"Invalid or unavailable {key} in project manifest.")
@@ -335,7 +355,58 @@ def validate_manifest(content: bytes, available: dict[str, str]) -> dict[str, An
     block_hash = data.get("agents_block_sha256")
     if not isinstance(block_hash, str) or re.fullmatch(r"[0-9a-f]{64}", block_hash) is None:
         raise BootstrapError("Invalid AGENTS.md block hash in project manifest.")
+    source = data.get("source")
+    if (
+        not isinstance(source, dict)
+        or "commit" not in source
+        or (
+            source["commit"] is not None
+            and (
+                not isinstance(source["commit"], str)
+                or re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", source["commit"]) is None
+            )
+        )
+        or "dirty" not in source
+        or (source["dirty"] is not None and not isinstance(source["dirty"], bool))
+        or not isinstance(source.get("content_sha256"), str)
+        or re.fullmatch(r"[0-9a-f]{64}", source["content_sha256"]) is None
+    ):
+        raise BootstrapError("Invalid source provenance in project manifest.")
     return data
+
+
+def check_integrity(project: Path) -> None:
+    """Verify recorded project content without loading current sources or planning writes."""
+    project = Path(os.path.abspath(project.expanduser()))
+    check_ancestors(project)
+    manifest = read_file(project / MANIFEST)
+    if manifest is None:
+        raise BootstrapError(f"Project is not bootstrapped; missing {MANIFEST}: {project}")
+    previous = validate_manifest(manifest.content)
+    problems = []
+    for name, fingerprint in sorted(previous["files"].items()):
+        try:
+            current = read_file(project / name)
+            if current is None:
+                problems.append(f"Missing managed file: {name}")
+            elif digest(current.content) != fingerprint:
+                problems.append(f"Edited managed file: {name}")
+        except (OSError, BootstrapError) as error:
+            problems.append(f"Unsafe or unreadable managed file {name}: {error}")
+    try:
+        agents = read_file(project / "AGENTS.md")
+        span = block_span(agents.content) if agents else None
+        if agents is None or span is None:
+            problems.append("Missing managed AGENTS.md routing block.")
+        elif digest(agents.content[span[0] : span[1]]) != previous["agents_block_sha256"]:
+            problems.append("Edited managed AGENTS.md routing block.")
+    except (OSError, BootstrapError) as error:
+        problems.append(f"Invalid managed AGENTS.md routing block: {error}")
+    if problems:
+        raise BootstrapError("Project toolkit integrity check failed:\n" + "\n".join(problems))
+    print(
+        f"Project toolkit integrity intact: {len(previous['files'])} managed files and AGENTS.md."
+    )
 
 
 def collect_files(

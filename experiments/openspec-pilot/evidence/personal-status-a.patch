@@ -1,0 +1,436 @@
+diff --git a/README.md b/README.md
+index 9f19133..8f1593d 100644
+--- a/README.md
++++ b/README.md
+@@ -419,6 +419,37 @@ need a separate host/behavior check; they do not follow from a valid TOML file a
+ 
+ ## Existing installations and restore
+ 
++Inspect a personal installation without changing source files, host entries, directories,
++or restoration receipts. Specify the home to inspect; an explicit `--home` ignores inherited
++`CODEX_HOME`, and `--codex-home` can select a custom Codex directory:
++
++```bash
++python3 install.py status --target codex --skill documentation-skill --home /path/to/home
++python3 install.py status --target codex --all --home /path/to/home --codex-home /path/to/codex --json
++python3 install.py status --target copilot --all --home /path/to/home
++```
++
++Repeated `--skill` flags, deprecated selector aliases, and automatic dependencies match
++installation selection. The report covers only the selected canonical skill and role
++destinations; Copilot is skill-only. Each entry is `current`, `missing`, or `different`.
++Current skills must be symlinks with the installer's canonical absolute source-directory
++target; equivalent relative symlinks report `different`. Current Codex roles must be regular
++hardlinks sharing the current source inode. A copied role, role symlink, or stale hardlink
++after atomic source replacement is `different`, even when its bytes still match.
++
++Human output is the default. `--json` emits one object with `schema_version: 1` and `entries`
++sorted by `area` then `name`; each entry contains `area`, `name`, and `state`. A validation or
++filesystem error returns an empty `entries` array plus an `error` string and a diagnostic on
++stderr. Exit status is zero only when every expected entry is current, and nonzero for
++missing, different, or invalid inspection requests. Invalid CLI syntax uses normal argparse
++usage errors. Symlinked or non-directory destination ancestors are invalid layouts.
++
++This is a point-in-time linkage inspection, not a content audit, host-discovery check, or
++ownership decision. It does not inspect legacy or unselected entries, interpret receipts,
++distinguish outdated owned entries from user modifications, grant overwrite permission, or
++repair entries. In-place source edits remain current because their linkage remains intact;
++concurrent filesystem changes can invalidate a completed report.
++
+ When upgrading from names without type suffixes, keep the old checkout/version available
+ and install from a separate checkout containing the new names. Existing skill symlinks
+ and agent hard links depend on their source paths; renaming the live checkout first can
+@@ -475,7 +506,7 @@ format, OpenAI's actual Codex initializer, and Anthropic's paired evaluation/rep
+ workflow with a Codex adapter. Upstream revisions, licenses, and exact source hashes are
+ included. This package does not load or reuse the toolkit's custom skills, roles, or benchmarks.
+ 
+-Edit `skills/<name>/` and `agents/<host>/` here. Skill symlinks expose source changes immediately. Codex role hard links share in-place edits, but an editor/Git operation that replaces a source file atomically leaves the installed role on the old inode. Re-run the selected installation to check it; if it reports a conflict, use `--backup-existing` to preserve the old role before refreshing it. Restoration also refuses a role whose canonical source inode changed. Start a fresh host session when it caches instructions. Re-run the installer after adding a skill or moving the checkout. It is safe to repeat an unchanged installation.
++Edit `skills/<name>/` and `agents/<host>/` here. Skill symlinks expose source changes immediately. Codex role hard links share in-place edits, but an editor/Git operation that replaces a source file atomically leaves the installed role on the old inode. Use `status` with the desired home and selection to inspect the links. Preserve any reported conflicting entry before explicitly reinstalling with `--backup-existing`. Restoration also refuses a role whose canonical source inode changed. Start a fresh host session when it caches instructions. Re-run the installer after adding a skill or moving the checkout. It is safe to repeat an unchanged installation.
+ 
+ Codex role hard links require the toolkit and Codex agent directory to be on the same filesystem. Cross-volume installation fails explicitly and rolls back; place the checkout and Codex home on the same volume. The installer does not silently fall back to a role symlink that the runtime cannot load.
+ 
+diff --git a/install.py b/install.py
+index bef2874..1a9f823 100644
+--- a/install.py
++++ b/install.py
+@@ -262,11 +262,8 @@ def linked_to(path: Path, source: Path) -> bool:
+     return path.is_file() and source.is_file() and path.samefile(source)
+ 
+ 
+-def plan_install(
+-    root: Path, target: str, skills: list[str], paths: dict[str, Path], *, backup_existing: bool
+-) -> list[Entry]:
+-    """Preflight selected links and legacy migrations without filesystem writes."""
+-    available = inventory(root)
++def resolve_selection(skills: list[str], available: dict[str, str]) -> list[str]:
++    """Resolve personal-install aliases and dependencies without creating bytecode."""
+     for alias in sorted(set(skills) & SKILL_ALIASES.keys()):
+         print(
+             f"Deprecated skill selector {alias!r}; use {SKILL_ALIASES[alias]!r}.",
+@@ -276,12 +273,55 @@ def plan_install(
+     unknown = sorted(set(skills) - available.keys())
+     if unknown:
+         raise InstallError(f"Unknown skills: {', '.join(unknown)}")
+-    from project_bootstrap import BootstrapError, resolve_skills
++    previous_bytecode = sys.dont_write_bytecode
++    try:
++        sys.dont_write_bytecode = True
++        from project_bootstrap import BootstrapError, resolve_skills
++    finally:
++        sys.dont_write_bytecode = previous_bytecode
+ 
+     try:
+-        skills = resolve_skills(skills, available)
++        return resolve_skills(skills, available)
+     except BootstrapError as error:
+         raise InstallError(str(error)) from error
++
++
++def inspect_installation(
++    root: Path, target: str, skills: list[str], home: Path, codex_home: Path
++) -> list[dict[str, str]]:
++    """Report selected canonical destinations using linkage identity, without writes.
++
++    Skills must be symbolic links to the current source directory. Codex roles
++    must be regular files sharing the current source inode; matching bytes alone
++    cannot establish linkage or permission to replace an entry. Legacy and
++    unselected entries and restoration receipts are outside this inspection.
++    """
++    selected = resolve_selection(skills, inventory(root))
++    paths = locations(home, codex_home)
++    expected = {(f"{target}-skills", name): root / "skills" / name for name in selected}
++    for name in selected:
++        for agent in AGENTS[target].get(name, []):
++            expected[f"{target}-agents", agent] = root / "agents" / target / agent
++    entries = []
++    for (area, name), source in sorted(expected.items()):
++        destination = paths[area] / name
++        check_parents(destination.parent)
++        try:
++            mode = destination.lstat().st_mode
++        except FileNotFoundError:
++            state = "missing"
++        else:
++            correct_type = stat.S_ISREG(mode) if area == "codex-agents" else stat.S_ISLNK(mode)
++            state = "current" if correct_type and linked_to(destination, source) else "different"
++        entries.append({"area": area, "name": name, "state": state})
++    return entries
++
++
++def plan_install(
++    root: Path, target: str, skills: list[str], paths: dict[str, Path], *, backup_existing: bool
++) -> list[Entry]:
++    """Preflight selected links and legacy migrations without filesystem writes."""
++    skills = resolve_selection(skills, inventory(root))
+     candidates = []
+     for name in skills:
+         candidates.append(Entry(f"{target}-skills", name, root / "skills" / name))
+@@ -640,6 +680,16 @@ def main(argv: list[str] | None = None) -> int:
+     apply.add_argument("--codex-home", type=Path, help="Explicit custom Codex directory.")
+     apply.add_argument("--backup-existing", action="store_true")
+     apply.add_argument("--dry-run", action="store_true")
++    status = commands.add_parser("status", help="Inspect selected personal links without changes.")
++    status.add_argument("--target", choices=tuple(AGENTS), required=True)
++    status_selection = status.add_mutually_exclusive_group(required=True)
++    status_selection.add_argument("--skill", action="append", dest="skills")
++    status_selection.add_argument("--all", action="store_true")
++    status.add_argument(
++        "--home", type=Path, required=True, help="Home to inspect; ignores inherited CODEX_HOME."
++    )
++    status.add_argument("--codex-home", type=Path, help="Explicit custom Codex directory.")
++    status.add_argument("--json", action="store_true", help="Emit one versioned JSON object.")
+     undo = commands.add_parser("restore", help="Restore the entries recorded by an installation.")
+     undo.add_argument("receipt", type=Path)
+     undo.add_argument("--dry-run", action="store_true")
+@@ -705,16 +755,28 @@ def main(argv: list[str] | None = None) -> int:
+                     .expanduser()
+                     .resolve()
+                 )
+-                install(
+-                    ROOT,
+-                    args.target,
+-                    list(skills) if args.all else args.skills,
+-                    home,
+-                    codex_home,
+-                    backup_existing=args.backup_existing,
+-                    dry_run=args.dry_run,
+-                )
++                selected = list(skills) if args.all else args.skills
++                if args.command == "status":
++                    entries = inspect_installation(ROOT, args.target, selected, home, codex_home)
++                    if args.json:
++                        print(json.dumps({"schema_version": 1, "entries": entries}, sort_keys=True))
++                    else:
++                        for entry in entries:
++                            print(f"{entry['area']}/{entry['name']}: {entry['state']}")
++                    return int(any(entry["state"] != "current" for entry in entries))
++                else:
++                    install(
++                        ROOT,
++                        args.target,
++                        selected,
++                        home,
++                        codex_home,
++                        backup_existing=args.backup_existing,
++                        dry_run=args.dry_run,
++                    )
+     except (OSError, ValueError, KeyError, TypeError) as error:
++        if args.command == "status" and args.json:
++            print(json.dumps({"schema_version": 1, "entries": [], "error": str(error)}))
+         print(f"error: {error}", file=sys.stderr)
+         return 1
+     return 0
+diff --git a/tests/test_install.py b/tests/test_install.py
+index 19e00fe..fc333c7 100644
+--- a/tests/test_install.py
++++ b/tests/test_install.py
+@@ -787,6 +787,249 @@ class InstallerTests(unittest.TestCase):
+         )
+         self.assertFalse(outside.exists())
+ 
++    def status(
++        self, *selection: str, target: str = "codex", json_output: bool = True
++    ) -> tuple[int, str, str]:
++        """Capture a status CLI call against the isolated package and home."""
++        output, errors = io.StringIO(), io.StringIO()
++        arguments = ["status", "--target", target, "--home", str(self.home), *selection]
++        if json_output:
++            arguments.append("--json")
++        with (
++            patch.object(install, "ROOT", self.root),
++            contextlib.redirect_stdout(output),
++            contextlib.redirect_stderr(errors),
++        ):
++            result = install.main(arguments)
++        return result, output.getvalue(), errors.getvalue()
++
++    def test_status_missing_reports_dependency_closure_without_creating_home(self) -> None:
++        """A fresh home reports every expected destination in stable order."""
++        result, output, errors = self.status("--skill", "documentation-skill")
++        self.assertEqual(result, 1)
++        self.assertEqual(errors, "")
++        self.assertEqual(
++            json.loads(output),
++            {
++                "schema_version": 1,
++                "entries": [
++                    {
++                        "area": "codex-agents",
++                        "name": "documentation-agent.toml",
++                        "state": "missing",
++                    },
++                    {"area": "codex-skills", "name": "documentation-skill", "state": "missing"},
++                    {"area": "codex-skills", "name": "task-routing-skill", "state": "missing"},
++                ],
++            },
++        )
++        self.assertFalse(self.home.exists())
++        result, output, _ = self.status("--skill", "documentation-skill", json_output=False)
++        self.assertEqual(result, 1)
++        self.assertIn("codex-agents/documentation-agent.toml: missing", output)
++
++    def test_status_current_aliases_and_shared_dependencies_are_canonical(self) -> None:
++        """Selectors resolve as installation does, without duplicate shared resources."""
++        self.apply(["ddia-design-skill", "ddia-review-skill", "documentation-skill"])
++        result, output, errors = self.status(
++            "--skill",
++            "ddia-design-skill",
++            "--skill",
++            "ddia-review-skill",
++            "--skill",
++            "doc-agent",
++            "--skill",
++            "documentation-skill",
++        )
++        self.assertEqual(result, 0)
++        self.assertIn("Deprecated skill selector 'doc-agent'", errors)
++        entries = json.loads(output)["entries"]
++        self.assertEqual({entry["state"] for entry in entries}, {"current"})
++        self.assertEqual(
++            [(entry["area"], entry["name"]) for entry in entries],
++            [
++                ("codex-agents", "ddia-agent.toml"),
++                ("codex-agents", "documentation-agent.toml"),
++                ("codex-skills", "ddia-design-skill"),
++                ("codex-skills", "ddia-review-skill"),
++                ("codex-skills", "ddia-skill"),
++                ("codex-skills", "documentation-skill"),
++                ("codex-skills", "task-routing-skill"),
++            ],
++        )
++
++    def test_status_role_requires_current_source_inode_and_regular_file(self) -> None:
++        """Copies, runtime-incompatible symlinks and stale equal-byte hardlinks differ."""
++        self.apply()
++        source = self.root / "agents/codex/documentation-agent.toml"
++        role = self.codex / "agents/documentation-agent.toml"
++        for kind in ("copy", "symlink", "stale-hardlink"):
++            with self.subTest(kind=kind):
++                role.unlink()
++                if kind == "copy":
++                    shutil.copyfile(source, role)
++                elif kind == "symlink":
++                    role.symlink_to(source)
++                else:
++                    os.link(source, role)
++                    replacement = source.with_suffix(".replacement")
++                    replacement.write_bytes(source.read_bytes())
++                    replacement.replace(source)
++                self.assertEqual(role.read_bytes(), source.read_bytes())
++                before = (role.lstat().st_ino, role.lstat().st_mtime_ns)
++                result, output, _ = self.status("--skill", "documentation-skill")
++                self.assertEqual(result, 1)
++                entries = json.loads(output)["entries"]
++                self.assertEqual(entries[0]["state"], "different")
++                self.assertEqual({entry["state"] for entry in entries[1:]}, {"current"})
++                self.assertEqual((role.lstat().st_ino, role.lstat().st_mtime_ns), before)
++
++    def test_status_foreign_skill_entries_are_different_including_broken_links(self) -> None:
++        """Only the intended skill symlink counts as current, regardless of contents."""
++        self.apply()
++        skill = self.home / ".agents/skills/documentation-skill"
++        for kind in ("copy", "file", "foreign-link", "broken-link", "relative-link"):
++            with self.subTest(kind=kind):
++                skill.unlink()
++                if kind == "copy":
++                    shutil.copytree(self.root / "skills/documentation-skill", skill)
++                elif kind == "file":
++                    skill.write_text("foreign")
++                elif kind == "relative-link":
++                    skill.symlink_to(
++                        os.path.relpath(self.root / "skills/documentation-skill", skill.parent)
++                    )
++                else:
++                    source = (
++                        self.root
++                        / "skills"
++                        / ("task-routing-skill" if kind == "foreign-link" else "missing-skill")
++                    )
++                    skill.symlink_to(source)
++                before = skill.lstat().st_ino
++                result, output, _ = self.status("--skill", "documentation-skill")
++                self.assertEqual(result, 1)
++                self.assertEqual(json.loads(output)["entries"][1]["state"], "different")
++                self.assertEqual(skill.lstat().st_ino, before)
++                if skill.is_dir() and not skill.is_symlink():
++                    shutil.rmtree(skill)
++                else:
++                    skill.unlink()
++                skill.symlink_to(self.root / "skills/documentation-skill")
++
++    def test_status_all_reports_only_selected_host_canonical_destinations(self) -> None:
++        """All expands the inventory; Copilot never inspects or supplies roles."""
++        skills = list(install.inventory(self.root))
++        for target in ("codex", "copilot"):
++            with self.subTest(target=target):
++                self.apply(skills, target=target)
++                legacy = self.home / ".copilot/agents/old.agent.md"
++                legacy.parent.mkdir(parents=True, exist_ok=True)
++                legacy.write_text("keep historical role")
++                result, output, _ = self.status("--all", target=target)
++                self.assertEqual(result, 0)
++                entries = json.loads(output)["entries"]
++                self.assertEqual(
++                    {entry["name"] for entry in entries if entry["area"] == f"{target}-skills"},
++                    set(skills),
++                )
++                self.assertEqual(len(entries), len(skills) + (6 if target == "codex" else 0))
++                self.assertEqual(legacy.read_text(), "keep historical role")
++
++    def test_status_explicit_home_ignores_environment_and_accepts_custom_codex_home(self) -> None:
++        """An explicit inspection home never falls through to inherited host paths."""
++        custom = self.base / "custom codex"
++        install.install(self.root, "codex", ["documentation-skill"], self.home, custom)
++        inherited = self.base / "inherited codex"
++        with patch.dict(os.environ, {"CODEX_HOME": str(inherited)}):
++            result, output, _ = self.status("--skill", "documentation-skill")
++            self.assertEqual(result, 1)
++            self.assertEqual(json.loads(output)["entries"][0]["state"], "missing")
++            result, _, _ = self.status(
++                "--skill", "documentation-skill", "--codex-home", str(custom)
++            )
++            self.assertEqual(result, 0)
++        self.assertFalse(inherited.exists())
++        self.assertFalse(self.codex.exists())
++
++    def test_status_invalid_selection_and_source_return_one_json_object(self) -> None:
++        """Invalid requests fail without inventing ownership or creating destinations."""
++        for selection in ("unknown-skill", "documentation-skill"):
++            with self.subTest(selection=selection):
++                if selection == "documentation-skill":
++                    (self.root / "skills/documentation-skill/SKILL.md").write_text("invalid")
++                result, output, errors = self.status("--skill", selection)
++                self.assertEqual(result, 1)
++                data = json.loads(output)
++                self.assertEqual(data["schema_version"], 1)
++                self.assertEqual(data["entries"], [])
++                self.assertIn("error", data)
++                self.assertIn("error:", errors)
++                self.assertFalse(self.home.exists())
++
++    def test_status_rejects_invalid_destination_parent_without_following_it(self) -> None:
++        """An invalid installation layout is a read-only error, not replacement consent."""
++        outside = self.base / "foreign skills"
++        outside.mkdir()
++        parent = self.home / ".agents/skills"
++        parent.parent.mkdir(parents=True)
++        parent.symlink_to(outside)
++        result, output, _ = self.status("--skill", "documentation-skill")
++        self.assertEqual(result, 1)
++        self.assertIn("Expected a real directory", json.loads(output)["error"])
++        self.assertEqual(list(outside.iterdir()), [])
++        self.assertTrue(parent.is_symlink())
++
++    def test_status_subprocess_preserves_source_host_and_receipts_without_bytecode(self) -> None:
++        """A fresh process makes no source cache, directory, receipt or repair writes."""
++        for filename in ("install.py", "project_bootstrap.py"):
++            shutil.copyfile(ROOT / filename, self.root / filename)
++
++        def snapshot() -> dict[str, tuple[int, int, int, bytes | str | None]]:
++            """Exclude access time but retain identity, modes, mtimes and link contents."""
++            return {
++                str(path.relative_to(self.base)): (
++                    path.lstat().st_ino,
++                    path.lstat().st_mode,
++                    path.lstat().st_mtime_ns,
++                    os.readlink(path)
++                    if path.is_symlink()
++                    else path.read_bytes()
++                    if path.is_file()
++                    else None,
++                )
++                for path in self.base.rglob("*")
++            }
++
++        environment = dict(os.environ)
++        environment.pop("PYTHONDONTWRITEBYTECODE", None)
++        for installed in (False, True):
++            with self.subTest(installed=installed):
++                if installed:
++                    self.apply()
++                before = snapshot()
++                result = subprocess.run(
++                    [
++                        sys.executable,
++                        str(self.root / "install.py"),
++                        "status",
++                        "--target",
++                        "codex",
++                        "--home",
++                        str(self.home),
++                        "--skill",
++                        "documentation-skill",
++                        "--json",
++                    ],
++                    env=environment,
++                    capture_output=True,
++                    text=True,
++                    check=False,
++                )
++                self.assertEqual(result.returncode, 0 if installed else 1, result.stderr)
++                self.assertEqual(json.loads(result.stdout)["schema_version"], 1)
++                self.assertEqual(snapshot(), before)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

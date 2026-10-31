@@ -113,6 +113,145 @@ class ProjectBootstrapTests(unittest.TestCase):
         self.assertIsNone(manifest["source"]["dirty"])
         self.assertEqual(len(manifest["source"]["content_sha256"]), 64)
 
+    def check_cli(self, *options: str, intact: bool = True) -> subprocess.CompletedProcess[str]:
+        """Run the real check command and assert it never changes target entries."""
+        before = self.snapshot()
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(self.source / "install.py"),
+                "bootstrap",
+                "--project",
+                str(self.app),
+                "--check",
+                *options,
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(self.snapshot(), before)
+        if intact:
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("integrity intact", result.stdout)
+        else:
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+        return result
+
+    def test_check_ignores_source_changes_and_unowned_project_content(self) -> None:
+        """Recorded hashes survive new source, removed packages, and unrelated local edits."""
+        self.apply(skills=["documentation-skill"], target="codex")
+        instructions = self.app / "AGENTS.md"
+        instructions.write_bytes(b"team prefix\n" + instructions.read_bytes() + b"\nteam suffix\n")
+        (self.app / ".agents/skills/documentation-skill/team-notes.txt").write_text("local notes")
+        source = self.source / "skills/documentation-skill/SKILL.md"
+        source.write_bytes(source.read_bytes() + b"\nNew source release.\n")
+        self.check_cli()
+        shutil.rmtree(self.source / "skills")
+        shutil.rmtree(self.source / "agents")
+        self.check_cli()
+
+    def test_check_reports_missing_and_edited_managed_files(self) -> None:
+        """Every failing owned file is identified while all target state is retained."""
+        self.apply(skills=["documentation-skill"], target="codex")
+        names = list(self.manifest()["files"])
+        (self.app / names[0]).unlink()
+        (self.app / names[1]).write_bytes(b"edited")
+        result = self.check_cli(intact=False)
+        self.assertIn(f"Missing managed file: {names[0]}", result.stderr)
+        self.assertIn(f"Edited managed file: {names[1]}", result.stderr)
+
+    def test_check_reports_invalid_routing_blocks(self) -> None:
+        """Missing, edited, duplicate, and partial routing blocks fail without writes."""
+        self.apply(skills=["documentation-skill"])
+        instructions = self.app / "AGENTS.md"
+        original = instructions.read_bytes()
+        for content in (
+            b"team instructions only\n",
+            original.replace(b"Shared engineering", b"Edited engineering"),
+            original + original,
+            original.replace(project.BLOCK_END, b""),
+        ):
+            with self.subTest(content=content[:40]):
+                instructions.write_bytes(content)
+                self.assertIn("AGENTS.md", self.check_cli(intact=False).stderr)
+        instructions.unlink()
+        self.assertIn("AGENTS.md", self.check_cli(intact=False).stderr)
+
+    def test_check_rejects_unbootstrapped_targets_without_creating_them(self) -> None:
+        """Checking a missing or existing unbootstrapped project is a read-only failure."""
+        self.assertIn("not bootstrapped", self.check_cli(intact=False).stderr)
+        self.assertFalse(self.app.exists())
+        self.app.mkdir()
+        (self.app / "AGENTS.md").write_text("team instructions")
+        self.assertIn("not bootstrapped", self.check_cli(intact=False).stderr)
+
+    def test_check_rejects_malformed_and_unsafe_manifests(self) -> None:
+        """Malformed records and all unsafe ownership paths fail before destination reads."""
+        self.apply(skills=["documentation-skill"], target="codex")
+        path = self.app / project.MANIFEST
+        original = path.read_bytes()
+        records = [b"not json", b"\xff", b"[]", b'{"schema": 1, "schema": 2}']
+        for field, value in (
+            ("schema", "unknown"),
+            ("skills", ["../outside-skill"]),
+            ("hosts", ["unknown"]),
+            ("files", {"../../outside": "0" * 64}),
+            ("files", {"/absolute": "0" * 64}),
+            ("files", {".agents/skills/documentation-skill/../escape": "0" * 64}),
+            ("files", {".agents/skills/documentation-skill/SKILL.md": "bad"}),
+            ("agents_block_sha256", "bad"),
+            ("source", {}),
+        ):
+            manifest = json.loads(original)
+            manifest[field] = value
+            records.append(json.dumps(manifest).encode())
+        for content in records:
+            with self.subTest(content=content[:80]):
+                path.write_bytes(content)
+                result = self.check_cli(intact=False)
+                self.assertIn("manifest", result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+
+    def test_check_rejects_incompatible_flags_without_writes(self) -> None:
+        """Check never silently ignores selection or mutation flags."""
+        for options in (
+            ("--update",),
+            ("--dry-run",),
+            ("--skill", "documentation-skill"),
+            ("--all",),
+            ("--target", "codex"),
+        ):
+            with self.subTest(options=options):
+                self.assertIn(
+                    "--check cannot be combined", self.check_cli(*options, intact=False).stderr
+                )
+                self.assertFalse(self.app.exists())
+
+    def test_check_refuses_symlinked_managed_paths(self) -> None:
+        """A managed file or directory symlink cannot authorize traversal outside the target."""
+        self.apply(skills=["documentation-skill"], target="codex")
+        name = next(iter(self.manifest()["files"]))
+        owned = self.app / name
+        external = self.base / "external"
+        external.write_bytes(owned.read_bytes())
+        owned.unlink()
+        owned.symlink_to(external)
+        self.assertIn(name, self.check_cli(intact=False).stderr)
+        self.assertEqual(external.read_bytes(), owned.read_bytes())
+
+    def test_check_nested_source_does_not_write_bytecode_in_target(self) -> None:
+        """A vendored checker import creates no caches on either success or failure."""
+        self.app.mkdir()
+        nested = self.app / "vendor/toolkit"
+        nested.parent.mkdir()
+        self.source.rename(nested)
+        self.source = nested
+        self.apply(skills=["documentation-skill"])
+        self.check_cli()
+        (self.app / "AGENTS.md").unlink()
+        self.check_cli(intact=False)
+        self.assertFalse(list(self.app.rglob("*.pyc")))
+
     def test_role_rendering_inherits_settings_and_preserves_all_other_fields(self) -> None:
         """Copied Codex roles preserve instructions but inherit the collaborator's host settings."""
         self.apply()

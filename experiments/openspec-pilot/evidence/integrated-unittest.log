@@ -1,0 +1,439 @@
+test_checker_cannot_upgrade_behavioral_assessment (test_authoring.AuthoringTests.test_checker_cannot_upgrade_behavioral_assessment)
+Prevent a format-only catalog from claiming certification. ... ok
+test_cli_reports_structure_separately (test_authoring.AuthoringTests.test_cli_reports_structure_separately)
+Expose machine-readable diagnostics with an honest assessment boundary. ... ok
+test_current_repository_has_complete_inventory (test_authoring.AuthoringTests.test_current_repository_has_complete_inventory)
+Check the real inventory without asserting that its artifacts behave well. ... ok
+test_cyclic_evidence_symlink_returns_diagnostic (test_authoring.AuthoringTests.test_cyclic_evidence_symlink_returns_diagnostic)
+Reject unresolvable evidence links without a parser traceback. ... ok
+test_duplicate_keys_fail_even_when_last_value_is_valid (test_authoring.AuthoringTests.test_duplicate_keys_fail_even_when_last_value_is_valid)
+Prevent conflicting descriptions from silently passing authoring checks. ... ok
+test_evidence_must_exist_and_remain_within_checkout (test_authoring.AuthoringTests.test_evidence_must_exist_and_remain_within_checkout)
+Reject dangling references, traversal, and symlinks to external evidence. ... ok
+test_invalid_source_tree_fails_before_opening_fifo (test_authoring.AuthoringTests.test_invalid_source_tree_fails_before_opening_fifo)
+Exit promptly when installer validation rejects a nonregular skill file. ... ok
+test_invalid_types_limits_and_missing_body (test_authoring.AuthoringTests.test_invalid_types_limits_and_missing_body)
+Reject malformed portable fields with useful failures instead of crashes. ... ok
+test_inventory_accepts_explicit_evaluation_gap (test_authoring.AuthoringTests.test_inventory_accepts_explicit_evaluation_gap)
+Allow honest legacy adoption without inventing completed evaluations. ... ok
+test_large_entrypoint_is_advisory (test_authoring.AuthoringTests.test_large_entrypoint_is_advisory)
+Keep an upstream recommendation separate from mandatory syntax. ... ok
+test_malformed_catalog_returns_diagnostic (test_authoring.AuthoringTests.test_malformed_catalog_returns_diagnostic)
+Report invalid JSON rather than leaving an unhandled parser traceback. ... ok
+test_missing_duplicate_and_stale_entries_fail (test_authoring.AuthoringTests.test_missing_duplicate_and_stale_entries_fail)
+Require exact inventory coverage as packages are added or removed. ... ok
+test_multiline_yaml_and_supported_optional_fields (test_authoring.AuthoringTests.test_multiline_yaml_and_supported_optional_fields)
+Accept ordinary YAML variants and preserve a small free-form body. ... ok
+test_review_fingerprint_detects_changed_artifact (test_authoring.AuthoringTests.test_review_fingerprint_detects_changed_artifact)
+Reject stale review identity without pretending to judge semantic quality. ... ok
+test_review_fingerprint_rejects_malformed_values_and_missing_files (test_authoring.AuthoringTests.test_review_fingerprint_rejects_malformed_values_and_missing_files)
+An optional identity must be valid and cannot hide a missing artifact. ... ok
+test_reviewed_entry_requires_an_existing_review_record (test_authoring.AuthoringTests.test_reviewed_entry_requires_an_existing_review_record)
+Require a review reference without presenting it as a favorable verdict. ... ok
+test_templates_render_into_supported_formats (test_authoring.AuthoringTests.test_templates_render_into_supported_formats)
+Exercise template parsing without requiring a particular instruction wording. ... ok
+test_all_inventory_skills_are_staged (test_benchmark_revisions.CampaignRegressionTests.test_all_inventory_skills_are_staged) ... ok
+test_artifact_and_grade_tampering_are_rejected_on_disk (test_benchmark_revisions.CampaignRegressionTests.test_artifact_and_grade_tampering_are_rejected_on_disk) ... ok
+test_auth_precedes_catalog_and_harness_failure_is_retained (test_benchmark_revisions.CampaignRegressionTests.test_auth_precedes_catalog_and_harness_failure_is_retained) ... ok
+test_changed_runtime_after_plan_is_rejected (test_benchmark_revisions.CampaignRegressionTests.test_changed_runtime_after_plan_is_rejected) ... ok
+test_missing_results_remain_in_saved_schedule (test_benchmark_revisions.CampaignRegressionTests.test_missing_results_remain_in_saved_schedule) ... ok
+test_pair_completion_requires_terminal_outcomes_for_planned_arms (test_benchmark_revisions.CampaignRegressionTests.test_pair_completion_requires_terminal_outcomes_for_planned_arms) ... ok
+test_parent_and_parent_receipt_cannot_be_rebound_after_plan (test_benchmark_revisions.CampaignRegressionTests.test_parent_and_parent_receipt_cannot_be_rebound_after_plan) ... ok
+test_report_separates_harness_revisions_and_unrecorded_legacy_plans (test_benchmark_revisions.CampaignRegressionTests.test_report_separates_harness_revisions_and_unrecorded_legacy_plans) ... ok
+test_sealed_but_incomplete_grade_cannot_claim_pass (test_benchmark_revisions.CampaignRegressionTests.test_sealed_but_incomplete_grade_cannot_claim_pass) ... ok
+test_toolkit_change_since_plan_is_rejected (test_benchmark_revisions.CampaignRegressionTests.test_toolkit_change_since_plan_is_rejected) ... ok
+test_all_forbidden_quickstart_does_not_establish_success (test_benchmark_revisions.OracleRegressionTests.test_all_forbidden_quickstart_does_not_establish_success) ... ok
+test_docs_retry_requires_identical_request_not_two_successes (test_benchmark_revisions.OracleRegressionTests.test_docs_retry_requires_identical_request_not_two_successes) ... ok
+test_malformed_status_results_fail_without_escaping_grader (test_benchmark_revisions.OracleRegressionTests.test_malformed_status_results_fail_without_escaping_grader) ... ok
+test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery) ... ERROR
+test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target) ... ERROR
+test_no_op_delete_fails_persistent_and_capacity_controls (test_benchmark_revisions.OracleRegressionTests.test_no_op_delete_fails_persistent_and_capacity_controls) ... ok
+test_parent_and_final_alias_reads_are_rejected (test_benchmark_revisions.OracleRegressionTests.test_parent_and_final_alias_reads_are_rejected) ... ok
+test_recursive_view_query_is_bounded_outside_grader (test_benchmark_revisions.OracleRegressionTests.test_recursive_view_query_is_bounded_outside_grader) ... ok
+test_retry_payload_canonicalization_and_logical_job_identity (test_benchmark_revisions.OracleRegressionTests.test_retry_payload_canonicalization_and_logical_job_identity) ... ok
+test_sql_snapshot_includes_committed_wal_sidecar (test_benchmark_revisions.OracleRegressionTests.test_sql_snapshot_includes_committed_wal_sidecar) ... ok
+test_unexpected_controller_error_is_distinct (test_benchmark_revisions.OracleRegressionTests.test_unexpected_controller_error_is_distinct) ... ok
+test_wal_reference_preserves_deletion_behavior (test_benchmark_revisions.OracleRegressionTests.test_wal_reference_preserves_deletion_behavior) ... ok
+test_complete_sources_keep_legacy_library_paths_after_skill_rename (test_benchmark_sessions.CanonicalStagingTests.test_complete_sources_keep_legacy_library_paths_after_skill_rename) ... ok
+test_staged_names_follow_authoritative_inventory_and_role_files (test_benchmark_sessions.CanonicalStagingTests.test_staged_names_follow_authoritative_inventory_and_role_files) ... ok
+test_generic_child_keeps_unknown_role_and_connects_its_descendants (test_benchmark_sessions.SessionObservationTests.test_generic_child_keeps_unknown_role_and_connects_its_descendants) ... ok
+test_malformed_or_duplicate_metadata_is_reported_without_false_dispatch (test_benchmark_sessions.SessionObservationTests.test_malformed_or_duplicate_metadata_is_reported_without_false_dispatch) ... ok
+test_metadata_and_stdout_do_not_duplicate_the_same_child (test_benchmark_sessions.SessionObservationTests.test_metadata_and_stdout_do_not_duplicate_the_same_child) ... ok
+test_missing_own_history_boundary_does_not_attribute_parent_model (test_benchmark_sessions.SessionObservationTests.test_missing_own_history_boundary_does_not_attribute_parent_model) ... ok
+test_no_root_event_does_not_infer_dispatch_from_local_or_global_catalog (test_benchmark_sessions.SessionObservationTests.test_no_root_event_does_not_infer_dispatch_from_local_or_global_catalog) ... ok
+test_parent_tree_recovers_actual_roles_without_stdout_spawn_events (test_benchmark_sessions.SessionObservationTests.test_parent_tree_recovers_actual_roles_without_stdout_spawn_events) ... ok
+test_session_directory_alias_is_not_followed (test_benchmark_sessions.SessionObservationTests.test_session_directory_alias_is_not_followed) ... ok
+test_model_advertised_effort_is_preserved_without_a_closed_enum (test_benchmarks.BenchmarkAccountingTests.test_model_advertised_effort_is_preserved_without_a_closed_enum) ... ok
+test_plan_bounds_staleness_and_reproducible_pair_order (test_benchmarks.BenchmarkAccountingTests.test_plan_bounds_staleness_and_reproducible_pair_order) ... ok
+test_prepare_never_overwrites_prior_attempt (test_benchmarks.BenchmarkAccountingTests.test_prepare_never_overwrites_prior_attempt) ... ok
+test_report_retains_failed_and_unknown_attempts (test_benchmarks.BenchmarkAccountingTests.test_report_retains_failed_and_unknown_attempts) ... ok
+test_report_separates_models_and_rejects_duplicates (test_benchmarks.BenchmarkAccountingTests.test_report_separates_models_and_rejects_duplicates) ... ok
+test_trace_discovery_is_not_usage_and_unknown_is_not_zero (test_benchmarks.BenchmarkAccountingTests.test_trace_discovery_is_not_usage_and_unknown_is_not_zero) ... ok
+test_actor_staging_has_no_oracles_or_references (test_benchmarks.BenchmarkControlsTests.test_actor_staging_has_no_oracles_or_references) ... ok
+test_all_reference_and_wrong_controls (test_benchmarks.BenchmarkControlsTests.test_all_reference_and_wrong_controls) ... ok
+test_archive_traversal_rejected (test_benchmarks.BenchmarkControlsTests.test_archive_traversal_rejected) ... ok
+test_contracts_and_fingerprints (test_benchmarks.BenchmarkControlsTests.test_contracts_and_fingerprints) ... ok
+test_self_reported_success_does_not_score (test_benchmarks.BenchmarkControlsTests.test_self_reported_success_does_not_score) ... ok
+test_symlink_and_configuration_artifacts_rejected (test_benchmarks.BenchmarkControlsTests.test_symlink_and_configuration_artifacts_rejected) ... ok
+test_executor_refuses_unverified_or_unsupported_native_boundary (test_benchmarks.BenchmarkProcessTests.test_executor_refuses_unverified_or_unsupported_native_boundary) ... ok
+test_timeout_and_output_limit (test_benchmarks.BenchmarkProcessTests.test_timeout_and_output_limit) ... ok
+test_timeout_cleans_background_process_group (test_benchmarks.BenchmarkProcessTests.test_timeout_cleans_background_process_group) ... ok
+test_complete_profile_requires_explicit_fingerprinted_source (test_benchmarks.BenchmarkProfileTests.test_complete_profile_requires_explicit_fingerprinted_source) ... ok
+test_controlled_roles_are_real_copies_with_equal_model_settings (test_benchmarks.BenchmarkProfileTests.test_controlled_roles_are_real_copies_with_equal_model_settings) ... ok
+test_downloaded_resources_exclude_evaluations_and_instructions (test_benchmarks.BenchmarkProfileTests.test_downloaded_resources_exclude_evaluations_and_instructions) ... ok
+test_git_is_canonical_and_host_configuration_is_disabled (test_benchmarks.BenchmarkProfileTests.test_git_is_canonical_and_host_configuration_is_disabled) ... ok
+test_permission_config_denies_default_access_and_parent_config_writes (test_benchmarks.BenchmarkProfileTests.test_permission_config_denies_default_access_and_parent_config_writes) ... ok
+test_sources_are_matched_without_skill_instructions (test_benchmarks.BenchmarkProfileTests.test_sources_are_matched_without_skill_instructions) ... ok
+test_pagination_is_explicit_and_invalid_anchors_fail (test_ddia_book.BookTests.test_pagination_is_explicit_and_invalid_anchors_fail)
+Partial reads advertise continuation and cannot silently invent citations. ... ok
+test_ranked_search_supports_aliases_partial_matches_and_source_neighbors (test_ddia_book.BookTests.test_ranked_search_supports_aliases_partial_matches_and_source_neighbors)
+Useful source navigation survives vocabulary mismatch without fabricated anchors. ... ok
+test_repeat_initialize_preserves_existing_files (test_ddia_book.BookTests.test_repeat_initialize_preserves_existing_files)
+Initialization is idempotent and refuses incomplete or conflicting storage. ... ok
+test_selected_install_and_restore (test_ddia_book.BookTests.test_selected_install_and_restore)
+The specialist's role and skill install together and restore cleanly. ... ok
+test_source_change_is_rejected (test_ddia_book.BookTests.test_source_change_is_rejected)
+A changed local EPUB cannot silently reuse stale references. ... ok
+test_source_is_stable_and_search_has_real_locators (test_ddia_book.BookTests.test_source_is_stable_and_search_has_real_locators)
+Deleting the original does not break the local copy or grounded retrieval. ... ok
+test_verify_detects_index_change (test_ddia_book.BookTests.test_verify_detects_index_change)
+Re-extraction detects text tampering even when the source remains unchanged. ... ok
+test_admission_closes_setup_and_readback_connections (test_ddia_suite.DDIASuiteTests.test_admission_closes_setup_and_readback_connections)
+Repeated experiments release database handles outside transaction context scope. ... ok
+test_all_authored_locators_resolve_against_the_actual_bundled_source (test_ddia_suite.DDIASuiteTests.test_all_authored_locators_resolve_against_the_actual_bundled_source)
+A mistyped or stale concept anchor fails against real EPUB chapter structure. ... ok
+test_comparison_freezes_matched_inputs_withholds_rubrics_and_reports_missing (test_ddia_suite.DDIASuiteTests.test_comparison_freezes_matched_inputs_withholds_rubrics_and_reports_missing)
+Three arms have identical tasks, explicit settings and no actor grading answers. ... ok
+test_coverage_validates_source_links_and_rejects_unknown_or_changed_inputs (test_ddia_suite.DDIASuiteTests.test_coverage_validates_source_links_and_rejects_unknown_or_changed_inputs)
+All chapter links resolve, and corrupted or foreign source metadata fails. ... ok
+test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores)
+Selecting a workflow cannot silently omit its shared reference dependency. ... ok
+test_every_experiment_rejects_broken_and_accepts_sufficient_control (test_ddia_suite.DDIASuiteTests.test_every_experiment_rejects_broken_and_accepts_sufficient_control)
+The actual SQLite and bounded-model oracles detect their introduced violation. ... ok
+test_explanations_route_across_all_chapters (test_ddia_suite.DDIASuiteTests.test_explanations_route_across_all_chapters)
+A teaching request can retrieve every domain instead of only data models. ... ok
+test_missing_dependency_fails_before_install_or_project_write (test_ddia_suite.DDIASuiteTests.test_missing_dependency_fails_before_install_or_project_write)
+An incomplete toolkit is rejected rather than creating a broken workflow. ... ok
+test_project_workflow_dependency_survives_relocation_without_personal_source (test_ddia_suite.DDIASuiteTests.test_project_workflow_dependency_survives_relocation_without_personal_source)
+Portable selection carries procedures, templates and helpers as regular files. ... ok
+test_routes_select_useful_concepts_and_show_only_requested_section (test_ddia_suite.DDIASuiteTests.test_routes_select_useful_concepts_and_show_only_requested_section)
+Routing works without a private book and preserves qualified worked examples. ... ok
+test_semantic_scores_require_evidence_and_frozen_inputs (test_ddia_suite.DDIASuiteTests.test_semantic_scores_require_evidence_and_frozen_inputs)
+Invalid scores, repeat receipts and changed actor files cannot quietly pass. ... ok
+test_snapshot_rejects_linked_resources_and_output_overlap (test_ddia_suite.DDIASuiteTests.test_snapshot_rejects_linked_resources_and_output_overlap)
+Planner inputs cannot pull arbitrary linked files into an actor snapshot. ... ok
+test_commands_are_listed_without_executing_or_printing_bodies (test_environment.DiscoveryTests.test_commands_are_listed_without_executing_or_printing_bodies)
+Only a safe script invocation is reported, never its arbitrary body. ... ok
+test_conflicting_lockfiles_do_not_guess_manager (test_environment.DiscoveryTests.test_conflicting_lockfiles_do_not_guess_manager)
+Conflicting evidence is reported instead of choosing a tool arbitrarily. ... ok
+test_excluded_and_deep_directories_are_not_scanned (test_environment.DiscoveryTests.test_excluded_and_deep_directories_are_not_scanned)
+Dependency caches and excessive depth do not inflate the inventory. ... ok
+test_fifo_manifest_returns_without_blocking (test_environment.DiscoveryTests.test_fifo_manifest_returns_without_blocking)
+A real FIFO is skipped, with a subprocess timeout bounding regressions. ... ok
+test_invalid_project_is_rejected (test_environment.DiscoveryTests.test_invalid_project_is_rejected)
+A missing root returns a meaningful input error. ... ok
+test_linked_configuration_is_not_read (test_environment.DiscoveryTests.test_linked_configuration_is_not_read)
+A manifest symlink is identified and not parsed. ... ok
+test_malformed_manifest_is_reported (test_environment.DiscoveryTests.test_malformed_manifest_is_reported)
+Bad JSON is a limitation, not a traceback or inferred command. ... ok
+test_manager_discovery_stays_inside_explicit_root (test_environment.DiscoveryTests.test_manager_discovery_stays_inside_explicit_root)
+An unrelated parent manifest is not used to guess a manager. ... ok
+test_missing_optional_tools_do_not_fail (test_environment.DiscoveryTests.test_missing_optional_tools_do_not_fail)
+Documentation work is still possible without optional validators. ... ok
+test_nearest_declaration_wins (test_environment.DiscoveryTests.test_nearest_declaration_wins)
+An explicitly configured nested project keeps its own manager. ... ok
+test_workspace_inherits_ancestor_package_manager (test_environment.DiscoveryTests.test_workspace_inherits_ancestor_package_manager)
+A nested package uses the selected workspace's declared manager. ... ok
+test_workspace_inherits_lockfile (test_environment.DiscoveryTests.test_workspace_inherits_lockfile)
+Lockfile evidence is inherited when no declaration exists. ... ok
+test_wrong_manifest_shapes_are_reported (test_environment.DiscoveryTests.test_wrong_manifest_shapes_are_reported)
+Unexpected JSON types cannot crash command discovery. ... ok
+test_aliasing_legacy_location_cannot_remove_installed_skill (test_install.InstallerTests.test_aliasing_legacy_location_cannot_remove_installed_skill)
+A repeat install cannot mistake its active skill for a legacy copy. ... ok
+test_all_old_selectors_migrate_shared_roles_once (test_install.InstallerTests.test_all_old_selectors_migrate_shared_roles_once)
+A full upgrade removes old names, deduplicates shared roles, and restores all. ... ok
+test_all_skills_and_associated_agents_for_both_hosts (test_install.InstallerTests.test_all_skills_and_associated_agents_for_both_hosts)
+Each host receives the authoritative skill inventory and supported wrappers. ... ok
+test_atomic_role_replacement_requires_preserving_reinstall (test_install.InstallerTests.test_atomic_role_replacement_requires_preserving_reinstall)
+A source inode replacement cannot silently leave an outdated role marked current. ... ok
+test_backup_restore_roundtrip_preserves_directory_file_and_broken_link (test_install.InstallerTests.test_backup_restore_roundtrip_preserves_directory_file_and_broken_link)
+Migration retains different destination types and unrelated settings. ... ok
+test_broken_destination_link_conflicts (test_install.InstallerTests.test_broken_destination_link_conflicts)
+Dangling links are treated as user content, not empty destinations. ... ok
+test_codex_home_cannot_retire_canonical_source (test_install.InstallerTests.test_codex_home_cannot_retire_canonical_source)
+A Codex home equal to the checkout cannot move its source skills. ... ok
+test_codex_role_identifier_must_match_filename (test_install.InstallerTests.test_codex_role_identifier_must_match_filename)
+A suffixed filename cannot conceal a stale runtime role identifier. ... ok
+test_conflict_aborts_all_changes (test_install.InstallerTests.test_conflict_aborts_all_changes)
+A late agent conflict cannot leave an earlier skill installed. ... ok
+test_copilot_catalog_contains_skills_without_agent_definitions (test_install.InstallerTests.test_copilot_catalog_contains_skills_without_agent_definitions)
+A skill-only target does not require a source role directory. ... ok
+test_copilot_role_files_are_rejected_as_unshipped_format (test_install.InstallerTests.test_copilot_role_files_are_rejected_as_unshipped_format)
+The package cannot silently reintroduce a second agent-definition format. ... ok
+test_cross_device_role_link_failure_rolls_back (test_install.InstallerTests.test_cross_device_role_link_failure_rolls_back)
+An unsupported cross-volume hard link leaves no partial installation. ... ok
+test_custom_codex_home (test_install.InstallerTests.test_custom_codex_home)
+A custom Codex home changes agent and legacy paths, not shared skills. ... ok
+test_deprecated_cli_selector_installs_only_canonical_names (test_install.InstallerTests.test_deprecated_cli_selector_installs_only_canonical_names)
+Old commands remain usable without installing duplicate host aliases. ... ok
+test_destination_parent_symlink_is_rejected (test_install.InstallerTests.test_destination_parent_symlink_is_rejected)
+Parent links cannot redirect host writes to another directory. ... ok
+test_disposable_home_inside_checkout_is_rejected (test_install.InstallerTests.test_disposable_home_inside_checkout_is_rejected)
+Generated host files and backups cannot enter the canonical checkout. ... ok
+test_dry_run_does_not_create_home (test_install.InstallerTests.test_dry_run_does_not_create_home)
+Preview is read-only even when no destination directories exist. ... ok
+test_explicit_cli_home_ignores_inherited_codex_home (test_install.InstallerTests.test_explicit_cli_home_ignores_inherited_codex_home)
+A disposable CLI install cannot accidentally use the caller's Codex home. ... ok
+test_final_receipt_failure_restores_moved_legacy_entry (test_install.InstallerTests.test_final_receipt_failure_restores_moved_legacy_entry)
+Failure persisting the final receipt restores moved backups as well. ... ok
+test_json_catalog_escapes_description_text (test_install.InstallerTests.test_json_catalog_escapes_description_text)
+Quotes, backslashes, and Unicode round trip from current skill metadata. ... ok
+test_json_catalog_fresh_process_does_not_create_source_cache (test_install.InstallerTests.test_json_catalog_fresh_process_does_not_create_source_cache)
+A normal fresh CLI invocation creates no source cache or host state. ... ok
+test_json_catalog_rejects_invalid_sources_without_stdout (test_install.InstallerTests.test_json_catalog_rejects_invalid_sources_without_stdout)
+Bad role metadata and missing required skills fail before producing JSON. ... ok
+test_json_catalog_schema_and_current_metadata (test_install.InstallerTests.test_json_catalog_schema_and_current_metadata)
+JSON contains exactly the public schema and actual runtime identifiers. ... ok
+test_json_catalog_sorts_roles_and_exposes_only_direct_dependencies (test_install.InstallerTests.test_json_catalog_sorts_roles_and_exposes_only_direct_dependencies)
+Unsorted associations and a dependency chain retain the JSON contract. ... ok
+test_late_link_failure_rolls_back_backups_and_new_directories (test_install.InstallerTests.test_late_link_failure_rolls_back_backups_and_new_directories)
+An ordinary write failure restores all earlier user entries. ... ok
+test_legacy_copy_requires_explicit_backup (test_install.InstallerTests.test_legacy_copy_requires_explicit_backup)
+Installing a new location cannot silently leave an older duplicate active. ... ok
+test_legacy_role_symlink_migration_is_selected_and_reversible (test_install.InstallerTests.test_legacy_role_symlink_migration_is_selected_and_reversible)
+Selected roles become regular files; old receipts and symlink backups still restore. ... ok
+test_list_does_not_change_package_or_host (test_install.InstallerTests.test_list_does_not_change_package_or_host)
+Listing available capabilities preserves package files and existing host state. ... ok
+test_list_shows_skill_only_and_shared_role_associations (test_install.InstallerTests.test_list_shows_skill_only_and_shared_role_associations)
+The catalog distinguishes no role, specialist roles, and shared workflow roles. ... ok
+test_nested_destination_and_backup_roots_are_rejected (test_install.InstallerTests.test_nested_destination_and_backup_roots_are_rejected)
+Host roots and backup storage cannot contain one another. ... ok
+test_rename_conflict_and_dry_run_preserve_old_entries (test_install.InstallerTests.test_rename_conflict_and_dry_run_preserve_old_entries)
+Renaming cannot modify existing entries without backup or during preview. ... ok
+test_rename_migration_failure_restores_old_entries (test_install.InstallerTests.test_rename_migration_failure_restores_old_entries)
+A failure after all rename moves restores old links and hard-link identities. ... ok
+test_repeat_install_is_a_noop (test_install.InstallerTests.test_repeat_install_is_a_noop)
+Repeated installs preserve existing links and do not add receipts. ... ok
+test_restore_failure_reinstates_installed_links (test_install.InstallerTests.test_restore_failure_reinstates_installed_links)
+An ordinary restoration failure leaves the completed install usable. ... ok
+test_restore_fresh_install_removes_only_toolkit_links (test_install.InstallerTests.test_restore_fresh_install_removes_only_toolkit_links)
+Restoring a fresh install preserves unrelated host files. ... ok
+test_restore_refuses_changed_destination_before_any_changes (test_install.InstallerTests.test_restore_refuses_changed_destination_before_any_changes)
+Restoration never removes a destination replaced after installation. ... ok
+test_restore_refuses_missing_backup_before_any_changes (test_install.InstallerTests.test_restore_refuses_missing_backup_before_any_changes)
+An incomplete backup cannot cause partial restoration. ... ok
+test_selected_install_links_canonical_skill_and_agent (test_install.InstallerTests.test_selected_install_links_canonical_skill_and_agent)
+A selected docs install exposes the complete skill and its wrapper. ... ok
+test_selected_rename_migration_and_restore_both_hosts (test_install.InstallerTests.test_selected_rename_migration_and_restore_both_hosts)
+Selected old entries move into a reversible backup; other skills stay intact. ... ok
+test_selected_review_installs_its_required_roles (test_install.InstallerTests.test_selected_review_installs_its_required_roles)
+A review-only selection supplies both independent Codex roles. ... ok
+test_shared_agent_dependencies_are_installed_once (test_install.InstallerTests.test_shared_agent_dependencies_are_installed_once)
+Combined workflow selections produce one receipt entry per destination. ... ok
+test_skill_display_metadata_and_prompts_use_canonical_names (test_install.InstallerTests.test_skill_display_metadata_and_prompts_use_canonical_names)
+The skill picker and suggested invocation expose the same explicit skill identity. ... ok
+test_skill_name_requires_type_suffix (test_install.InstallerTests.test_skill_name_requires_type_suffix)
+Matching frontmatter and directory cannot introduce an ambiguous skill name. ... ok
+test_skill_only_install_preserves_roles_and_restores_independently (test_install.InstallerTests.test_skill_only_install_preserves_roles_and_restores_independently)
+A skill-only workflow installs without changing existing specialists. ... ok
+test_source_root_symlink_is_rejected_before_writes (test_install.InstallerTests.test_source_root_symlink_is_rejected_before_writes)
+A symlink replacing the skills directory cannot bypass validation. ... ok
+test_source_scan_error_aborts_before_writes (test_install.InstallerTests.test_source_scan_error_aborts_before_writes)
+A failed scan cannot silently omit package resources. ... ok
+test_source_symlink_is_rejected_before_writes (test_install.InstallerTests.test_source_symlink_is_rejected_before_writes)
+An internal source link never exposes unrelated files to the host. ... ok
+test_special_source_file_is_rejected_without_reading (test_install.InstallerTests.test_special_source_file_is_rejected_without_reading)
+Named pipes fail validation rather than blocking on a read. ... ok
+test_status_aliases_dependencies_and_shared_roles_are_unique (test_install.InstallerTests.test_status_aliases_dependencies_and_shared_roles_are_unique)
+Repeated canonical/alias selectors include dependency closure and shared roles. ... ok
+test_status_all_current_both_hosts_is_sorted_and_read_only (test_install.InstallerTests.test_status_all_current_both_hosts_is_sorted_and_read_only)
+All inspects every expected entry once and Copilot never expects roles. ... ok
+test_status_foreign_skill_entries_are_different_without_repairs (test_install.InstallerTests.test_status_foreign_skill_entries_are_different_without_repairs)
+Copied directories, files and foreign/dangling/relative links remain untouched. ... ok
+test_status_human_output_and_explicit_home_rules (test_install.InstallerTests.test_status_human_output_and_explicit_home_rules)
+Explicit home ignores inherited Codex state while an explicit override is honored. ... ok
+test_status_invalid_source_and_parent_fail_without_writes (test_install.InstallerTests.test_status_invalid_source_and_parent_fail_without_writes)
+Status rejects invalid package data and symlinked destination parents. ... ok
+test_status_json_argument_errors_emit_one_object (test_install.InstallerTests.test_status_json_argument_errors_emit_one_object)
+Invalid CLI selections preserve the machine-readable output contract. ... ok
+test_status_json_symlink_loop_homes_fail_without_writes (test_install.InstallerTests.test_status_json_symlink_loop_homes_fail_without_writes)
+Real CLI filesystem errors preserve JSON output and the inspected trees. ... ok
+test_status_missing_home_and_invalid_selection_do_not_write (test_install.InstallerTests.test_status_missing_home_and_invalid_selection_do_not_write)
+Missing and invalid inspections emit one JSON object without creating a home. ... ok
+test_status_pristine_cli_does_not_create_source_bytecode (test_install.InstallerTests.test_status_pristine_cli_does_not_create_source_bytecode)
+The lazy dependency import is read-only even in an uncached source checkout. ... ok
+test_status_role_requires_current_regular_hardlink (test_install.InstallerTests.test_status_role_requires_current_regular_hardlink)
+Equal bytes do not make copies, symlinks or atomically detached roles current. ... ok
+test_unknown_skill_and_invalid_metadata_fail_before_writes (test_install.InstallerTests.test_unknown_skill_and_invalid_metadata_fail_before_writes)
+Selection mistakes and malformed packages fail without partial installs. ... ok
+test_unmapped_agent_files_are_validated (test_install.InstallerTests.test_unmapped_agent_files_are_validated)
+The naming gate includes files absent from installer associations. ... ok
+test_check_ignores_source_changes_and_unowned_project_content (test_project_bootstrap.ProjectBootstrapTests.test_check_ignores_source_changes_and_unowned_project_content)
+Recorded hashes survive new source, removed packages, and unrelated local edits. ... ok
+test_check_nested_source_does_not_write_bytecode_in_target (test_project_bootstrap.ProjectBootstrapTests.test_check_nested_source_does_not_write_bytecode_in_target)
+A vendored checker import creates no caches on either success or failure. ... ok
+test_check_refuses_symlinked_managed_paths (test_project_bootstrap.ProjectBootstrapTests.test_check_refuses_symlinked_managed_paths)
+A managed file or directory symlink cannot authorize traversal outside the target. ... ok
+test_check_rejects_incompatible_flags_without_writes (test_project_bootstrap.ProjectBootstrapTests.test_check_rejects_incompatible_flags_without_writes)
+Check never silently ignores selection or mutation flags. ... ok
+test_check_rejects_malformed_and_unsafe_manifests (test_project_bootstrap.ProjectBootstrapTests.test_check_rejects_malformed_and_unsafe_manifests)
+Malformed records and all unsafe ownership paths fail before destination reads. ... ok
+test_check_rejects_unbootstrapped_targets_without_creating_them (test_project_bootstrap.ProjectBootstrapTests.test_check_rejects_unbootstrapped_targets_without_creating_them)
+Checking a missing or existing unbootstrapped project is a read-only failure. ... ok
+test_check_reports_invalid_routing_blocks (test_project_bootstrap.ProjectBootstrapTests.test_check_reports_invalid_routing_blocks)
+Missing, edited, duplicate, and partial routing blocks fail without writes. ... ok
+test_check_reports_missing_and_edited_managed_files (test_project_bootstrap.ProjectBootstrapTests.test_check_reports_missing_and_edited_managed_files)
+Every failing owned file is identified while all target state is retained. ... ok
+test_cli_dry_run_does_not_create_source_bytecode_or_project (test_project_bootstrap.ProjectBootstrapTests.test_cli_dry_run_does_not_create_source_bytecode_or_project)
+A first dry run from an unpacked source archive remains read-only. ... ok
+test_default_profile_is_portable_engineering_for_both_hosts (test_project_bootstrap.ProjectBootstrapTests.test_default_profile_is_portable_engineering_for_both_hosts)
+A fresh project gets engineering guidance and host roles, without private material. ... ok
+test_dry_run_absent_target_and_unchanged_repeat_have_no_writes (test_project_bootstrap.ProjectBootstrapTests.test_dry_run_absent_target_and_unchanged_repeat_have_no_writes)
+Planning creates no target; repeat installation preserves file identities. ... ok
+test_existing_project_instructions_preserved_across_update (test_project_bootstrap.ProjectBootstrapTests.test_existing_project_instructions_preserved_across_update)
+Only the owned block changes; outside bytes and unrelated project files survive. ... ok
+test_explicit_skill_only_selection_and_cli_defaults (test_project_bootstrap.ProjectBootstrapTests.test_explicit_skill_only_selection_and_cli_defaults)
+An explicit skill-only CLI selection creates its routes without host wrappers. ... ok
+test_generated_caches_are_not_copied (test_project_bootstrap.ProjectBootstrapTests.test_generated_caches_are_not_copied)
+Ignoring source caches matches package validation and avoids machine-specific state. ... ok
+test_hostile_manifest_paths_cannot_escape_owned_roots (test_project_bootstrap.ProjectBootstrapTests.test_hostile_manifest_paths_cannot_escape_owned_roots)
+An edited ownership record cannot authorize reads or writes outside toolkit paths. ... ok
+test_initial_write_failure_rolls_back_created_files_and_directories (test_project_bootstrap.ProjectBootstrapTests.test_initial_write_failure_rolls_back_created_files_and_directories)
+A failure writing the last ownership record leaves no half-created project. ... ok
+test_local_file_or_managed_block_edits_refuse_update (test_project_bootstrap.ProjectBootstrapTests.test_local_file_or_managed_block_edits_refuse_update)
+An update never overwrites locally customized managed content. ... ok
+test_new_source_file_collision_and_removed_owned_file (test_project_bootstrap.ProjectBootstrapTests.test_new_source_file_collision_and_removed_owned_file)
+Updates add/remove owned source files while preserving unowned neighboring files. ... ok
+test_relocated_project_runs_its_helper_after_source_removal (test_project_bootstrap.ProjectBootstrapTests.test_relocated_project_runs_its_helper_after_source_removal)
+A project clone/copy can use its files without the toolkit checkout or original path. ... ok
+test_removed_owned_agents_update_without_touching_unrelated_roles (test_project_bootstrap.ProjectBootstrapTests.test_removed_owned_agents_update_without_touching_unrelated_roles)
+Old ownership remains valid when the new source removes an associated role. ... ok
+test_renamed_owned_agents_replace_only_the_previous_owned_role (test_project_bootstrap.ProjectBootstrapTests.test_renamed_owned_agents_replace_only_the_previous_owned_role)
+A canonical role rename removes the old file and installs the new source definition. ... ok
+test_role_rendering_inherits_settings_and_preserves_all_other_fields (test_project_bootstrap.ProjectBootstrapTests.test_role_rendering_inherits_settings_and_preserves_all_other_fields)
+Copied Codex roles preserve instructions but inherit the collaborator's host settings. ... ok
+test_selected_copilot_profile_and_persisted_selection (test_project_bootstrap.ProjectBootstrapTests.test_selected_copilot_profile_and_persisted_selection)
+Explicit selection creates only its wrappers and becomes the repeat-command default. ... ok
+test_source_git_provenance_is_honest_about_dirty_and_nested_archive (test_project_bootstrap.ProjectBootstrapTests.test_source_git_provenance_is_honest_about_dirty_and_nested_archive)
+Only the source's own Git root supplies a revision; archives use content hashes. ... ok
+test_source_overlap_rejected_and_separate_nested_source_supported (test_project_bootstrap.ProjectBootstrapTests.test_source_overlap_rejected_and_separate_nested_source_supported)
+Vendored source is allowed only outside all managed project destinations. ... ok
+test_symlinked_ancestor_and_destination_are_rejected (test_project_bootstrap.ProjectBootstrapTests.test_symlinked_ancestor_and_destination_are_rejected)
+Project writes never follow a managed path or project-root symlink. ... ok
+test_unmanaged_collision_aborts_the_entire_plan (test_project_bootstrap.ProjectBootstrapTests.test_unmanaged_collision_aborts_the_entire_plan)
+Even identical preexisting files require ownership rather than silent adoption. ... ok
+test_unsupported_role_rendering_fails_before_writes (test_project_bootstrap.ProjectBootstrapTests.test_unsupported_role_rendering_fails_before_writes)
+A setting-like line inside instructions cannot be stripped as a top-level setting. ... ok
+test_update_write_failure_restores_previous_content (test_project_bootstrap.ProjectBootstrapTests.test_update_write_failure_restores_previous_content)
+A late update failure restores old owned bytes and preserves external instructions. ... ok
+test_every_shipped_selection_has_routing_without_selecting_other_domains (test_routing.RoutingInstallationTests.test_every_shipped_selection_has_routing_without_selecting_other_domains)
+Each entrypoint's shared pointer resolves through its actual install plan. ... ok
+test_existing_dependency_links_survive_selected_install_restore (test_routing.RoutingInstallationTests.test_existing_dependency_links_survive_selected_install_restore)
+A second selection owns only its changes and retains independently installed routing. ... ok
+test_missing_routing_dependency_fails_before_project_creation (test_routing.RoutingInstallationTests.test_missing_routing_dependency_fails_before_project_creation)
+A partial source checkout cannot silently create dangling runtime pointers. ... ok
+test_old_manifest_adds_only_required_dependency_with_explicit_update (test_routing.RoutingInstallationTests.test_old_manifest_adds_only_required_dependency_with_explicit_update)
+A real old project upgrades, relocates and repeats without selecting other domains. ... ok
+test_old_project_update_retires_only_unchanged_owned_copilot_role (test_routing.RoutingInstallationTests.test_old_project_update_retires_only_unchanged_owned_copilot_role)
+The skill-only transition uses existing ownership checks, never broad deletion. ... ok
+test_restore_preserves_foreign_pre_routing_installation_for_both_hosts (test_routing.RoutingInstallationTests.test_restore_preserves_foreign_pre_routing_installation_for_both_hosts)
+Replay actual old receipts; canonical names alone do not establish dependencies. ... ok
+test_reverse_restore_protects_ddia_package_and_roles_with_existing_routing (test_routing.RoutingInstallationTests.test_reverse_restore_protects_ddia_package_and_roles_with_existing_routing)
+The guard applies to existing transitive DDIA resources, not only new routing. ... ok
+test_reverse_restore_protects_shared_engineering_roles (test_routing.RoutingInstallationTests.test_reverse_restore_protects_shared_engineering_roles)
+A surviving workflow retains shared roles even when routing was installed earlier. ... ok
+test_reverse_restore_refuses_shared_routing_removal_for_both_hosts (test_routing.RoutingInstallationTests.test_reverse_restore_refuses_shared_routing_removal_for_both_hosts)
+Restoring the first receipt cannot break a later independently installed skill. ... ok
+test_selected_copilot_skills_include_dependencies_without_roles (test_routing.RoutingInstallationTests.test_selected_copilot_skills_include_dependencies_without_roles)
+The retained Copilot target supplies portable skills without named-role adapters. ... ok
+test_skill_only_restore_still_cleans_dangling_links_without_source (test_routing.RoutingInstallationTests.test_skill_only_restore_still_cleans_dangling_links_without_source)
+Dependency protection must not require opening a source tree that disappeared. ... ok
+test_upgrade_refuses_edited_owned_file_and_unmanaged_dependency_collision (test_routing.RoutingInstallationTests.test_upgrade_refuses_edited_owned_file_and_unmanaged_dependency_collision)
+The whole dependency upgrade is preflighted before any managed content changes. ... ok
+test_upgrade_still_rejects_unrelated_selection_and_host_changes (test_routing.RoutingInstallationTests.test_upgrade_still_rejects_unrelated_selection_and_host_changes)
+Dependency expansion cannot become an arbitrary reconfiguration bypass. ... ok
+test_blank_template_matches_native_initializer (test_skill_authoring.SkillAuthoringTests.test_blank_template_matches_native_initializer)
+Keep the documented starter tied to actual pinned generator output. ... ok
+test_blind_bundle_excludes_arm_mapping_and_expected_answers (test_skill_authoring.SkillAuthoringTests.test_blind_bundle_excludes_arm_mapping_and_expected_answers)
+Supply only the task, assertions, neutral labels, and artifact copies to a reviewer. ... ok
+test_cases_reject_aliases_and_conflicting_checks (test_skill_authoring.SkillAuthoringTests.test_cases_reject_aliases_and_conflicting_checks)
+Validate input boundaries before creating an evaluation workspace. ... ok
+test_missing_grades_or_unknown_tokens_never_become_a_score (test_skill_authoring.SkillAuthoringTests.test_missing_grades_or_unknown_tokens_never_become_a_score)
+Prevent silent omission and upstream's token/output-character fallback. ... ok
+test_native_scaffold_and_validation_are_upstream (test_skill_authoring.SkillAuthoringTests.test_native_scaffold_and_validation_are_upstream)
+Execute the native generator, including UI metadata and unfinished-draft rejection. ... ok
+test_pairing_fresh_context_and_credential_cleanup (test_skill_authoring.SkillAuthoringTests.test_pairing_fresh_context_and_credential_cleanup)
+Preserve planned pairs, alternating order, isolated configuration, and hidden grading. ... ok
+test_preflight_failure_retains_every_attempt_without_credentials_or_model (test_skill_authoring.SkillAuthoringTests.test_preflight_failure_retains_every_attempt_without_credentials_or_model)
+Refuse unrestricted fallback and keep setup failures visible. ... ok
+test_report_rejects_one_arm_and_unplanned_runs (test_skill_authoring.SkillAuthoringTests.test_report_rejects_one_arm_and_unplanned_runs)
+Require the complete declared product of cases, arms, and repetitions. ... ok
+test_report_uses_real_upstream_aggregation_and_static_viewer (test_skill_authoring.SkillAuthoringTests.test_report_uses_real_upstream_aggregation_and_static_viewer)
+Produce compatible reports with correct direction, repeat count, and observed metrics. ... ok
+test_runtime_executable_mode_is_preserved_and_recorded (test_skill_authoring.SkillAuthoringTests.test_runtime_executable_mode_is_preserved_and_recorded)
+Allow directly invoked runtime helpers in the actor's read-only skill home. ... ok
+test_static_view_includes_nested_deliverables_without_flat_name_collision (test_skill_authoring.SkillAuthoringTests.test_static_view_includes_nested_deliverables_without_flat_name_collision)
+Show nested artifacts and preserve ambiguous-looking original filenames. ... ok
+test_token_accounting_ignores_cached_subset_and_retains_unknown (test_skill_authoring.SkillAuthoringTests.test_token_accounting_ignores_cached_subset_and_retains_unknown)
+Count observed root usage without inventing data or double-counting cache hits. ... ok
+test_upstream_fingerprint_detects_modified_source (test_skill_authoring.SkillAuthoringTests.test_upstream_fingerprint_detects_modified_source)
+Exercise source pinning in an isolated copy without editing vendored files. ... ok
+test_viewer_supports_long_unicode_paths_and_escapes_script_terminators (test_skill_authoring.SkillAuthoringTests.test_viewer_supports_long_unicode_paths_and_escapes_script_terminators)
+Keep valid output names and untrusted text intact without creating executable HTML. ... ok
+test_assets_are_source_grounded_and_do_not_overwrite_changes (test_software_design_book.SoftwareDesignBookTests.test_assets_are_source_grounded_and_do_not_overwrite_changes)
+Only known raster images are materialized and existing divergent content is preserved. ... ok
+test_catalog_and_search_return_actual_source_locators (test_software_design_book.SoftwareDesignBookTests.test_catalog_and_search_return_actual_source_locators)
+Catalog filters chapters and search requires all words within a source entry. ... ok
+test_pagination_continues_without_losing_body_content (test_software_design_book.SoftwareDesignBookTests.test_pagination_continues_without_losing_body_content)
+Small reads advertise an offset, and continuation reaches the concluding paragraph. ... ok
+test_repeat_initialization_preserves_notes_and_refuses_conflicts (test_software_design_book.SoftwareDesignBookTests.test_repeat_initialization_preserves_notes_and_refuses_conflicts)
+Idempotent import keeps study files and does not overwrite a broken installation. ... ok
+test_section_reads_all_siblings_and_stops_at_next_heading (test_software_design_book.SoftwareDesignBookTests.test_section_reads_all_siblings_and_stops_at_next_heading)
+A paragraph-heading reference includes its body, qualifications, and code. ... ok
+test_selected_install_and_restore_preserve_other_roles (test_software_design_book.SoftwareDesignBookTests.test_selected_install_and_restore_preserve_other_roles)
+A selected install supplies both real role and skill, then restores cleanly. ... ok
+test_source_change_and_incomplete_inputs_fail_explicitly (test_software_design_book.SoftwareDesignBookTests.test_source_change_and_incomplete_inputs_fail_explicitly)
+Refuse stale data and incomplete table-of-contents references. ... ok
+test_tampered_index_is_rejected_by_search_read_and_verify (test_software_design_book.SoftwareDesignBookTests.test_tampered_index_is_rejected_by_search_read_and_verify)
+A valid source hash cannot legitimize modified derived text or locators. ... ok
+test_wrong_edition_and_missing_chapter_are_rejected (test_software_design_book.SoftwareDesignBookTests.test_wrong_edition_and_missing_chapter_are_rejected)
+Identity and complete chapter coverage are checked before publishing a library. ... ok
+
+======================================================================
+ERROR: test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 263, in test_native_git_inside_repository_stops_parent_discovery
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 302, in test_native_grader_cannot_overwrite_protected_alias_target
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+----------------------------------------------------------------------
+Ran 226 tests in 42.134s
+
+FAILED (errors=2)

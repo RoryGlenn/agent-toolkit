@@ -1,0 +1,128 @@
+[
+  {
+    "path": "final/catalog-json-a-grade.json.gz",
+    "uncompressed_sha256": "b3bc2c2263904de3045d514394aafb9fb398b165c7671f12b3a81c5c43e1293d",
+    "uncompressed_bytes": 95572,
+    "compressed_bytes": 3427
+  },
+  {
+    "path": "final/catalog-json-b-grade.json.gz",
+    "uncompressed_sha256": "20d31ec7a93e47bc65523cd63938fb832099da15067d02d9dc7e9827586227c6",
+    "uncompressed_bytes": 77634,
+    "compressed_bytes": 3212
+  },
+  {
+    "path": "final/catalog-json-integrated-grade.json.gz",
+    "uncompressed_sha256": "cde31c299654e342af5b85ea69751eceafb5ea0ebf684050dd7be8fa1d8eb61c",
+    "uncompressed_bytes": 77631,
+    "compressed_bytes": 3205
+  },
+  {
+    "path": "final/catalog-json-original-grade.json.gz",
+    "uncompressed_sha256": "42cfcf418f2578217bbc92dd103ade7337e5240cac9db73764eb6f1544aede4a",
+    "uncompressed_bytes": 4685,
+    "compressed_bytes": 449
+  },
+  {
+    "path": "final/personal-status-a-grade.json.gz",
+    "uncompressed_sha256": "36795b524b3beba8e7359705fc7f5eb9aa51cfac49d6c0609c0e792b6bc42477",
+    "uncompressed_bytes": 35123,
+    "compressed_bytes": 1576
+  },
+  {
+    "path": "final/personal-status-b-grade.json.gz",
+    "uncompressed_sha256": "f1b03cfbb41d6dd51f947b693506912c2db399c4bd3fcd93b07f373be9e33acf",
+    "uncompressed_bytes": 35179,
+    "compressed_bytes": 1577
+  },
+  {
+    "path": "final/personal-status-integrated-grade.json.gz",
+    "uncompressed_sha256": "ad69ce9d4baa3142d8320c84a7af75a07ce73f29128bd3177d3de6a352cf46c9",
+    "uncompressed_bytes": 35179,
+    "compressed_bytes": 1577
+  },
+  {
+    "path": "final/personal-status-original-grade.json.gz",
+    "uncompressed_sha256": "8414944bf4d471192e5338c24f4470944db3810ed466e0739585e91ed5a3a3b1",
+    "uncompressed_bytes": 24495,
+    "compressed_bytes": 1359
+  },
+  {
+    "path": "final/project-check-a-grade.json.gz",
+    "uncompressed_sha256": "d18ada8528f8dcf4b136589ba2c510a0144dceb2bd2833b0c8b04966d779586d",
+    "uncompressed_bytes": 60484,
+    "compressed_bytes": 1973
+  },
+  {
+    "path": "final/project-check-b-grade.json.gz",
+    "uncompressed_sha256": "be110087a8cc0646e18ba2b433575191d2c1acd87c5d98ce5d9c434622c98621",
+    "uncompressed_bytes": 60690,
+    "compressed_bytes": 1967
+  },
+  {
+    "path": "final/project-check-integrated-grade.json.gz",
+    "uncompressed_sha256": "bc80a37437043da0c4b73295e664f364f97e5ecda3db8dee7b142c55a8ed961f",
+    "uncompressed_bytes": 60519,
+    "compressed_bytes": 1970
+  },
+  {
+    "path": "final/project-check-original-grade.json.gz",
+    "uncompressed_sha256": "8d621348cef01e36079bb2e397f8592a8cc47ec77a20a7567d9680bb96a8ffd4",
+    "uncompressed_bytes": 56108,
+    "compressed_bytes": 1530
+  },
+  {
+    "path": "initial/catalog-json-a-grade.json.gz",
+    "uncompressed_sha256": "c3981b41754d53ee5bbcd4c5ad35b3cebe65ec30c6d4adb134d4700599811632",
+    "uncompressed_bytes": 95570,
+    "compressed_bytes": 3435
+  },
+  {
+    "path": "initial/catalog-json-b-grade.json.gz",
+    "uncompressed_sha256": "ba3feb4dedcf3b324722bc4c17635119a5dc48eb87e6a408c2dd4ce485fbf500",
+    "uncompressed_bytes": 77631,
+    "compressed_bytes": 3212
+  },
+  {
+    "path": "initial/catalog-json-original-grade.json.gz",
+    "uncompressed_sha256": "52b54feda94427fe62545b46eb465760b8282a94e5da79034870dec1725c85b8",
+    "uncompressed_bytes": 4684,
+    "compressed_bytes": 461
+  },
+  {
+    "path": "initial/personal-status-a-grade.json.gz",
+    "uncompressed_sha256": "a9c4916fb439de22b2b3e82f8a9f78613727a5210d6cdc5beee5b4649a270792",
+    "uncompressed_bytes": 35118,
+    "compressed_bytes": 1601
+  },
+  {
+    "path": "initial/personal-status-b-grade.json.gz",
+    "uncompressed_sha256": "c971f9e6f5170bb2f12f4a7c57088c37f3ebcecfbecf95298a9657d1dbf24f34",
+    "uncompressed_bytes": 35178,
+    "compressed_bytes": 1596
+  },
+  {
+    "path": "initial/personal-status-original-grade.json.gz",
+    "uncompressed_sha256": "258bb054dd7a865272bc4a6620c2f4cc601d0f7680d01f905b234df14e336b57",
+    "uncompressed_bytes": 24496,
+    "compressed_bytes": 1356
+  },
+  {
+    "path": "initial/project-check-a-grade.json.gz",
+    "uncompressed_sha256": "89641648f909f1993a1bf48a9407d766fcaeeef92b117fa504a4c35ab871b757",
+    "uncompressed_bytes": 60481,
+    "compressed_bytes": 1968
+  },
+  {
+    "path": "initial/project-check-b-grade.json.gz",
+    "uncompressed_sha256": "43d536c373e8422ae3bf8e663e631eafcec8b7e483e4dc4fcd9bf7b2c690a748",
+    "uncompressed_bytes": 60689,
+    "compressed_bytes": 1991
+  },
+  {
+    "path": "initial/project-check-original-grade.json.gz",
+    "uncompressed_sha256": "2263a1f07bfecddd37ade651c12e3506c93b8fca76f34570c8594d2fdfae3027",
+    "uncompressed_bytes": 56103,
+    "compressed_bytes": 1539
+  }
+]
