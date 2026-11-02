@@ -48,8 +48,25 @@ These source findings apply to all 21 entrypoints identified below. Prior domain
 remain at their original hashes in the documentation, DDIA, software-design and engineering
 records. They are not silently rebound to these changed entrypoints. The new routing skill has no prior behavioral claim; the removed Copilot roles are
 historical evidence only. The old `runtime-sha256.json` and observation
-receipt are preserved as historical evidence; current source identities are in
-[routing-runtime-sha256.json](routing-runtime-sha256.json).
+receipt are preserved as historical evidence. The routing assessment's resource snapshot
+is recorded in [routing-runtime-sha256.json](routing-runtime-sha256.json); it is not a
+rolling fingerprint of later checkouts.
+
+### Resource identity after the documentation merge
+
+At merged revision `0b36e7d4e95300b16a713edf831c8613dba46b69`, 79 of the 80 recorded
+resource hashes still match. The exception is
+`skills/documentation-skill/tooling/README.md`: its recorded SHA-256 is
+`64b7d380798c77ccb40234fe28b7ec18adbe4c2c25541002d2daea4f4fda3a4a`, while that revision has
+`1a0cfc4da316d6b7b7fbdd2799f3ecd11b9a22be8e882f3cca1a55c191ded92a`.
+The earlier hash matches routing commit `f869d8ff113947610c61f7bddfdf35da0c4a3eb0`.
+Merge `5f1d84dfd1563692000d5bb35c63312ff6fc0f8e` incorporated PR #7's updated checkout
+instructions and browser-workflow paragraph in that README.
+
+The all-80 identity checks below describe the assessed snapshot before that merge.
+The manifest and execution observations retain their original identities; this clarification
+does not establish a later behavioral run. All 21 reviewed entrypoint hashes still match at
+the merged revision above, but those entrypoint checks do not cover every supporting resource.
 
 ## Compatibility and executable checks
 
@@ -102,8 +119,9 @@ After the user narrowed named roles to Codex, the implementation agent ran the f
 bootstrap tests also passed separately. Ruff lint/format, strict mypy (22 source files),
 authoring inventory (21 artifacts), package validation (15 skills/six Codex/zero Copilot),
 upstream verification, new routing-skill validation and diff checks passed. The public
-benchmark's 13 reference/wrong-control phases passed on this final scope. Current runtime
-identity checks match all 80 recorded files. These source checks do not establish model routing.
+benchmark's 13 reference/wrong-control phases passed on this final scope. Runtime
+identity checks matched all 80 recorded files in the assessed snapshot. These source checks
+do not establish model routing.
 
 ## Independent final verification
 

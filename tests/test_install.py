@@ -240,7 +240,7 @@ class InstallerTests(unittest.TestCase):
             "Deprecated skill selector 'doc-agent'; use 'documentation-skill'", errors.getvalue()
         )
         self.assertEqual(
-            [path.name for path in (self.home / ".agents/skills").iterdir()],
+            sorted(path.name for path in (self.home / ".agents/skills").iterdir()),
             ["documentation-skill", "task-routing-skill"],
         )
         self.assertEqual(
