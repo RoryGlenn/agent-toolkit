@@ -184,6 +184,86 @@ class SkillAuthoringTests(unittest.TestCase):
             self.assertEqual(json.loads((root / "status.json").read_text())["total_tokens"], 5)
             self.assertIn("[agents]\nenabled = false", (root / "client/config.toml").read_text())
 
+    def test_actor_response_deliverable_survives_snapshot_and_review(self) -> None:
+        """Keep actor files intact even when their name overlaps the final-response fallback."""
+        execute = self.execute_fixture
+        for filename in ("response.md", "response.md/details.txt"):
+            with self.subTest(filename=filename):
+                self.output = self.root / ("nested-run" if "/" in filename else "file-run")
+
+                def deliver_response(
+                    command: list[str],
+                    cwd: Path,
+                    environment: dict[str, str],
+                    text: str = "",
+                    seconds: int = 30,
+                    deliverable_name: str = filename,
+                ) -> dict[str, Any]:
+                    result = execute(command, cwd, environment, text, seconds)
+                    deliverable = cwd / "outputs" / deliverable_name
+                    deliverable.parent.mkdir(parents=True, exist_ok=True)
+                    deliverable.write_text("Actor-authored deliverable.")
+                    return result
+
+                with patch.object(self, "execute_fixture", side_effect=deliver_response):
+                    plan = self.run_fixture()
+                for relative in plan["runs"]:
+                    root = self.output / relative
+                    self.assertEqual(
+                        (root / "outputs" / filename).read_bytes(),
+                        (root / "workspace/outputs" / filename).read_bytes(),
+                    )
+                    self.assertEqual((root / "final.txt").read_text(), "Fixture completed.")
+                    status = json.loads((root / "status.json").read_text())
+                    self.assertEqual(status["status"], "completed")
+                    self.assertNotIn("error", status)
+                self.grade_fixture(plan)
+                workflow.report(self.output)
+                self.assertIn(
+                    "Actor-authored deliverable.", (self.output / "review.html").read_text()
+                )
+                destination = self.output / "blind"
+                workflow.blind(self.output, destination)
+                for label in ("A", "B"):
+                    self.assertEqual(
+                        (destination / "eval-1-run-1" / label / filename).read_text(),
+                        "Actor-authored deliverable.",
+                    )
+
+    def test_empty_actor_response_directory_is_not_replaced_by_a_file(self) -> None:
+        """Do not add a synthetic response file where the actor chose an empty directory."""
+        execute = self.execute_fixture
+
+        def deliver_directory(
+            command: list[str],
+            cwd: Path,
+            environment: dict[str, str],
+            text: str = "",
+            seconds: int = 30,
+        ) -> dict[str, Any]:
+            result = execute(command, cwd, environment, text, seconds)
+            (cwd / "outputs/response.md").mkdir()
+            return result
+
+        with patch.object(self, "execute_fixture", side_effect=deliver_directory):
+            plan = self.run_fixture()
+        for relative in plan["runs"]:
+            root = self.output / relative
+            self.assertTrue((root / "workspace/outputs/response.md").is_dir())
+            self.assertFalse((root / "outputs/response.md").exists())
+            self.assertEqual((root / "final.txt").read_text(), "Fixture completed.")
+
+    def test_final_response_is_retained_when_no_actor_response_exists(self) -> None:
+        """Keep the final response available without requiring that filename from the actor."""
+        plan = self.run_fixture()
+        for relative in plan["runs"]:
+            root = self.output / relative
+            self.assertFalse((root / "workspace/outputs/response.md").exists())
+            self.assertEqual(
+                (root / "outputs/response.md").read_bytes(), (root / "final.txt").read_bytes()
+            )
+            self.assertEqual((root / "outputs/result.txt").read_text(), "result")
+
     def test_preflight_failure_retains_every_attempt_without_credentials_or_model(self) -> None:
         """Refuse unrestricted fallback and keep setup failures visible."""
         with (
