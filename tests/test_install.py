@@ -64,16 +64,137 @@ class InstallerTests(unittest.TestCase):
             dry_run=dry_run,
         )
 
-    def list_catalog(self) -> str:
+    def list_catalog(self, *, json_output: bool = False) -> str:
         """Run the list command against the disposable package and host."""
         output = io.StringIO()
         with (
             patch.object(install, "ROOT", self.root),
-            patch.object(Path, "home", return_value=self.home),
+            patch.object(Path, "home", side_effect=AssertionError("Listing must not read home")),
             contextlib.redirect_stdout(output),
         ):
-            self.assertEqual(install.main(["list"]), 0)
+            self.assertEqual(install.main(["list", "--json"] if json_output else ["list"]), 0)
         return output.getvalue()
+
+    def test_json_catalog_schema_and_current_metadata(self) -> None:
+        """JSON contains exactly the public schema and actual runtime identifiers."""
+        skills = install.inventory(self.root)
+        with patch.object(install, "inventory", return_value=dict(reversed(skills.items()))):
+            output = self.list_catalog(json_output=True)
+        catalog = json.loads(output)
+        self.assertEqual(set(catalog), {"schema_version", "skills"})
+        self.assertEqual(type(catalog["schema_version"]), int)
+        self.assertEqual(catalog["schema_version"], 1)
+        self.assertEqual([entry["name"] for entry in catalog["skills"]], sorted(skills))
+        entries = {entry["name"]: entry for entry in catalog["skills"]}
+        for name, entry in entries.items():
+            self.assertEqual(set(entry), {"name", "description", "dependencies", "roles"})
+            self.assertEqual(entry["description"], skills[name])
+            self.assertEqual(set(entry["roles"]), set(install.AGENTS))
+            self.assertEqual(entry["roles"]["copilot"], [])
+        self.assertEqual(
+            entries["issue-to-tested-pr-skill"]["roles"]["codex"],
+            ["adversarial_reviewer_agent", "implementation_owner_agent", "verifier_agent"],
+        )
+        self.assertEqual(entries["release-and-docs-skill"]["roles"]["codex"], [])
+        self.assertEqual(entries["task-routing-skill"]["dependencies"], [])
+        self.assertEqual(
+            entries["ddia-assess-skill"]["dependencies"], ["ddia-skill", "task-routing-skill"]
+        )
+
+    def test_json_catalog_sorts_roles_and_exposes_only_direct_dependencies(self) -> None:
+        """Unsorted associations and a dependency chain retain the JSON contract."""
+        from project_bootstrap import SKILL_DEPENDENCIES
+
+        associations = {host: dict(groups) for host, groups in install.AGENTS.items()}
+        associations["codex"]["issue-to-tested-pr-skill"] = [
+            "verifier-agent.toml",
+            "implementation-owner-agent.toml",
+            "adversarial-reviewer-agent.toml",
+        ]
+        with (
+            patch.object(install, "AGENTS", associations),
+            patch.dict(
+                SKILL_DEPENDENCIES,
+                {
+                    "documentation-skill": ("issue-to-tested-pr-skill",),
+                    "ddia-assess-skill": ("task-routing-skill", "ddia-skill"),
+                },
+            ),
+        ):
+            entries = {
+                entry["name"]: entry
+                for entry in json.loads(self.list_catalog(json_output=True))["skills"]
+            }
+        self.assertEqual(
+            entries["documentation-skill"]["dependencies"], ["issue-to-tested-pr-skill"]
+        )
+        self.assertEqual(
+            entries["ddia-assess-skill"]["dependencies"], ["ddia-skill", "task-routing-skill"]
+        )
+        self.assertEqual(
+            entries["issue-to-tested-pr-skill"]["dependencies"], ["task-routing-skill"]
+        )
+        self.assertEqual(
+            entries["issue-to-tested-pr-skill"]["roles"]["codex"],
+            ["adversarial_reviewer_agent", "implementation_owner_agent", "verifier_agent"],
+        )
+
+    def test_json_catalog_escapes_description_text(self) -> None:
+        """Quotes, backslashes, and Unicode round trip from current skill metadata."""
+        path = self.root / "skills/documentation-skill/SKILL.md"
+        text = path.read_text()
+        description = 'Describe "quoted" paths \\ and café.'
+        path.write_text(
+            re.sub(r"(?m)^description: .*", f"description: {description}", text, count=1)
+        )
+        entries = json.loads(self.list_catalog(json_output=True))["skills"]
+        self.assertEqual(
+            next(
+                entry["description"] for entry in entries if entry["name"] == "documentation-skill"
+            ),
+            description,
+        )
+
+    def test_json_catalog_rejects_invalid_sources_without_stdout(self) -> None:
+        """Bad role metadata and missing required skills fail before producing JSON."""
+        role = self.root / "agents/codex/documentation-agent.toml"
+        original = role.read_text()
+        for invalid in ("role", "dependency"):
+            with self.subTest(invalid=invalid):
+                if invalid == "role":
+                    role.write_text(
+                        original.replace('name = "documentation_agent"', 'name = "stale"')
+                    )
+                else:
+                    role.write_text(original)
+                    shutil.rmtree(self.root / "skills/task-routing-skill")
+                output, errors = io.StringIO(), io.StringIO()
+                with (
+                    patch.object(install, "ROOT", self.root),
+                    contextlib.redirect_stdout(output),
+                    contextlib.redirect_stderr(errors),
+                ):
+                    self.assertEqual(install.main(["list", "--json"]), 1)
+                self.assertEqual(output.getvalue(), "")
+                self.assertIn("error:", errors.getvalue())
+
+    def test_json_catalog_fresh_process_does_not_create_source_cache(self) -> None:
+        """A normal fresh CLI invocation creates no source cache or host state."""
+        for name in ("install.py", "project_bootstrap.py"):
+            shutil.copyfile(ROOT / name, self.root / name)
+        before = set(self.root.rglob("*"))
+        result = subprocess.run(
+            [sys.executable, str(self.root / "install.py"), "list", "--json"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stderr, "")
+        self.assertEqual(json.loads(result.stdout)["schema_version"], 1)
+        self.assertEqual(set(self.root.rglob("*")), before)
+        self.assertFalse(self.home.exists())
 
     def test_list_shows_skill_only_and_shared_role_associations(self) -> None:
         """The catalog distinguishes no role, specialist roles, and shared workflow roles."""
@@ -355,6 +476,7 @@ class InstallerTests(unittest.TestCase):
 
         before = snapshot()
         self.list_catalog()
+        self.list_catalog(json_output=True)
         self.assertEqual(snapshot(), before)
 
     def test_selected_install_links_canonical_skill_and_agent(self) -> None:
@@ -786,6 +908,332 @@ class InstallerTests(unittest.TestCase):
             )
         )
         self.assertFalse(outside.exists())
+
+    def run_status(self, *options: str, target: str = "codex") -> tuple[int, str, str]:
+        """Capture the status CLI against the disposable checkout and explicit home."""
+        output, errors = io.StringIO(), io.StringIO()
+        with (
+            patch.object(install, "ROOT", self.root),
+            contextlib.redirect_stdout(output),
+            contextlib.redirect_stderr(errors),
+        ):
+            code = install.main(["status", "--target", target, "--home", str(self.home), *options])
+        return code, output.getvalue(), errors.getvalue()
+
+    def status_snapshot(self) -> dict[Path, tuple[int, int, int, int, str | bytes | None]]:
+        """Capture entry identity, mode, modification time, targets and file bytes."""
+        result = {}
+        for path in self.base.rglob("*"):
+            metadata = path.lstat()
+            content = (
+                os.readlink(path)
+                if path.is_symlink()
+                else path.read_bytes()
+                if path.is_file()
+                else None
+            )
+            result[path.relative_to(self.base)] = (
+                metadata.st_ino,
+                metadata.st_mode,
+                metadata.st_mtime_ns,
+                metadata.st_nlink,
+                content,
+            )
+        return result
+
+    def test_status_missing_home_and_invalid_selection_do_not_write(self) -> None:
+        """Missing and invalid inspections emit one JSON object without creating a home."""
+        before = self.status_snapshot()
+        code, output, errors = self.run_status("--skill", "documentation-skill", "--json")
+        self.assertEqual(code, 1)
+        self.assertEqual(errors, "")
+        self.assertEqual(
+            json.loads(output),
+            {
+                "schema_version": 1,
+                "entries": [
+                    {
+                        "area": "codex-agents",
+                        "name": "documentation-agent.toml",
+                        "state": "missing",
+                    },
+                    {"area": "codex-skills", "name": "documentation-skill", "state": "missing"},
+                    {"area": "codex-skills", "name": "task-routing-skill", "state": "missing"},
+                ],
+            },
+        )
+        code, output, errors = self.run_status("--skill", "unknown-skill", "--json")
+        self.assertEqual(code, 1)
+        self.assertIn("Unknown skills", errors)
+        self.assertEqual(json.loads(output)["entries"], [])
+        self.assertIn("Unknown skills", json.loads(output)["error"])
+        self.assertFalse(self.home.exists())
+        self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_all_current_both_hosts_is_sorted_and_read_only(self) -> None:
+        """All inspects every expected entry once and Copilot never expects roles."""
+        skills = list(install.inventory(self.root))
+        for target in ("codex", "copilot"):
+            self.apply(skills, target=target)
+        before = self.status_snapshot()
+        for target in ("codex", "copilot"):
+            with self.subTest(target=target):
+                code, output, errors = self.run_status("--all", "--json", target=target)
+                self.assertEqual(code, 0, errors)
+                payload = json.loads(output)
+                self.assertEqual(payload["schema_version"], 1)
+                entries = payload["entries"]
+                keys = [(entry["area"], entry["name"]) for entry in entries]
+                self.assertEqual(keys, sorted(set(keys)))
+                self.assertTrue(all(set(entry) == {"area", "name", "state"} for entry in entries))
+                self.assertTrue(all(entry["state"] == "current" for entry in entries))
+                self.assertEqual(
+                    {entry["name"] for entry in entries if entry["area"] == f"{target}-skills"},
+                    set(skills),
+                )
+                self.assertEqual(len(entries), len(skills) + (6 if target == "codex" else 0))
+        self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_json_argument_errors_emit_one_object(self) -> None:
+        """Invalid CLI selections preserve the machine-readable output contract."""
+        before = self.status_snapshot()
+        for options in (
+            ["--json"],
+            ["--all", "--skill", "documentation-skill", "--json"],
+            ["--all", "--json", "--unexpected"],
+        ):
+            with self.subTest(options=options):
+                code, output, errors = self.run_status(*options)
+                self.assertNotEqual(code, 0)
+                self.assertIn("error:", errors)
+                payload = json.loads(output)
+                self.assertEqual(payload["schema_version"], 1)
+                self.assertEqual(payload["entries"], [])
+                self.assertIn("error", payload)
+        code, output, errors = self.run_status("--all", "--json", target="unknown")
+        self.assertNotEqual(code, 0)
+        self.assertIn("invalid choice", errors)
+        self.assertEqual(json.loads(output)["entries"], [])
+        self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_json_symlink_loop_homes_fail_without_writes(self) -> None:
+        """Real CLI filesystem errors preserve JSON output and the inspected trees."""
+        for name in ("install.py", "project_bootstrap.py"):
+            shutil.copyfile(ROOT / name, self.root / name)
+        loop = self.base / "loop"
+        loop.symlink_to(loop.name)
+        before = self.status_snapshot()
+        for option in ("--home", "--codex-home"):
+            with self.subTest(option=option):
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        str(self.root / "install.py"),
+                        "status",
+                        "--target",
+                        "codex",
+                        "--skill",
+                        "documentation-skill",
+                        "--home",
+                        str(self.home),
+                        option,
+                        str(loop),
+                        "--json",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertIn("error:", result.stderr)
+                payload = json.loads(result.stdout)
+                self.assertEqual(payload["schema_version"], 1)
+                self.assertEqual(payload["entries"], [])
+                self.assertIn("loop", payload["error"].lower())
+                self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_aliases_dependencies_and_shared_roles_are_unique(self) -> None:
+        """Repeated canonical/alias selectors include dependency closure and shared roles."""
+        options = [
+            "--skill",
+            "issue-to-tested-pr",
+            "--skill",
+            "issue-to-tested-pr-skill",
+            "--skill",
+            "independent-diff-review",
+            "--skill",
+            "ddia-migrate-skill",
+            "--json",
+        ]
+        code, output, errors = self.run_status(*options)
+        self.assertEqual(code, 1)
+        self.assertIn("Deprecated skill selector", errors)
+        entries = json.loads(output)["entries"]
+        keys = [(entry["area"], entry["name"]) for entry in entries]
+        self.assertEqual(keys, sorted(set(keys)))
+        self.assertEqual(
+            {name for area, name in keys if area == "codex-skills"},
+            {
+                "issue-to-tested-pr-skill",
+                "independent-diff-review-skill",
+                "task-routing-skill",
+                "ddia-skill",
+                "ddia-migrate-skill",
+            },
+        )
+        self.assertEqual(len(entries), 9)
+
+    def test_status_role_requires_current_regular_hardlink(self) -> None:
+        """Equal bytes do not make copies, symlinks or atomically detached roles current."""
+        self.apply()
+        role = self.codex / "agents/documentation-agent.toml"
+        source = self.root / "agents/codex/documentation-agent.toml"
+        for kind in ("copy", "symlink", "stale-hardlink", "foreign-hardlink"):
+            with self.subTest(kind=kind):
+                role.unlink()
+                if kind == "copy":
+                    shutil.copyfile(source, role)
+                elif kind == "symlink":
+                    role.symlink_to(source)
+                elif kind == "foreign-hardlink":
+                    foreign = self.base / "foreign-role.toml"
+                    shutil.copyfile(source, foreign)
+                    os.link(foreign, role)
+                else:
+                    os.link(source, role)
+                    replacement = source.with_suffix(".replacement")
+                    replacement.write_bytes(source.read_bytes())
+                    replacement.replace(source)
+                self.assertEqual(role.read_bytes(), source.read_bytes())
+                before = self.status_snapshot()
+                code, output, _ = self.run_status("--skill", "documentation-skill", "--json")
+                self.assertEqual(code, 1)
+                self.assertEqual(json.loads(output)["entries"][0]["state"], "different")
+                self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_foreign_skill_entries_are_different_without_repairs(self) -> None:
+        """Copied directories, files and foreign/dangling/relative links remain untouched."""
+        self.apply()
+        skill = self.home / ".agents/skills/documentation-skill"
+        source = self.root / "skills/documentation-skill"
+        foreign = self.base / "foreign skill"
+        shutil.copytree(source, foreign)
+        for kind in ("copy", "file", "foreign", "dangling", "relative"):
+            with self.subTest(kind=kind):
+                if skill.is_symlink() or skill.is_file():
+                    skill.unlink()
+                else:
+                    shutil.rmtree(skill)
+                if kind == "copy":
+                    shutil.copytree(source, skill)
+                elif kind == "file":
+                    skill.write_text("foreign entry")
+                else:
+                    target = {
+                        "foreign": str(foreign),
+                        "dangling": "/missing-source",
+                        "relative": os.path.relpath(source, skill.parent),
+                    }[kind]
+                    skill.symlink_to(target, target_is_directory=True)
+                before = self.status_snapshot()
+                code, output, _ = self.run_status("--skill", "documentation-skill", "--json")
+                self.assertEqual(code, 1)
+                self.assertEqual(json.loads(output)["entries"][1]["state"], "different")
+                self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_human_output_and_explicit_home_rules(self) -> None:
+        """Explicit home ignores inherited Codex state while an explicit override is honored."""
+        self.apply()
+        custom = self.base / "custom codex"
+        (custom / "agents").mkdir(parents=True)
+        os.link(
+            self.root / "agents/codex/documentation-agent.toml",
+            custom / "agents/documentation-agent.toml",
+        )
+        unrelated = self.codex / "agents/unselected-agent.toml"
+        unrelated.write_text("preserve unrelated role")
+        legacy = self.home / ".agents/skills/doc-agent"
+        legacy.symlink_to("/missing-old-source")
+        with patch.dict(os.environ, {"CODEX_HOME": str(self.base / "inherited codex")}):
+            before = self.status_snapshot()
+            code, output, errors = self.run_status("--skill", "documentation-skill")
+            self.assertEqual(code, 0, errors)
+            self.assertEqual(len(output.splitlines()), 3)
+            self.assertIn(f"{self.codex / 'agents/documentation-agent.toml'}: current", output)
+            self.assertNotIn(str(legacy), output)
+            code, output, errors = self.run_status(
+                "--skill", "documentation-skill", "--codex-home", str(custom), "--json"
+            )
+            self.assertEqual(code, 0, errors)
+            (custom / "agents/documentation-agent.toml").unlink()
+            code, output, _ = self.run_status(
+                "--skill", "documentation-skill", "--codex-home", str(custom), "--json"
+            )
+            self.assertEqual(code, 1)
+            self.assertEqual(json.loads(output)["entries"][0]["state"], "missing")
+            os.link(
+                self.root / "agents/codex/documentation-agent.toml",
+                custom / "agents/documentation-agent.toml",
+            )
+            # Recreated entries have new metadata, so compare only the untouched roots here.
+            after = self.status_snapshot()
+            for path, value in before.items():
+                if path.parts[0] != custom.name:
+                    self.assertEqual(after[path], value)
+        self.assertFalse((self.base / "inherited codex").exists())
+
+    def test_status_pristine_cli_does_not_create_source_bytecode(self) -> None:
+        """The lazy dependency import is read-only even in an uncached source checkout."""
+        for name in ("install.py", "project_bootstrap.py"):
+            shutil.copyfile(ROOT / name, self.root / name)
+        before = self.status_snapshot()
+        environment = {
+            key: value for key, value in os.environ.items() if key != "PYTHONDONTWRITEBYTECODE"
+        }
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(self.root / "install.py"),
+                "status",
+                "--target",
+                "codex",
+                "--skill",
+                "documentation-skill",
+                "--home",
+                str(self.home),
+                "--json",
+            ],
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertEqual(len(json.loads(result.stdout)["entries"]), 3)
+        self.assertFalse((self.root / "__pycache__").exists())
+        self.assertEqual(self.status_snapshot(), before)
+
+    def test_status_invalid_source_and_parent_fail_without_writes(self) -> None:
+        """Status rejects invalid package data and symlinked destination parents."""
+        real = self.base / "real skills"
+        real.mkdir()
+        (self.home / ".agents").mkdir(parents=True)
+        (self.home / ".agents/skills").symlink_to(real, target_is_directory=True)
+        before = self.status_snapshot()
+        code, output, errors = self.run_status("--skill", "documentation-skill", "--json")
+        self.assertEqual(code, 1)
+        self.assertIn("Expected a real directory", errors)
+        self.assertEqual(json.loads(output)["entries"], [])
+        self.assertEqual(self.status_snapshot(), before)
+        metadata = self.root / "skills/documentation-skill/SKILL.md"
+        metadata.write_text("invalid source")
+        before = self.status_snapshot()
+        code, output, errors = self.run_status("--all", "--json")
+        self.assertEqual(code, 1)
+        self.assertIn("frontmatter", errors)
+        self.assertEqual(json.loads(output)["entries"], [])
+        self.assertEqual(self.status_snapshot(), before)
 
 
 if __name__ == "__main__":

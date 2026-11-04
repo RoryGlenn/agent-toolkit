@@ -5,6 +5,12 @@ projects. Bring established engineering workflows and domain expertise into a pr
 repository so collaborators can use the same guidance. Each project supplies its own
 architecture, stack, package manager, commands, audience, and terminology.
 
+The [OpenSpec trial](docs/openspec/README.md) uses upstream project workflows and
+feature specifications alongside the existing toolkit. Its [paired comparison](experiments/openspec-pilot/README.md)
+records three implemented CLI features, matched candidate results, review findings,
+and the maintenance overhead observed so far. Toolkit bootstrap remains independent
+of OpenSpec.
+
 ## Start a project
 
 The bootstrap command requires Python 3.11 or newer on macOS or Linux. Run it from an
@@ -84,6 +90,26 @@ source Git commit only when the checkout has its own Git root, records whether i
 dirty, and always fingerprints the exact rendered project content. An archive has a null
 Git revision; a dirty checkout is not represented as an exact released commit. The manifest
 contains no source, home, or application absolute paths.
+
+### Check a project's recorded integrity
+
+```bash
+python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project --check
+```
+
+This read-only check returns zero and reports an intact installation when the manifest,
+recorded managed file contents, and marked `AGENTS.md` routing block are intact. It returns
+nonzero and identifies missing or edited managed content, a modified or missing routing
+block, an invalid or unsafe manifest, or an unbootstrapped target. Symlinks and special
+files in managed paths are rejected. It does not create a missing target, write bytecode
+there, update files or the manifest, install anything, or stage changes.
+
+The check verifies the recorded installation, not available upgrades. Changes to the
+current toolkit source do not cause drift, and current skill packages need not be present.
+Extra unowned files and changes outside the managed `AGENTS.md` block are allowed. The
+manifest is the project's integrity record, not a signed proof against deliberate changes
+to both the content and its recorded hashes. `--check` cannot be combined with `--update`,
+`--dry-run`, `--skill`, `--all`, or `--target`. Use `--update --dry-run` to preview upgrades.
 
 ### Update a project's layer
 
@@ -259,10 +285,18 @@ Run these commands from the repository root:
 
 ```bash
 python3 install.py list
+python3 install.py list --json
 python3 install.py check
 python3 install.py install --target codex --skill documentation-skill --dry-run
 python3 install.py install --target codex --skill documentation-skill
 ```
+
+For scripts, `list --json` writes one JSON object with `schema_version: 1` and a `skills`
+array sorted by canonical name. Each entry contains `name`, `description`, `dependencies`
+(sorted direct skill dependencies), and `roles` (each supported host mapped to sorted runtime
+role names). Skill-only hosts have empty role arrays. It validates the current package and
+dependency availability, reads no user configuration, and creates no installation directories.
+Without `--json`, `list` keeps its human-readable output.
 
 Restart or refresh your agent session, then invoke `$documentation-skill` for a documentation task. The new session should show the installed skill and `documentation_agent` role. Installation checks files and links; actual model behavior also depends on the host, selected model, and available tools.
 
@@ -288,6 +322,34 @@ Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports 
 Copilot can also discover shared `~/.agents/skills` content. Avoid separately maintaining another copy of a skill it already discovers. Host versions can differ in how duplicate names appear; inspect the skill picker after installation.
 
 To test an installation without affecting your normal setup, supply `--home /path/to/disposable-home` outside the toolkit checkout. This ignores inherited `CODEX_HOME`; `--codex-home /explicit/path` can override the agent directory deliberately. The source checkout, active and legacy installation directories, and backup storage must be separate: aliases and nested locations are rejected before changes. The `install` subcommand handles personal links; use `bootstrap` for portable project copies. Windows installation is not supported.
+
+Inspect selected personal links without changing them:
+
+```bash
+python3 install.py status --target codex --skill documentation-skill --home ~
+python3 install.py status --target copilot --all --home /path/to/home --json
+```
+
+Status requires `--home`, ignores inherited `CODEX_HOME`, and accepts `--codex-home`
+for an explicit role directory. It follows install aliases, repeated `--skill` selectors
+and dependency closure, reporting each expected destination once. Copilot reports skills only.
+Human output lists paths and states. JSON output is one object with `schema_version: 1`
+and `entries` sorted by `area`, then `name`; each entry contains `area`, `name` and `state`.
+Exit status is zero only when every entry is `current`; missing, different or invalid
+inspections return nonzero. Inspection or argument errors add an `error` string to the JSON
+object with empty entries and print stderr diagnostics.
+
+`current` means a skill symlink names this checkout's canonical absolute source directory,
+or a Codex role is a regular hardlink sharing the current source inode. Absent entries
+are `missing`; foreign entries, dangling links, copied skills, copied roles, role symlinks
+and role hardlinks detached by atomic source replacement are `different`, even with
+identical bytes. Equivalent relative symlink targets are also `different`, matching install's
+canonical target convention. Status creates no directories or receipts and performs no repairs.
+It inspects selected expected destinations, not legacy duplicates or unrelated entries.
+Linkage is an observation at inspection time, not proof of host loading, pristine content,
+historical ownership or permission to overwrite. It cannot distinguish an outdated owned
+entry from user edits without additional evidence. Unsafe destination parents and invalid
+package sources fail inspection; concurrent changes can invalidate the observation.
 
 ## DDIA skill and agent
 

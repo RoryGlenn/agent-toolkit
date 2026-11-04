@@ -1,0 +1,314 @@
+======================================================================
+ERROR: test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 263, in test_native_git_inside_repository_stops_parent_discovery
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_benchmark_revisions.py", line 302, in test_native_grader_cannot_overwrite_protected_alias_target
+    checks = preflight(executor, root)[0]["checks"]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/__main__.py", line 294, in preflight
+    return executor.preflight(forbidden)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/benchmarks/runtime.py", line 418, in preflight
+    listener = socket.socket()
+               ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_selected_install_and_restore (test_ddia_book.BookTests.test_selected_install_and_restore)
+The specialist's role and skill install together and restore cleanly.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmprii4tngz/host/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_book.py", line 136, in test_selected_install_and_restore
+    receipt = install.install(ROOT, "codex", ["ddia-skill"], home, home / ".codex")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmprii4tngz/host/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='assess')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/assess/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/assess/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='design')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/design/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/design/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='review')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/review/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/review/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='validate')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/validate/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/validate/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='migrate')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/migrate/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/migrate/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='operate')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/operate/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/operate/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_each_workflow_installs_shared_skill_and_one_role_and_restores (test_ddia_suite.DDIASuiteTests.test_each_workflow_installs_shared_skill_and_one_role_and_restores) (workflow='explain')
+Selecting a workflow cannot silently omit its shared reference dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/explain/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_ddia_suite.py", line 113, in test_each_workflow_installs_shared_skill_and_one_role_and_restores
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpvnvhkj65/explain/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_existing_dependency_links_survive_selected_install_restore (test_routing.RoutingInstallationTests.test_existing_dependency_links_survive_selected_install_restore) (host='codex')
+A second selection owns only its changes and retains independently installed routing.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpc6_ksg20/codex/.codex/agents/documentation-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_routing.py", line 123, in test_existing_dependency_links_survive_selected_install_restore
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpc6_ksg20/codex/.codex/agents/documentation-agent.toml'
+
+======================================================================
+ERROR: test_restore_preserves_foreign_pre_routing_installation_for_both_hosts (test_routing.RoutingInstallationTests.test_restore_preserves_foreign_pre_routing_installation_for_both_hosts) (host='codex')
+Replay actual old receipts; canonical names alone do not establish dependencies.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpukv166e1/codex/.codex/agents/documentation-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_routing.py", line 282, in test_restore_preserves_foreign_pre_routing_installation_for_both_hosts
+    current = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpukv166e1/codex/.codex/agents/documentation-agent.toml'
+
+======================================================================
+ERROR: test_reverse_restore_protects_ddia_package_and_roles_with_existing_routing (test_routing.RoutingInstallationTests.test_reverse_restore_protects_ddia_package_and_roles_with_existing_routing) (host='codex')
+The guard applies to existing transitive DDIA resources, not only new routing.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpfby4lgqf/codex/.codex/agents/ddia-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_routing.py", line 200, in test_reverse_restore_protects_ddia_package_and_roles_with_existing_routing
+    shared = install.install(ROOT, host, ["ddia-skill"], home, home / ".codex")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/ddia-agent.toml' -> '/tmp/tmpfby4lgqf/codex/.codex/agents/ddia-agent.toml'
+
+======================================================================
+ERROR: test_reverse_restore_protects_shared_engineering_roles (test_routing.RoutingInstallationTests.test_reverse_restore_protects_shared_engineering_roles)
+A surviving workflow retains shared roles even when routing was installed earlier.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/adversarial-reviewer-agent.toml' -> '/tmp/tmp6xbz93wz/home/.codex/agents/adversarial-reviewer-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_routing.py", line 213, in test_reverse_restore_protects_shared_engineering_roles
+    review = install.install(
+             ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/adversarial-reviewer-agent.toml' -> '/tmp/tmp6xbz93wz/home/.codex/agents/adversarial-reviewer-agent.toml'
+
+======================================================================
+ERROR: test_reverse_restore_refuses_shared_routing_removal_for_both_hosts (test_routing.RoutingInstallationTests.test_reverse_restore_refuses_shared_routing_removal_for_both_hosts) (host='codex')
+Restoring the first receipt cannot break a later independently installed skill.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpil35dt_j/codex/.codex/agents/documentation-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_routing.py", line 177, in test_reverse_restore_refuses_shared_routing_removal_for_both_hosts
+    first = install.install(ROOT, host, ["documentation-skill"], home, home / ".codex")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpil35dt_j/codex/.codex/agents/documentation-agent.toml'
+
+======================================================================
+ERROR: test_selected_install_and_restore_preserve_other_roles (test_software_design_book.SoftwareDesignBookTests.test_selected_install_and_restore_preserve_other_roles)
+A selected install supplies both real role and skill, then restores cleanly.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 438, in install
+    os.link(entry.source, destination)
+OSError: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/software-design-agent.toml' -> '/tmp/tmpyhwonqk2/host/.codex/agents/software-design-agent.toml'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_software_design_book.py", line 241, in test_selected_install_and_restore_preserve_other_roles
+    receipt = install.install(
+              ^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/install.py", line 463, in install
+    raise InstallError(f"Install failed and was rolled back: {error}") from error
+install.InstallError: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/software-design-agent.toml' -> '/tmp/tmpyhwonqk2/host/.codex/agents/software-design-agent.toml'
+
+======================================================================
+FAIL: test_explicit_cli_home_ignores_inherited_codex_home (test_install.InstallerTests.test_explicit_cli_home_ignores_inherited_codex_home)
+A disposable CLI install cannot accidentally use the caller's Codex home.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/tests/test_install.py", line 782, in test_explicit_cli_home_ignores_inherited_codex_home
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 1 != 0 : error: Install failed and was rolled back: [Errno 18] Invalid cross-device link: '/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/agents/codex/documentation-agent.toml' -> '/tmp/tmpvhpa8zzx/test home/.codex/agents/documentation-agent.toml'
+
+
+----------------------------------------------------------------------
+Ran 203 tests in 34.527s
+
+FAILED (failures=1, errors=16)

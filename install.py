@@ -214,6 +214,37 @@ def print_catalog(root: Path, skills: dict[str, str]) -> None:
         print()
 
 
+def print_json_catalog(root: Path, skills: dict[str, str]) -> None:
+    """Print one versioned catalog object from validated package metadata."""
+    previous_bytecode = sys.dont_write_bytecode
+    try:
+        sys.dont_write_bytecode = True
+        from project_bootstrap import SKILL_DEPENDENCIES, resolve_skills
+    finally:
+        sys.dont_write_bytecode = previous_bytecode
+
+    resolve_skills(list(skills), skills)
+    entries = []
+    for skill in sorted(skills):
+        roles = {}
+        for host, groups in AGENTS.items():
+            roles[host] = sorted(
+                tomllib.loads((root / "agents" / host / filename).read_text(encoding="utf-8"))[
+                    "name"
+                ]
+                for filename in groups.get(skill, [])
+            )
+        entries.append(
+            {
+                "name": skill,
+                "description": skills[skill],
+                "dependencies": sorted(SKILL_DEPENDENCIES.get(skill, ())),
+                "roles": roles,
+            }
+        )
+    print(json.dumps({"schema_version": 1, "skills": entries}))
+
+
 def locations(home: Path, codex_home: Path) -> dict[str, Path]:
     """Return host directories without reading or changing host configuration."""
     return {
@@ -262,11 +293,8 @@ def linked_to(path: Path, source: Path) -> bool:
     return path.is_file() and source.is_file() and path.samefile(source)
 
 
-def plan_install(
-    root: Path, target: str, skills: list[str], paths: dict[str, Path], *, backup_existing: bool
-) -> list[Entry]:
-    """Preflight selected links and legacy migrations without filesystem writes."""
-    available = inventory(root)
+def selected_skills(skills: list[str], available: dict[str, str]) -> list[str]:
+    """Resolve personal-install selectors, aliases and shared dependencies."""
     for alias in sorted(set(skills) & SKILL_ALIASES.keys()):
         print(
             f"Deprecated skill selector {alias!r}; use {SKILL_ALIASES[alias]!r}.",
@@ -279,9 +307,59 @@ def plan_install(
     from project_bootstrap import BootstrapError, resolve_skills
 
     try:
-        skills = resolve_skills(skills, available)
+        return resolve_skills(skills, available)
     except BootstrapError as error:
         raise InstallError(str(error)) from error
+
+
+def installation_status(
+    root: Path, target: str, skills: list[str], home: Path, codex_home: Path
+) -> list[dict[str, str]]:
+    """Inspect expected current links without writing source or host state.
+
+    Linkage establishes neither historical ownership nor permission to replace an
+    entry. Legacy and unrelated destinations are outside this selection.
+    """
+    available = inventory(root)
+    previous_bytecode = sys.dont_write_bytecode
+    try:
+        sys.dont_write_bytecode = True
+        skills = selected_skills(skills, available)
+    finally:
+        sys.dont_write_bytecode = previous_bytecode
+    paths = locations(home, codex_home)
+    expected = {(f"{target}-skills", name): root / "skills" / name for name in skills}
+    expected.update(
+        {
+            (f"{target}-agents", agent): root / "agents" / target / agent
+            for name in skills
+            for agent in AGENTS[target].get(name, [])
+        }
+    )
+    entries = []
+    for (area, name), source in sorted(expected.items()):
+        destination = paths[area] / name
+        check_parents(destination.parent)
+        try:
+            mode = destination.lstat().st_mode
+        except FileNotFoundError:
+            state = "missing"
+        else:
+            current = False
+            if area == "codex-agents":
+                current = stat.S_ISREG(mode) and destination.samefile(source)
+            elif stat.S_ISLNK(mode):
+                current = os.readlink(destination) == str(source)
+            state = "current" if current else "different"
+        entries.append({"area": area, "name": name, "state": state})
+    return entries
+
+
+def plan_install(
+    root: Path, target: str, skills: list[str], paths: dict[str, Path], *, backup_existing: bool
+) -> list[Entry]:
+    """Preflight selected links and legacy migrations without filesystem writes."""
+    skills = selected_skills(skills, inventory(root))
     candidates = []
     for name in skills:
         candidates.append(Entry(f"{target}-skills", name, root / "skills" / name))
@@ -625,7 +703,10 @@ def main(argv: list[str] | None = None) -> int:
     """Run the command-line interface and return a process exit status."""
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("list", help="List packaged skills and associated named agent roles.")
+    catalog = commands.add_parser(
+        "list", help="List packaged skills and associated named agent roles."
+    )
+    catalog.add_argument("--json", action="store_true", help="Emit a versioned JSON catalog.")
     commands.add_parser("check", help="Validate package sources without installing.")
     apply = commands.add_parser("install", help="Link selected skills into an agent host.")
     apply.add_argument("--target", choices=tuple(AGENTS), required=True)
@@ -640,6 +721,14 @@ def main(argv: list[str] | None = None) -> int:
     apply.add_argument("--codex-home", type=Path, help="Explicit custom Codex directory.")
     apply.add_argument("--backup-existing", action="store_true")
     apply.add_argument("--dry-run", action="store_true")
+    status = commands.add_parser("status", help="Inspect selected personal links without changes.")
+    status.add_argument("--target", choices=tuple(AGENTS), required=True)
+    status_selection = status.add_mutually_exclusive_group(required=True)
+    status_selection.add_argument("--skill", action="append", dest="skills")
+    status_selection.add_argument("--all", action="store_true")
+    status.add_argument("--home", type=Path, required=True, help="Ignores inherited CODEX_HOME.")
+    status.add_argument("--codex-home", type=Path, help="Explicit custom Codex directory.")
+    status.add_argument("--json", action="store_true", help="Print one versioned JSON object.")
     undo = commands.add_parser("restore", help="Restore the entries recorded by an installation.")
     undo.add_argument("receipt", type=Path)
     undo.add_argument("--dry-run", action="store_true")
@@ -653,14 +742,54 @@ def main(argv: list[str] | None = None) -> int:
     project_selection.add_argument("--all", action="store_true")
     project.add_argument("--update", action="store_true")
     project.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args(argv)
+    project.add_argument(
+        "--check", action="store_true", help="Verify recorded project integrity without changes."
+    )
     try:
-        if args.command == "restore":
+        args = parser.parse_args(argv)
+    except SystemExit as error:
+        arguments = sys.argv[1:] if argv is None else argv
+        if error.code and arguments and arguments[0] == "status" and "--json" in arguments:
+            print(
+                json.dumps(
+                    {"schema_version": 1, "entries": [], "error": "Invalid status arguments."}
+                )
+            )
+            return 2
+        raise
+    if args.command == "bootstrap" and args.check:
+        incompatible = [
+            flag
+            for flag, value in (
+                ("--update", args.update),
+                ("--dry-run", args.dry_run),
+                ("--skill", args.skills),
+                ("--all", args.all),
+                ("--target", args.target),
+            )
+            if value
+        ]
+        if incompatible:
+            parser.error("--check cannot be combined with " + ", ".join(incompatible))
+    try:
+        if args.command == "bootstrap" and args.check:
+            previous_bytecode = sys.dont_write_bytecode
+            try:
+                sys.dont_write_bytecode = True
+                from project_bootstrap import check_integrity
+
+                check_integrity(args.project)
+            finally:
+                sys.dont_write_bytecode = previous_bytecode
+        elif args.command == "restore":
             restore(args.receipt.expanduser().absolute(), dry_run=args.dry_run)
         else:
             skills = inventory(ROOT)
             if args.command == "list":
-                print_catalog(ROOT, skills)
+                if args.json:
+                    print_json_catalog(ROOT, skills)
+                else:
+                    print_catalog(ROOT, skills)
             elif args.command == "check":
                 counts = {
                     host: len({name for names in groups.values() for name in names})
@@ -698,23 +827,46 @@ def main(argv: list[str] | None = None) -> int:
                     dry_run=args.dry_run,
                 )
             else:
-                home = (args.home or Path.home()).expanduser().resolve()
-                inherited = os.environ.get("CODEX_HOME") if args.home is None else None
-                codex_home = (
-                    (args.codex_home or (Path(inherited) if inherited else home / ".codex"))
-                    .expanduser()
-                    .resolve()
-                )
-                install(
-                    ROOT,
-                    args.target,
-                    list(skills) if args.all else args.skills,
-                    home,
-                    codex_home,
-                    backup_existing=args.backup_existing,
-                    dry_run=args.dry_run,
-                )
+                try:
+                    home = (args.home or Path.home()).expanduser().resolve()
+                    inherited = os.environ.get("CODEX_HOME") if args.home is None else None
+                    codex_home = (
+                        (args.codex_home or (Path(inherited) if inherited else home / ".codex"))
+                        .expanduser()
+                        .resolve()
+                    )
+                except RuntimeError as error:
+                    if args.command != "status":
+                        raise
+                    raise InstallError(str(error)) from error
+                if args.command == "status":
+                    entries = installation_status(
+                        ROOT,
+                        args.target,
+                        list(skills) if args.all else args.skills,
+                        home,
+                        codex_home,
+                    )
+                    if args.json:
+                        print(json.dumps({"schema_version": 1, "entries": entries}))
+                    else:
+                        paths = locations(home, codex_home)
+                        for entry in entries:
+                            print(f"{paths[entry['area']] / entry['name']}: {entry['state']}")
+                    return 0 if all(entry["state"] == "current" for entry in entries) else 1
+                else:
+                    install(
+                        ROOT,
+                        args.target,
+                        list(skills) if args.all else args.skills,
+                        home,
+                        codex_home,
+                        backup_existing=args.backup_existing,
+                        dry_run=args.dry_run,
+                    )
     except (OSError, ValueError, KeyError, TypeError) as error:
+        if args.command == "status" and args.json:
+            print(json.dumps({"schema_version": 1, "entries": [], "error": str(error)}))
         print(f"error: {error}", file=sys.stderr)
         return 1
     return 0

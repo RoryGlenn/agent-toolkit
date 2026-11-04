@@ -1,0 +1,9 @@
+schema: spec-driven
+
+context: |
+  This is a bounded adoption trial in an existing project. The project's intention
+  is already documented in README.md; preserve that intention and AGENTS.md.
+  The goal is to reduce first-party workflow maintenance by reusing upstream
+  OpenSpec directly. Use each accepted feature request as the change scope.
+  Keep project-specific engineering judgment and independent review/verification.
+  Trial features are prototypes for review, not an instruction to merge or release.

@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "id": "package-catalog",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 6
+    },
+    {
+      "id": "personal-installation-status",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 1
+    },
+    {
+      "id": "project-toolkit-integrity",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 1
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "byType": {
+      "change": {
+        "items": 0,
+        "passed": 0,
+        "failed": 0
+      },
+      "spec": {
+        "items": 3,
+        "passed": 3,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+    "source": "nearest"
+  }
+}
