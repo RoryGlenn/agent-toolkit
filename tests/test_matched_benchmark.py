@@ -252,6 +252,23 @@ class MatchedBenchmarkTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "multi_agent_v1"):
                         verify_prompt_surface(executor, target, entry)
 
+    def test_message_only_native_diagnostic_is_an_explicit_setup_failure(self) -> None:
+        plan = self.plan()
+        entry = next(row for row in plan["entries"] if row["arm"] == "stock")
+        target = self.root / "attempt"
+        prepare(plan, entry, target)
+        executor = SimpleNamespace(
+            codex=Path("codex"), workspace=target / "workspace", environment={}
+        )
+        raw = [{"role": "user", "content": [{"type": "input_text", "text": "Review this diff."}]}]
+        with patch("benchmarks.__main__.bounded_process") as command:
+            command.return_value = Execution([], 0, json.dumps(raw), "", 0)
+            with self.assertRaisesRegex(
+                ValueError, "did not expose the model-visible tool catalog"
+            ):
+                verify_prompt_surface(executor, target, entry)
+        self.assertEqual(json.loads((target / "prompt-surface.json").read_text()), raw)
+
     def test_actual_bootstrap_stages_identical_diff_and_never_stages_curator_checks(self) -> None:
         plan = self.plan()
         results = []
