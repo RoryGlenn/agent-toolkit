@@ -195,6 +195,74 @@
         "Passes the original question, advice-only scope, relevant facts and no further rerouting context, then synthesizes the returned findings.",
         "Identifies replay identity risk without claiming local deduplication proves external exactly-once effects."
       ]
+    },
+    {
+      "id": "design-to-legacy",
+      "starting_roles": [
+        "software_design_agent"
+      ],
+      "prompt": "We must add one export field to an old batch routine. Its constructor opens a live database, and no local tests can instantiate it. Review the actual fixture and propose a bounded safe-change strategy; advice only.",
+      "expected_expertise": "legacy-code-skill",
+      "checks": [
+        "Reads legacy-code guidance or obtains an actual bounded consultation.",
+        "Identifies the relevant behavior, seam and enabling point, conservative bootstrap and protection.",
+        "Preserves read-only scope and avoids an unbounded redesign."
+      ]
+    },
+    {
+      "id": "legacy-to-docs",
+      "starting_roles": [
+        "legacy_code_agent"
+      ],
+      "prompt": "Write a short first-run guide for this supplied command: scan --input data.csv. It reads only that local file; prints valid_rows and invalid_rows; returns 0 for valid and 2 for invalid input. Do not execute or edit product code.",
+      "expected_expertise": "documentation-skill",
+      "checks": [
+        "Reads documentation guidance or uses an actual consultation.",
+        "Supplies the exact command, local meaning, outputs and exit codes without invention.",
+        "Does not add a legacy testability or refactoring workflow."
+      ]
+    },
+    {
+      "id": "legacy-to-design",
+      "starting_roles": [
+        "legacy_code_agent"
+      ],
+      "prompt": "This well-tested new API has callers duplicating lifecycle setup in four services. Compare two module boundaries and explain the caller knowledge each removes. Advice only.",
+      "expected_expertise": "software-design-skill",
+      "checks": [
+        "Uses software-design guidance rather than assuming code is legacy.",
+        "Compares actual caller obligations and maintenance cost.",
+        "Keeps the requested advice scope."
+      ]
+    },
+    {
+      "id": "legacy-mixed-data",
+      "starting_roles": [
+        "legacy_code_agent"
+      ],
+      "prompt": "The untested importer retries after a remote charge succeeds but before its local operation ID is saved. Help the assigned writer make this safe. We need testability advice and the actual retry invariant; do not edit.",
+      "expected_expertise": [
+        "legacy-code-skill",
+        "ddia-skill"
+      ],
+      "checks": [
+        "Retains one primary owner and bounded complementary input.",
+        "Explains remote-effect ambiguity and durable identity; a fake or passing unit test alone does not prove the guarantee.",
+        "Returns a useful safe-change strategy without competing writers."
+      ]
+    },
+    {
+      "id": "legacy-bounded-fallback",
+      "starting_roles": [
+        "legacy_code_agent"
+      ],
+      "prompt": "Assigned subtask: inspect the supplied procedural routine and identify its test boundary. Do not delegate or edit. The custom legacy role and original book are unavailable, but legacy-code-skill is installed.",
+      "expected_expertise": "legacy-code-skill",
+      "checks": [
+        "Reads the actual skill directly and discloses unavailable named execution and source.",
+        "Completes only the assigned inspection; no recursive topic routing or fabricated consultation.",
+        "Preserves read-only files and explicitly requested no-delegation."
+      ]
     }
   ],
   "revision": "routing-codex-only-2"

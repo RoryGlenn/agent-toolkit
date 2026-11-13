@@ -381,7 +381,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(
             {path.name for path in (self.home / ".agents/skills").iterdir()}, set(skills)
         )
-        self.assertEqual(len(list((self.codex / "agents").iterdir())), 6)
+        self.assertEqual(len(list((self.codex / "agents").iterdir())), 7)
         self.assertEqual(
             {path.name for path in (self.home / ".copilot/skills").iterdir()}, set(skills)
         )

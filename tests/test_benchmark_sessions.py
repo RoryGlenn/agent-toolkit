@@ -42,7 +42,7 @@ class CanonicalStagingTests(unittest.TestCase):
                 for path in (REPOSITORY / "agents/codex").glob("*.toml")
             }
             self.assertEqual(role_names, expected)
-            self.assertEqual(len(role_names), 6)
+            self.assertEqual(len(role_names), 7)
             self.assertTrue(all(name.endswith("_agent") for name in role_names))
 
     def test_complete_sources_keep_legacy_library_paths_after_skill_rename(self) -> None:
