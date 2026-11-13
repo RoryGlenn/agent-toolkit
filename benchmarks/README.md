@@ -22,21 +22,32 @@ because `executescript()` commits the caller's pending transaction in SQLite
 legacy transaction mode. All three pass the startup check. The fixture proves the
 bug. Measuring review quality requires completing and grading the two reviews.
 
-### Run a sealed campaign
+### Prepare a sealed campaign
 
-Use a signed-in Codex CLI on a Linux or macOS host where the native preflight passes.
-Run these commands from the toolkit checkout, replacing the auth path with
-your regular Codex auth file. The example requires access to `gpt-5.5`, a
-direct-tool V1 model in the bundled Codex CLI 0.167 catalog. Controlled role
-and calibration campaigns use that protocol for verbatim handoff and
-worker-result verification. Model access varies across accounts. Use the
-manual demo for other models or qualify their live prompt surface before
-relying on automated comparison output.
+The automated runner requires native sandbox checks and a diagnostic that
+shows the actual model-visible tool catalog. Codex CLI 0.167 with the bundled
+`gpt-5.5` profile omits that catalog from `debug prompt-input`, so automated
+execution stops before the model runs. The [live study](https://github.com/RoryGlenn/agent-toolkit/issues/27)
+tracks qualification. Use the manual demo above for an interactive comparison.
+Offline staging requires no model invocation or authentication.
 
 ```bash
 python3 -m benchmarks validate --matched
 python3 -m benchmarks plan --comparison demo --model gpt-5.5 \
   --output .benchmark-runs/demo-plan.json
+python3 -m benchmarks prepare .benchmark-runs/demo-plan.json --index 0 \
+  --output .benchmark-runs/demo-slot
+```
+
+### Run on a qualified runtime
+
+Run these commands from the toolkit checkout after verifying the CLI/model
+combination exposes the required catalog and passes the native checks on your
+Linux or macOS host. Freeze a new plan for that same runtime. Use your selected
+regular Codex auth file. Controlled role and calibration runs also need the
+native V1 worker protocol for verbatim handoff and worker-result verification.
+
+```bash
 python3 -m benchmarks run .benchmark-runs/demo-plan.json \
   --auth-source /absolute/path/to/codex/auth.json --output .benchmark-runs/demo
 python3 -m benchmarks export-reviews .benchmark-runs/demo \

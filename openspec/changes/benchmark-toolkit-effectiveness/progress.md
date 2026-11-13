@@ -31,6 +31,11 @@ model catalog and actual prompt tool surface are checked before execution. A
 version with a different worker protocol or missing native traces remains
 unqualified for controlled role results.
 
+Codex CLI 0.167's `debug prompt-input` omits the separate tool schemas used
+by its direct-tool `gpt-5.5` profile. The runner records this as a setup
+failure. Offline staging and the manual review demo remain usable while
+the live study qualifies a tool-catalog evidence path.
+
 ## Live results
 
 The four scheduled SQLite demo slots reached native preflight on the managed

@@ -418,9 +418,11 @@ def verify_prompt_surface(
         "clock__curr_time",
     }
     exposed: list[str] = []
+    catalog_seen = False
     direct_tools = {"exec_command", "write_stdin", "apply_patch", "view_image", "update_plan"}
     for item in value:
         for namespace in item.get("tools", []):
+            catalog_seen = True
             name = namespace.get("name")
             if entry is not None and namespace.get("type") in {"function", "custom"}:
                 if name not in direct_tools:
@@ -439,6 +441,12 @@ def verify_prompt_surface(
                     if not nested or not nested <= allowed_nested:
                         raise ValueError(f"unapproved nested tool surface: {sorted(nested)}")
                     exposed += sorted(nested)
+    if entry is not None and not catalog_seen:
+        raise ValueError(
+            "Codex debug prompt-input did not expose the model-visible tool catalog. "
+            "This CLI/model combination cannot run a sealed campaign. "
+            "Use the manual demo or qualify another runtime."
+        )
     if "functions.exec" not in exposed and (entry is None or "exec_command" not in exposed):
         raise ValueError("actual tool catalog is missing; cannot verify surface")
     text = json.dumps(value)
