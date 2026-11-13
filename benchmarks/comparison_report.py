@@ -10,7 +10,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from benchmarks.comparison import ROLE_ARMS, SUITE, attempt_directory, case_for
+from benchmarks.comparison import ROLE_ARMS, SUITE, attempt_directory, scheduled_case
 from benchmarks.comparison_cases import ROLE_CASES
 from benchmarks.files import read_regular
 from benchmarks.runtime import fingerprint
@@ -56,7 +56,7 @@ def export_reviews(
         if data["status"] != "needs_review" or not data.get("submission_sha256"):
             continue
         source = root / attempt_directory(index, plan["entries"][index])
-        case = case_for(data["case_id"], plan.get("held_out"))
+        case = scheduled_case(data["case_id"], plan.get("held_out"), data["comparison"])
         label = review_id(data)
         packet = destination / label
         packet.mkdir()
@@ -75,6 +75,7 @@ def export_reviews(
             "artifact_hashes": files,
             "objective_checks": data["grade"]["checks"],
             "required_flags": sorted(review_flags(data["case_id"])),
+            "actor_archive_startup_exit_codes": data.get("archive_startup_exit_codes", []),
         }
         if read_regular(source / "initial.diff"):
             (packet / "input.diff").write_bytes(read_regular(source / "initial.diff"))
@@ -190,6 +191,8 @@ def matched_report(
     slots = []
     blocks: dict[tuple[str, str, str, int], dict[str, dict[str, Any]]] = {}
     analysis = plan["held_out"]["analysis"] if plan.get("held_out") else None
+    case_aliases: dict[str, str] = {}
+    cluster_aliases: dict[str, str] = {}
     for data in results:
         objective = objective_outcome(data)
         decision = objective
@@ -206,8 +209,13 @@ def matched_report(
                     flags=review_flags(data["case_id"]),
                 )
                 decision = assessment["pass"]
+        elif data["status"] == "verification_unverified":
+            decision = None
         elif data["status"] in {"failed", "timed_out"}:
             decision = False
+        settings = data.get("root_settings_status", "unverified")
+        if settings == "mismatched" or (analysis is not None and settings != "observed"):
+            decision = None
         usage = data.get("reported_root_usage") or {}
         aggregate = data.get("aggregate_tree_tokens")
         slot: dict[str, Any] = {
@@ -230,6 +238,15 @@ def matched_report(
                 "wall_elapsed_seconds",
             )
         }
+        if analysis is not None:
+            slot["case_id"] = case_aliases.setdefault(
+                data["case_id"], f"task-{len(case_aliases) + 1:03d}"
+            )
+            slot["cluster"] = cluster_aliases.setdefault(
+                data["cluster"], f"group-{len(cluster_aliases) + 1:03d}"
+            )
+            for field in ("product_hashes", "artifact_hashes"):
+                slot[field] = fingerprint(slot[field]) if slot[field] is not None else None
         slot["root_usage"] = {
             key: usage[key]
             for key in (
@@ -246,6 +263,7 @@ def matched_report(
                 "cost": None,
                 "objective_pass": objective,
                 "task_success": decision,
+                "root_settings_status": settings,
                 "review_id": blind_id,
                 "review_flags": assessment.get("flags") if assessment else None,
                 "dispatch": safe_dispatch(data),
@@ -267,7 +285,7 @@ def matched_report(
                 ),
             }
         )
-        key = (data["comparison"], data["role"] or "", data["case_id"], data["attempt"])
+        key = (data["comparison"], data["role"] or "", slot["case_id"], data["attempt"])
         blocks.setdefault(key, {})[data["arm"]] = slot
         slots.append(slot)
     if set(reviews) - available_reviews:
@@ -391,7 +409,7 @@ def markdown_report(report: dict[str, Any]) -> str:
     header = [
         "# Agent Toolkit paired benchmark",
         "",
-        f"{report['stage'].capitalize()} campaign. Model {report['model']} "
+        f"{report['stage'].capitalize()} campaign. Requested model {report['model']} "
         f"at {report['effort']} effort. {report['host']['codex_version']} on "
         f"{report['host']['system']} {report['host']['machine']}. "
         f"Wall deadline {report['wall_seconds']} seconds per session.",

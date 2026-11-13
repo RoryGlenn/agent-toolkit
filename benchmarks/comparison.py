@@ -9,6 +9,7 @@ import random
 import re
 import sys
 import uuid
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -40,12 +41,24 @@ from benchmarks.runtime import (
 SUITE = "matched-toolkit-v2"
 HEADLINE_ARMS = ("stock", "default-toolkit")
 ROLE_ARMS = ("single-agent", "generic-worker", "named-worker")
+GENERIC_ROLE = "benchmark_generic_worker"
+GENERIC_ROLE_FILE = ".codex/agents/benchmark-generic-worker.toml"
+GENERIC_GUIDANCE = (
+    f'name = "{GENERIC_ROLE}"\n'
+    'description = "Generic coding worker for the assigned benchmark task."\n'
+    'developer_instructions = """Complete the assigned task using the available tools. '
+    "Stay within the requested scope. Return the result and the checks you performed. "
+    'Complete the work in this session."""\n'
+).encode()
 MANAGED = frozenset({".git", ".agents", ".codex", ".agent-toolkit", "AGENTS.md"})
 HANDOFF = (
     "First call spawn_agent with agent_type={role} and fork_context=false, passing the exact "
     "user message as the message value. Wait for that one worker to finish. "
     "Only the worker may run commands, edit files or decide the answer. "
     "Do not send follow-up instructions or use any other tools."
+)
+SOLE_WRITER = (
+    "You are the sole writer authorized to implement this task in the current workspace.\n\n"
 )
 
 
@@ -76,6 +89,8 @@ def treatment_files(arm: str, role: str | None) -> dict[str, bytes]:
             if (path.startswith(".agents/") and "evals" not in Path(path).parts)
             or path == f".codex/agents/{file_name}"
         }
+    if arm == "generic-worker":
+        return {GENERIC_ROLE_FILE: GENERIC_GUIDANCE}
     return {}
 
 
@@ -103,11 +118,68 @@ def host_identity(codex: Path) -> dict[str, str]:
     }
 
 
+def require_role_protocol(codex: Path, model: str) -> None:
+    """Check bundled direct-tool V1 compatibility before controlled worker runs."""
+    catalog = bounded_process(
+        [str(codex), "debug", "models", "--bundled"],
+        REPOSITORY,
+        sanitized_environment(Path("/var/empty"), Path("/tmp")),
+        timeout=15,
+    )
+    if catalog.returncode:
+        raise ValueError("could not read the Codex model catalog to qualify the worker protocol")
+    value = json.loads(catalog.stdout)
+    rows = value.get("models", []) if isinstance(value, dict) else value
+    if not isinstance(rows, list) or not any(
+        isinstance(row, dict)
+        and row.get("slug") == model
+        and row.get("multi_agent_version") in {None, "v1"}
+        and row.get("tool_mode") not in {"code_mode_only"}
+        for row in rows
+    ):
+        raise ValueError("controlled worker runs require direct-tool Codex V1 support")
+
+
 def read_held_out(manifest: Path) -> dict[str, Any]:
     """Read curator-owned held-out tasks without staging reference answers for actors."""
     data: dict[str, Any] = json.loads(read_regular(manifest.resolve()))
     validate_held_out(data)
+    for case_id, case in data["cases"].items():
+        case_for(case_id, data)
+        for outcome, control in case["controls"].items():
+            path = manifest.resolve().parent / "controls" / case_id / f"{outcome}.json"
+            evidence = read_regular(path)
+            if fingerprint(json.loads(evidence)) != control["evidence_sha256"]:
+                raise ValueError(f"held-out control receipt changed for {case_id}/{outcome}")
+            receipt = json.loads(evidence)
+            if (
+                not isinstance(receipt, dict)
+                or receipt.get("case_id") != case_id
+                or receipt.get("case_fingerprint") != held_out_case_fingerprint(case)
+                or not isinstance(receipt.get("scores"), list)
+                or len(receipt["scores"]) != 2
+            ):
+                raise ValueError(f"held-out control receipt is incomplete for {case_id}/{outcome}")
+            reviewers = set()
+            for score in receipt["scores"]:
+                if (
+                    not isinstance(score, dict)
+                    or not isinstance(score.get("reviewer"), str)
+                    or not score["reviewer"].strip()
+                    or not isinstance(score.get("evidence"), str)
+                    or not score["evidence"].strip()
+                    or score.get("pass") is not control["pass"]
+                    or score["reviewer"].strip() in reviewers
+                ):
+                    raise ValueError(f"held-out control review disagrees for {case_id}/{outcome}")
+                reviewers.add(score["reviewer"].strip())
+            control["receipt"] = receipt
     return data
+
+
+def held_out_case_fingerprint(case: dict[str, Any]) -> str:
+    """Bind curator control receipts to the rubric and inputs they assessed."""
+    return fingerprint({key: value for key, value in case.items() if key != "controls"})
 
 
 def validate_held_out(data: dict[str, Any]) -> None:
@@ -144,7 +216,7 @@ def case_for(case_id: str, held_out: dict[str, Any] | None) -> ComparisonCase:
     case = held_out["cases"][case_id]
     if (
         not isinstance(case, dict)
-        or set(case) != {"prompt", "files", "rubric", "cluster", "read_only", "diff"}
+        or set(case) != {"prompt", "files", "rubric", "cluster", "read_only", "diff", "controls"}
         or not all(
             isinstance(case[key], str) and case[key].strip() for key in ("prompt", "cluster")
         )
@@ -172,6 +244,22 @@ def case_for(case_id: str, held_out: dict[str, Any] | None) -> ComparisonCase:
         raise ValueError("held-out diff must update paths from the base fixture")
     if not all(isinstance(contents, str) for contents in diff.values()):
         raise ValueError("held-out diff contents must be text")
+    controls = case["controls"]
+    if (
+        not isinstance(controls, dict)
+        or set(controls) != {"reference", "wrong"}
+        or any(
+            not isinstance(control, dict)
+            or not {"evidence_sha256", "pass"} <= control.keys()
+            or set(control) - {"evidence_sha256", "pass", "receipt"}
+            or not isinstance(control["evidence_sha256"], str)
+            or not re.fullmatch(r"[a-f0-9]{64}", control["evidence_sha256"])
+            or control["pass"] is not (label == "reference")
+            for label, control in controls.items()
+        )
+        or controls["reference"]["evidence_sha256"] == controls["wrong"]["evidence_sha256"]
+    ):
+        raise ValueError("held-out cases require distinct review evidence for both controls")
     changed = {**files, **{name: contents.encode() for name, contents in diff.items()}}
     return ComparisonCase(
         case_id,
@@ -182,6 +270,14 @@ def case_for(case_id: str, held_out: dict[str, Any] | None) -> ComparisonCase:
         tuple(case["rubric"]),
         case["read_only"],
     )
+
+
+def scheduled_case(case_id: str, held_out: dict[str, Any] | None, track: str) -> ComparisonCase:
+    """Give all arms of a write-role task the same explicit ownership."""
+    case = case_for(case_id, held_out)
+    if track == "role" and not case.read_only:
+        return replace(case, prompt=SOLE_WRITER + case.prompt)
+    return case
 
 
 def comparison_plan(
@@ -236,6 +332,15 @@ def comparison_plan(
         raise ValueError("pilot uses its fixed toolkit and role schedule")
     if held_out is not None:
         validate_held_out(held_out)
+        for case in held_out["cases"].values():
+            for label, control in case["controls"].items():
+                if (
+                    not isinstance(control.get("receipt"), dict)
+                    or fingerprint(control["receipt"]) != control["evidence_sha256"]
+                    or control["receipt"].get("case_fingerprint") != held_out_case_fingerprint(case)
+                    or control["pass"] is not (label == "reference")
+                ):
+                    raise ValueError("held-out plan is missing its verified control receipts")
     if held_out and (cases or track == "demo" or pilot or include_single):
         raise ValueError("held-out inputs form their own toolkit or role campaign")
     if held_out and track == "role" and held_out["analysis"]["claim_count"] < 2:
@@ -264,7 +369,7 @@ def comparison_plan(
     rng = random.Random(20261113)
     treatments: dict[tuple[str, str | None], dict[str, str]] = {}
     for lane, specialist, case_id, choices in schedule:
-        case = case_for(case_id, held_out)
+        case = scheduled_case(case_id, held_out, lane)
         cluster = held_out["cases"][case_id]["cluster"] if held_out else case_id
         for arm in choices:
             key = (arm, specialist)
@@ -358,13 +463,13 @@ def verify_product_permissions(executor: NativeExecutor, readonly: list[Path]) -
     """Require existing fixture/metadata writes to obey their declared boundary."""
     if not readonly:
         return {}
-    source = """import json, os, sys
+    source = """import errno, json, os, sys
 result = {}
 for path in sys.argv[1:]:
     try:
         fd = os.open(path, os.O_WRONLY | os.O_APPEND)
-    except PermissionError:
-        result[path] = True
+    except OSError as error:
+        result[path] = error.errno in (errno.EPERM, errno.EACCES, errno.EROFS)
     else:
         os.close(fd)
         result[path] = False
@@ -421,6 +526,32 @@ def git_command(workspace: Path, home: Path, temporary: Path, *args: str) -> byt
     return result.stdout.encode()
 
 
+def catalog_skill_paths(body: str) -> set[str]:
+    """Read exact host locators and resolve Codex's scoped catalog aliases."""
+    locators: set[str] = set()
+    aliases: dict[str, str] = {}
+    section = ""
+    for line in body.splitlines():
+        if line.startswith("#"):
+            section = line.strip()
+        if section == "### Skill roots":
+            match = re.fullmatch(r"- `(h\d+)` = `(/[^`]+)`", line)
+            if match:
+                alias, root = match.groups()
+                if alias in aliases and aliases[alias] != root:
+                    raise ValueError("conflicting skill catalog aliases")
+                aliases[alias] = root
+        if section == "### Available skills" and line.startswith("- "):
+            match = re.search(r"\((?:file|path): ([^)\n]+/SKILL\.md)\)$", line)
+            if match:
+                path = match[1]
+                root, _, rest = path.partition("/")
+                if root in aliases:
+                    path = str(Path(aliases[root]) / rest)
+                locators.add(path)
+    return locators
+
+
 def stage_demo_pair(destination: Path, case_id: str) -> None:
     """Prepare the two public review workspaces without starting a model."""
     if case_id not in DEMO_CASES:
@@ -439,7 +570,7 @@ def stage_demo_pair(destination: Path, case_id: str) -> None:
 
 def stage_match(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str, Any]:
     """Stage exact product and toolkit bytes without exposing control material."""
-    case = case_for(entry["case_id"], plan.get("held_out"))
+    case = scheduled_case(entry["case_id"], plan.get("held_out"), entry["comparison"])
     workspace, home, client, temporary = (
         root / name for name in ("workspace", "actor-home", "client-home", "private-tmp")
     )
@@ -478,7 +609,7 @@ def stage_match(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict
     diff = git_command(workspace, home, temporary, "diff", "--no-ext-diff", "--no-textconv")
     (root / "initial.diff").write_bytes(diff)
     arm = entry["arm"]
-    role = entry["role"] if arm == "named-worker" else "default"
+    role = entry["role"] if arm == "named-worker" else GENERIC_ROLE
     readonly = [workspace / name for name in sorted(MANAGED) if (workspace / name).exists()]
     configuration = config_text(
         workspace,
@@ -560,7 +691,7 @@ def worker_output(
     role = entry["role"]
     label = worker.get("agent_role")
     if worker.get("parent_thread_id") != sessions.get("root_thread_id") or (
-        label != role if entry["arm"] == "named-worker" else label not in {None, "default"}
+        label != (role if entry["arm"] == "named-worker" else GENERIC_ROLE)
     ):
         return None, "worker_role_unverified"
     if (worker.get("model"), worker.get("effort")) != (plan["model"], plan["effort"]):
@@ -584,11 +715,16 @@ def handoff_matches(
     """Require evidence the coordinator only delegated the frozen task and waited."""
     if trace.get("root_tools_confined") is not True:
         return False
+    receipt = trace.get("session_dispatch_evidence", {})
+    workers = receipt.get("observations", [])
+    if len(workers) != 1 or trace.get("coordinator_worker") != workers[0].get("thread_id"):
+        return False
     if len(calls) != 1:
         return False
     call = calls[0]
     return (
-        call.get("agent_type") == (entry["role"] if entry["arm"] == "named-worker" else "default")
+        call.get("agent_type")
+        == (entry["role"] if entry["arm"] == "named-worker" else GENERIC_ROLE)
         and call.get("fork_context", False) is False
         and isinstance(call.get("message"), str)
         and fingerprint(call["message"]) == entry["prompt_fingerprint"]

@@ -8,6 +8,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 from unittest.mock import patch
 
@@ -18,19 +19,30 @@ from benchmarks.__main__ import (
     prepare,
     run_attempt,
     seal_result,
+    verify_prompt_surface,
 )
 from benchmarks.cases import REPOSITORY
 from benchmarks.comparison import (
+    GENERIC_ROLE,
     ROLE_ARMS,
     attempt_directory,
     comparison_plan,
     handoff_matches,
+    held_out_case_fingerprint,
+    read_held_out,
     treatment_files,
     verify_comparison_plan,
     verify_treatment,
     worker_output,
 )
-from benchmarks.comparison_cases import ROLE_CASES, comparison_controls, demo_controls
+from benchmarks.comparison_cases import (
+    LEGACY_POST_REFERENCE,
+    ROLE_CASES,
+    comparison_case,
+    comparison_controls,
+    demo_controls,
+    grade_fixture,
+)
 from benchmarks.comparison_report import (
     export_reviews,
     matched_report,
@@ -39,7 +51,8 @@ from benchmarks.comparison_report import (
     review_flags,
 )
 from benchmarks.oracles import Grade
-from benchmarks.runtime import digest, observe_trace
+from benchmarks.process import Execution, TrustedControlExecutor
+from benchmarks.runtime import digest, fingerprint, observe_trace
 
 HOST = {
     "system": "Test",
@@ -76,6 +89,168 @@ class MatchedBenchmarkTests(unittest.TestCase):
         self.assertEqual([item["rows_after_rollback"] for item in outcomes.values()], [0, 1, 0])
         self.assertTrue(all(item["startup"] for item in outcomes.values()))
         self.assertTrue(all(item["validated"] for item in comparison_controls()))
+
+    def test_legacy_regression_test_needs_review_and_label_trivia_is_ignored(self) -> None:
+        (self.root / "invoice.py").write_text(LEGACY_POST_REFERENCE)
+        executor = TrustedControlExecutor()
+        result = grade_fixture(comparison_case("legacy-post"), self.root, executor)
+        self.assertEqual(result.status, "needs_review")
+        self.assertIn("regression test", result.needs_review[0])
+        (self.root / "labels.py").write_text("LABEL='Queued jobs'  # alternate formatting\n")
+        result = grade_fixture(comparison_case("routine-label"), self.root, executor)
+        self.assertEqual(result.status, "passed")
+
+    def test_held_out_control_receipts_bind_rubric_and_keep_private_labels_out(self) -> None:
+        case_id = "private-task"
+        case: dict[str, Any] = {
+            "prompt": "Review change.",
+            "files": {"secret-project.py": "x = 1\n"},
+            "diff": {"secret-project.py": "x = 2\n"},
+            "rubric": ["Check the changed contract."],
+            "cluster": "confidential-customer",
+            "read_only": True,
+        }
+        receipts = self.root / "controls" / case_id
+        receipts.mkdir(parents=True)
+        case_fingerprint = held_out_case_fingerprint(case)
+        case["controls"] = {}
+        for label, decision in (("reference", True), ("wrong", False)):
+            document = {
+                "case_id": case_id,
+                "case_fingerprint": case_fingerprint,
+                "scores": [
+                    {"reviewer": person, "evidence": label, "pass": decision}
+                    for person in ("one", "two")
+                ],
+            }
+            (receipts / f"{label}.json").write_text(json.dumps(document))
+            case["controls"][label] = {
+                "evidence_sha256": fingerprint(document),
+                "pass": decision,
+            }
+        manifest = self.root / "manifest.json"
+        manifest.write_text(
+            json.dumps(
+                {
+                    "cases": {case_id: case},
+                    "analysis": {
+                        "minimum_effect": 0.05,
+                        "alpha": 0.05,
+                        "min_clusters": 10,
+                        "claim_count": 1,
+                    },
+                }
+            )
+        )
+        held_out = read_held_out(manifest)
+        plan = comparison_plan(
+            "toolkit",
+            [],
+            None,
+            "test-model",
+            "medium",
+            180,
+            1,
+            None,
+            False,
+            HOST,
+            held_out=held_out,
+        )
+        verify_comparison_plan(plan)
+        root = self.root / "campaign"
+        initialize_campaign(root, plan)
+        summary = matched_report(plan, campaign_results(root), {}, objective_outcome)
+        serialized = json.dumps(summary)
+        for name in (case_id, "secret-project.py", "confidential-customer", "grader"):
+            self.assertNotIn(name, serialized)
+        (receipts / "wrong.json").write_text("{}")
+        with self.assertRaisesRegex(ValueError, "changed"):
+            read_held_out(manifest)
+
+    def test_provider_failure_is_not_native_completion_and_archive_binds_cwd(self) -> None:
+        opening = [
+            {"type": "thread.started", "thread_id": "root"},
+            {"type": "turn.started"},
+        ]
+        failed = observe_trace("\n".join(map(json.dumps, [*opening, {"type": "turn.failed"}])))
+        self.assertFalse(failed["native_turn_completed"])
+        command = {
+            "type": "command_execution",
+            "status": "completed",
+            "command": "python3 release.pyz",
+            "exit_code": 0,
+        }
+        events = [*opening, {"type": "item.completed", "item": command}, {"type": "turn.completed"}]
+        no_cwd = observe_trace("\n".join(map(json.dumps, events)), workspace=self.root)
+        self.assertEqual(no_cwd["archive_startup_exit_codes"], [])
+        command["cwd"] = self.root.as_uri()
+        current = observe_trace("\n".join(map(json.dumps, events)), workspace=self.root)
+        self.assertEqual(current["archive_startup_exit_codes"], [0])
+        self.assertTrue(current["native_turn_completed"])
+
+    def test_native_prompt_catalog_verifies_named_generic_and_single_agent_profiles(self) -> None:
+        plan = self.plan("role", "legacy_code_agent")
+        for index, entry in enumerate(plan["entries"][:3]):
+            target = self.root / str(index)
+            prepare(plan, entry, target)
+            executor = SimpleNamespace(
+                codex=Path("codex"), workspace=target / "workspace", environment={}
+            )
+            roles = [
+                Path(name).stem.replace("-", "_")
+                for name in entry["treatment_hashes"]
+                if name.startswith(".codex/agents/")
+            ]
+            skills = [
+                str(executor.workspace / name)
+                for name in entry["treatment_hashes"]
+                if name.endswith("/SKILL.md")
+            ]
+            tools = [{"type": "function", "name": "exec_command"}]
+            if entry["arm"] != "single-agent":
+                tools.append(
+                    {
+                        "name": "multi_agent_v1",
+                        "type": "namespace",
+                        "tools": [
+                            {"name": "spawn_agent", "description": " ".join(roles)},
+                            {"name": "send_input"},
+                            {"name": "close_agent"},
+                            {"name": "resume_agent"},
+                            {"name": "wait_agent"},
+                        ],
+                    }
+                )
+            catalog = "\n".join(
+                [
+                    "### Skill roots",
+                    f"- `h0` = `{executor.workspace}`",
+                    "### Available skills",
+                    *(
+                        f"- {Path(name).parent.name}: "
+                        f"(file: h0/{Path(name).relative_to(executor.workspace)})"
+                        for name in skills
+                    ),
+                ]
+            )
+            raw = [{"content": [{"text": catalog}], "tools": tools}]
+            with patch("benchmarks.__main__.bounded_process") as command:
+                command.return_value = Execution([], 0, json.dumps(raw), "", 0)
+                receipt = verify_prompt_surface(executor, target, entry)
+                self.assertIn("exec_command", receipt["exposed_tools"])
+                if entry["arm"] == "generic-worker":
+                    self.assertEqual(roles, [GENERIC_ROLE])
+                    self.assertEqual(skills, [])
+                    generic_role = (
+                        target / f"workspace/.codex/agents/{GENERIC_ROLE.replace('_', '-')}.toml"
+                    )
+                    self.assertNotIn("spawn_agent", generic_role.read_text())
+                if entry["arm"] == "named-worker":
+                    command.return_value = Execution(
+                        [], 0, json.dumps([{**raw[0], "tools": tools[:1]}]), "", 0
+                    )
+                    with self.assertRaisesRegex(ValueError, "multi_agent_v1"):
+                        verify_prompt_surface(executor, target, entry)
 
     def test_actual_bootstrap_stages_identical_diff_and_never_stages_curator_checks(self) -> None:
         plan = self.plan()
@@ -225,13 +400,55 @@ class MatchedBenchmarkTests(unittest.TestCase):
         ]
         for name, events in (("parent", root), ("child", child)):
             (sessions / f"{name}.jsonl").write_text("\n".join(map(json.dumps, events)) + "\n")
-        trace = json.dumps({"type": "thread.started", "thread_id": "parent"})
+        trace = "\n".join(
+            map(
+                json.dumps,
+                [
+                    {"type": "thread.started", "thread_id": "parent"},
+                    {"type": "turn.started"},
+                    {
+                        "type": "item.completed",
+                        "item": {
+                            "type": "collab_tool_call",
+                            "tool": "spawn_agent",
+                            "status": "completed",
+                            "sender_thread_id": "parent",
+                            "receiver_thread_ids": ["child"],
+                        },
+                    },
+                    {
+                        "type": "item.completed",
+                        "item": {
+                            "type": "collab_tool_call",
+                            "tool": "wait",
+                            "status": "completed",
+                            "sender_thread_id": "parent",
+                            "receiver_thread_ids": ["child"],
+                            "agents_states": {"child": {"status": "completed"}},
+                        },
+                    },
+                    {"type": "turn.completed"},
+                ],
+            )
+        )
         observed = observe_trace(trace, self.root, include_worker_result=True)
         self.assertEqual(
             worker_output(entry, plan, observed), ("Check the transaction.", "observed")
         )
         calls = observed["session_dispatch_evidence"]["spawn_calls"]
         self.assertTrue(handoff_matches(entry, observed, calls))
+        no_wait = observe_trace(
+            "\n".join(line for line in trace.splitlines() if '"tool": "wait"' not in line),
+            self.root,
+            include_worker_result=True,
+        )
+        self.assertFalse(handoff_matches(entry, no_wait, calls))
+        child[0]["payload"].pop("subagent_history_start_ordinal")
+        child.pop(1)  # A no-fork worker has no inherited records.
+        (sessions / "child.jsonl").write_text("\n".join(map(json.dumps, child)) + "\n")
+        no_fork = observe_trace(trace, self.root, include_worker_result=True)
+        self.assertTrue(handoff_matches(entry, no_fork, calls))
+        self.assertEqual(worker_output(entry, plan, no_fork)[1], "observed")
         self.assertFalse(handoff_matches(entry, observed, [{**invocation, "fork_context": True}]))
         worker = observed["session_dispatch_evidence"]["observations"][0]
         worker["worker_inputs"] = ["Paraphrased brief"]

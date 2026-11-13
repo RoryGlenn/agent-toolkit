@@ -13,7 +13,7 @@ from typing import Any
 
 from benchmarks.cases import CASES, get_case, materialize
 from benchmarks.files import hashes, snapshot
-from benchmarks.oracles import Grade
+from benchmarks.oracles import Grade, seed_upgrade
 from benchmarks.process import Executor, TrustedControlExecutor
 from benchmarks.runtime import fingerprint
 
@@ -159,6 +159,8 @@ def comparison_case(case_id: str) -> ComparisonCase:
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory) / "workspace"
             materialize(workspace, case)
+            if case.id == "docs-hard":
+                seed_upgrade(workspace / "upgrade.sqlite")
             files = snapshot(workspace)
         return ComparisonCase(case_id, "recordbatch", case.task, files, files, case.review)
 
@@ -216,7 +218,17 @@ def comparison_case(case_id: str) -> ComparisonCase:
             "daily-total key, and callback failures. Add a focused regression test."
         )
         files = {"invoice.py": LEGACY.encode()}
-        return ComparisonCase(case_id, "legacy", prompt, files, files)
+        return ComparisonCase(
+            case_id,
+            "legacy",
+            prompt,
+            files,
+            files,
+            (
+                "The submitted regression test exercises the requested behavior and "
+                "would fail on the original code. Existing behavior is preserved.",
+            ),
+        )
 
     if case_id == "routine-label":
         files = {"labels.py": ROUTINE.encode()}
@@ -263,10 +275,11 @@ def grade_fixture(case: ComparisonCase, workspace: Path, executor: Executor) -> 
         )
         expected = True
     else:
-        expected_label = ROUTINE.replace("Pending", "Queued")
         source = (
-            "from pathlib import Path\nimport json\n"
-            f'print(json.dumps(Path("labels.py").read_text() == {expected_label!r}))'
+            "import ast, json\nfrom pathlib import Path\n"
+            'tree = ast.parse(Path("labels.py").read_text())\n'
+            'expected = ast.parse("LABEL = \\"Queued jobs\\"")\n'
+            "print(json.dumps(ast.dump(tree) == ast.dump(expected)))"
         )
         expected = True
     result = executor.execute([python, "-B", "-c", source], workspace)
@@ -313,11 +326,10 @@ def demo_controls() -> dict[str, dict[str, Any]]:
     return out
 
 
-def comparison_controls() -> list[dict[str, Any]]:
+def comparison_controls(selection: set[str] | None = None) -> list[dict[str, Any]]:
     """Qualify the additional repository-owned fixture oracles without model access."""
-    demo_controls()
     controls = []
-    for case_id in sorted(EXTRA_CASES):
+    for case_id in sorted(EXTRA_CASES if selection is None else EXTRA_CASES & selection):
         case = comparison_case(case_id)
         reference = case.files
         if case.family == "ledger":

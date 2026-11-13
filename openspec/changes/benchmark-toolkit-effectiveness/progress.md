@@ -16,6 +16,21 @@ Tracked in [issue #25](https://github.com/RoryGlenn/agent-toolkit/issues/25).
   The public report is a structured projection. It excludes raw output and
   free-form grading evidence, which can be reviewed and excerpted separately.
 
+## Independent review
+
+Review and verification identified native catalog, no-fork worker, permission
+denial, and grading gaps. The updated runner checks the actual project catalog,
+recognizes native read-only errors, and requires a verifiable coordinator handoff,
+worker turn, and matched brief. The generic worker has neutral instructions to
+avoid inheriting the coordinator role. Provider and tool-surface failures stay
+separate from task scores. Legacy regression tests and review judgments require
+their own evidence.
+
+Controlled per-role runs target the direct-tool native V1 profile. The bundled
+model catalog and actual prompt tool surface are checked before execution. A
+version with a different worker protocol or missing native traces remains
+unqualified for controlled role results.
+
 ## Live results
 
 The four scheduled SQLite demo slots reached native preflight on the managed
@@ -24,7 +39,7 @@ its loopback NETLINK_ROUTE socket. The host stopped before authentication was
 staged or any model was invoked. Both pairs remain incomplete, with no
 measured quality, dispatch, latency, or usage results.
 
-The next evidence milestone is to run the demo and calibration on a signed-in
-Codex CLI host that passes the native checks. Curate private held-out cases and
-freeze the study after calibration. This change can publish the demo and
-methodology now. Quantitative claims need the later run and independent grades.
+The live study is tracked in [issue #27](https://github.com/RoryGlenn/agent-toolkit/issues/27).
+Run the demo and calibration on a signed-in Codex CLI host that passes the native
+checks. Curate private held-out cases and freeze the study after calibration.
+Quantitative claims need that run and independent grades.

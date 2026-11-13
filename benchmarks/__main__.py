@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 import re
 import shutil
@@ -16,14 +15,17 @@ from typing import Any
 
 from benchmarks.cases import CASES, REPOSITORY, SEQUEL, get_case, materialize
 from benchmarks.comparison import (
+    GENERIC_ROLE,
     ROLE_ARMS,
     attempt_directory,
     case_for,
+    catalog_skill_paths,
     comparison_plan,
     handoff_matches,
     host_identity,
     product_snapshot,
     read_held_out,
+    require_role_protocol,
     stage_demo_pair,
     stage_match,
     verify_comparison_plan,
@@ -40,7 +42,7 @@ from benchmarks.comparison_cases import (
     grade_fixture,
 )
 from benchmarks.comparison_report import export_reviews, markdown_report, matched_report
-from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot
+from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot, write_new_regular
 from benchmarks.oracles import Grade, Oracle, artifact_hashes
 from benchmarks.process import TrustedControlExecutor, bounded_process
 from benchmarks.runtime import (
@@ -58,6 +60,8 @@ from benchmarks.runtime import (
     stage_runtime,
     toolkit_manifest,
 )
+
+COLLABORATION_NAMESPACES = {"collaboration", "multi_agent_v1"}
 
 
 def write_json(path: Path, data: Any) -> None:
@@ -140,12 +144,14 @@ def make_plan(
     }
 
 
-def validate_controls() -> dict[str, Any]:
+def validate_controls(selection: set[str] | None = None) -> dict[str, Any]:
     """Run trusted reference and deliberately wrong controls without model access."""
     results = []
     with tempfile.TemporaryDirectory(prefix="toolkit-controls-") as directory:
         root = Path(directory)
         for case in CASES:
+            if selection is not None and case.id not in selection:
+                continue
             for phase in (1, 2) if case.id == "design-hard" else (1,):
                 controls = {}
                 for control in ("reference", "wrong"):
@@ -171,6 +177,18 @@ def validate_controls() -> dict[str, Any]:
         "validated": all(result["validated"] for result in results),
         "cases": results,
     }
+
+
+def verify_campaign_controls(plan: dict[str, Any]) -> None:
+    """Require built-in controls for the scheduled cases before model execution."""
+    if plan.get("held_out"):
+        return  # Curator-qualified controls are bound in every held-out case.
+    selected = {entry["case_id"] for entry in plan["entries"]}
+    validated = validate_controls(selected)["cases"] + comparison_controls(selected)
+    if {proof["case_id"] for proof in validated if proof["validated"]} != selected or not all(
+        proof["validated"] for proof in validated
+    ):
+        raise ValueError("benchmark reference and wrong controls did not qualify")
 
 
 def read_plan(path: Path) -> dict[str, Any]:
@@ -379,6 +397,14 @@ def verify_prompt_surface(
             "send_message",
             "spawn_agent",
             "wait_agent",
+            "close_agent",
+        },
+        "multi_agent_v1": {
+            "spawn_agent",
+            "send_input",
+            "resume_agent",
+            "wait_agent",
+            "close_agent",
         },
     }
     allowed_nested = {
@@ -392,9 +418,15 @@ def verify_prompt_surface(
         "clock__curr_time",
     }
     exposed: list[str] = []
+    direct_tools = {"exec_command", "write_stdin", "apply_patch", "view_image", "update_plan"}
     for item in value:
         for namespace in item.get("tools", []):
             name = namespace.get("name")
+            if entry is not None and namespace.get("type") in {"function", "custom"}:
+                if name not in direct_tools:
+                    raise ValueError(f"unapproved direct tool in actual prompt: {name}")
+                exposed.append(name)
+                continue
             if name not in allowed_top or namespace.get("type") != "namespace":
                 raise ValueError(f"unapproved tool namespace in actual prompt: {name}")
             for tool in namespace.get("tools", []):
@@ -407,7 +439,7 @@ def verify_prompt_surface(
                     if not nested or not nested <= allowed_nested:
                         raise ValueError(f"unapproved nested tool surface: {sorted(nested)}")
                     exposed += sorted(nested)
-    if "functions.exec" not in exposed:
+    if "functions.exec" not in exposed and (entry is None or "exec_command" not in exposed):
         raise ValueError("actual tool catalog is missing; cannot verify surface")
     text = json.dumps(value)
     forbidden = [
@@ -431,17 +463,25 @@ def verify_prompt_surface(
             raise ValueError("actual project guidance did not match the comparison arm")
         if "AGENT_TOOLKIT:START" in body and not has_project_block:
             raise ValueError("unexpected toolkit project instructions in comparison")
-        for path in staged:
-            if path.endswith("/SKILL.md") and str(executor.workspace / path) not in body:
-                raise ValueError(f"expected staged skill is missing from prompt: {path}")
+        expected_skills = {
+            str(executor.workspace / path) for path in staged if path.endswith("/SKILL.md")
+        }
+        if catalog_skill_paths(body) != expected_skills:
+            raise ValueError("actual skill catalog did not match the comparison arm")
         tools = [
             tool
             for item in value
             for namespace in item.get("tools", [])
             for tool in namespace.get("tools", [])
-            if namespace.get("name") == "collaboration" and tool.get("name") == "spawn_agent"
+            if namespace.get("name") in COLLABORATION_NAMESPACES
+            and tool.get("name") == "spawn_agent"
         ]
-        available = set(ROLE_CASES).intersection(
+        if entry["arm"] in ROLE_ARMS[1:] and "multi_agent_v1.spawn_agent" not in exposed:
+            raise ValueError(
+                "controlled worker runs require Codex native multi_agent_v1; "
+                "choose a direct-tool V1 model available to your Codex client"
+            )
+        available = ({*ROLE_CASES, GENERIC_ROLE}).intersection(
             re.findall(r"[a-z]+(?:_[a-z]+)+", json.dumps(tools))
         )
         expected_roles = {
@@ -451,7 +491,8 @@ def verify_prompt_surface(
         }
         if available != expected_roles:
             raise ValueError("actual named roles did not match the comparison arm")
-        if ("collaboration.spawn_agent" in exposed) != (entry["arm"] != "single-agent"):
+        spawn = any(f"{namespace}.spawn_agent" in exposed for namespace in COLLABORATION_NAMESPACES)
+        if spawn != (entry["arm"] != "single-agent"):
             raise ValueError("actual delegation surface did not match the comparison arm")
     # Prompt-input exposes messages/catalog, not a cryptographic guarantee about every tool.
     # The actual permissions and command/network canaries are verified independently.
@@ -505,9 +546,8 @@ def run_attempt(
         if auth_source is None or not auth_source.is_file() or auth_source.is_symlink():
             raise ValueError("run requires --auth-source selecting a regular Codex auth.json")
         if matched:
-            descriptor = os.open(credential, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-            with os.fdopen(descriptor, "wb") as output:
-                output.write(read_regular(auth_source))
+            # macOS paths may include /var -> /private/var; read_regular rejects aliases.
+            write_new_regular(credential, read_regular(auth_source.resolve(strict=True)))
             executor.preflight(
                 [root / "outside-canary.txt", credential], writable=not entry["read_only"]
             )
@@ -546,20 +586,39 @@ def run_attempt(
         (root / "trace.jsonl").write_text(execution.stdout)
         (root / "stderr.txt").write_text(execution.stderr)
         delegated = matched and entry["arm"] in ROLE_ARMS[1:]
-        observed = (
-            observe_trace(execution.stdout, root / "client-home", include_worker_result=True)
-            if delegated
-            else observe_trace(execution.stdout, root / "client-home")
+        observed = observe_trace(
+            execution.stdout,
+            root / "client-home",
+            include_worker_result=matched,
+            workspace=executor.workspace if matched else None,
         )
+        native_settings = observed["session_dispatch_evidence"].pop("root_settings", [])
+        if matched:
+            result["root_settings_status"] = (
+                "observed"
+                if native_settings
+                and all(
+                    row == {"model": plan["model"], "effort": plan["effort"]}
+                    for row in native_settings
+                )
+                else "mismatched"
+                if native_settings
+                else "unverified"
+            )
         direct_answer = None
+        calls = observed["session_dispatch_evidence"].pop("spawn_calls", [])
         if delegated:
             direct_answer, result["dispatch_status"] = worker_output(entry, plan, observed)
-            calls = observed["session_dispatch_evidence"].pop("spawn_calls", [])
             if direct_answer is not None and not handoff_matches(entry, observed, calls):
                 direct_answer, result["dispatch_status"] = None, "coordinator_handoff_unverified"
-            for event in observed["session_dispatch_evidence"]["observations"]:
-                event.pop("worker_output", None)
-                event.pop("worker_inputs", None)
+            workers = observed["session_dispatch_evidence"]["observations"]
+            observed["archive_startup_exit_codes"] = (
+                workers[0].get("archive_startup_exit_codes", []) if direct_answer else []
+            )
+        for event in observed["session_dispatch_evidence"]["observations"]:
+            event.pop("worker_output", None)
+            event.pop("worker_inputs", None)
+        observed.pop("coordinator_worker", None)
         result.update(observed)
         result["budget_accounting"] = {
             "limit_weighted_units": plan["budget_units"],
@@ -573,6 +632,8 @@ def run_attempt(
         result["status"] = (
             "timed_out"
             if execution.timed_out
+            else "runtime_error"
+            if matched and (execution.returncode or not observed["native_turn_completed"])
             else "failed"
             if execution.returncode != 0 or execution.output_limited
             else "completed"
@@ -592,6 +653,14 @@ def run_attempt(
             return result
         result["artifact_hashes"] = hashes(frozen)
         copy_snapshot(frozen, root / "artifact")
+        if (
+            matched
+            and result["status"] == "completed"
+            and entry["read_only"]
+            and result["artifact_hashes"] != entry["product_hashes"]
+        ):
+            result["status"] = "failed"
+            result["invalid_product"] = "read-only product differs from the starting fixture"
         if matched and result["status"] == "completed":
             if delegated and direct_answer is None:
                 result["status"] = "dispatch_unverified"
@@ -624,9 +693,12 @@ def run_attempt(
             elif matched and entry["family"] != "recordbatch":
                 case = case_for(entry["case_id"], plan.get("held_out"))
                 grade = grade_fixture(case, grading, grading_executor)
-                if case.read_only and result["artifact_hashes"] != entry["product_hashes"]:
-                    grade.failures.append("read-only product differs from the starting fixture")
-                    grade.status = "failed"
+                if case.family == "release" and int(case.id == "release-broken") not in result.get(
+                    "archive_startup_exit_codes", []
+                ):
+                    result["archive_verification"] = "unverified"
+                elif case.family == "release":
+                    result["archive_verification"] = "observed"
                 if case.family == "routine" and set(frozen) != set(entry["product_hashes"]):
                     grade.failures.append("routine change added unrelated files")
                     grade.status = "failed"
@@ -635,7 +707,12 @@ def run_attempt(
                     grading, get_case(entry["case_id"]), grading_executor, entry["phase"]
                 ).run()
             result["grade"] = grade.to_dict()
-            result["status"] = grade.status
+            result["status"] = (
+                "verification_unverified"
+                if grade.status == "needs_review"
+                and result.get("archive_verification") == "unverified"
+                else grade.status
+            )
     except Exception as error:
         result["status"] = "setup_error" if "execution" not in result else "harness_error"
         result["error"] = f"{type(error).__name__}: {error}"
@@ -689,6 +766,9 @@ def objective_outcome(result: dict[str, Any]) -> bool | None:
         or grade.get("harness_error") is not None
         or grade.get("status") not in {"passed", "needs_review"}
         or result.get("status") != grade["status"]
+        and not (
+            result.get("status") == "verification_unverified" and grade["status"] == "needs_review"
+        )
     ):
         raise ValueError("incomplete or inconsistent passing grade evidence")
     return True
@@ -1025,6 +1105,9 @@ def main() -> None:
                         "matched comparisons define their own arms and resource profile"
                     )
                 pilot = matched == "pilot"
+                codex = resolve_codex(arguments.codex)
+                if pilot or matched == "role":
+                    require_role_protocol(codex, arguments.model)
                 plan = comparison_plan(
                     "toolkit" if pilot else matched,
                     arguments.case or [],
@@ -1035,7 +1118,7 @@ def main() -> None:
                     arguments.attempts if arguments.attempts is not None else (2 if pilot else 1),
                     arguments.budget_units,
                     arguments.include_single_agent,
-                    host_identity(resolve_codex(arguments.codex)),
+                    host_identity(codex),
                     pilot=pilot,
                     held_out=read_held_out(arguments.held_out) if arguments.held_out else None,
                 )
@@ -1069,6 +1152,8 @@ def main() -> None:
             codex = resolve_codex(arguments.codex)
             if plan["version"] == 2 and host_identity(codex) != plan["host"]:
                 raise ValueError("host or CLI identity differs from the frozen plan")
+            if plan["version"] == 2:
+                verify_campaign_controls(plan)
             initialize_campaign(arguments.output, plan)
             for index, entry in enumerate(plan["entries"]):
                 root = arguments.output.resolve() / attempt_directory(index, entry)

@@ -25,12 +25,17 @@ bug. Measuring review quality requires completing and grading the two reviews.
 ### Run a sealed campaign
 
 Use a signed-in Codex CLI on a Linux or macOS host where the native preflight passes.
-Run these commands from the toolkit checkout, replacing `MODEL` and the auth path
-with your selected model and regular Codex auth file:
+Run these commands from the toolkit checkout, replacing the auth path with
+your regular Codex auth file. The example requires access to `gpt-5.5`, a
+direct-tool V1 model in the bundled Codex CLI 0.167 catalog. Controlled role
+and calibration campaigns use that protocol for verbatim handoff and
+worker-result verification. Model access varies across accounts. Use the
+manual demo for other models or qualify their live prompt surface before
+relying on automated comparison output.
 
 ```bash
 python3 -m benchmarks validate --matched
-python3 -m benchmarks plan --comparison demo --model MODEL \
+python3 -m benchmarks plan --comparison demo --model gpt-5.5 \
   --output .benchmark-runs/demo-plan.json
 python3 -m benchmarks run .benchmark-runs/demo-plan.json \
   --auth-source /absolute/path/to/codex/auth.json --output .benchmark-runs/demo
@@ -57,7 +62,9 @@ Use `--case ID` to select public cases within a track and `--attempts N` for
 fresh repetitions. The [role case matrix](comparison_cases.py) contains two
 public tasks for each of the seven named roles. The default project install uses
 the normal bootstrap. Named-worker arms expose only the selected role and its
-required runtime skill guidance. Root coordination is matched between
+required runtime skill guidance. The generic arm uses a neutral local Codex role
+with no toolkit guidance. Its instructions replace the coordinator's handoff
+instructions when Codex starts the child. Root coordination is matched between
 generic and named workers. Grades come from the frozen product or direct worker
 response. Missing native dispatch, settings, handoff, or worker output leaves a
 delegated result unverified.
@@ -84,7 +91,17 @@ Keep public cases exploratory. After calibration, use a private
 `--held-out MANIFEST.json` with `--comparison toolkit` or `--comparison role`.
 Each `cases` entry has a unique case ID and `prompt`, `files` (path to base text),
 `diff` (path to changed text, or an empty object), `rubric`, `cluster`, and
-`read_only`. Keep graders' expected behavior in the rubric. Use distinct
+`read_only`, plus `controls` for the correct and deliberately wrong sample.
+For each control record its `evidence_sha256` and `pass` verdict under
+`reference` and `wrong`. Add the private receipt
+`controls/CASE-ID/reference.json` or `controls/CASE-ID/wrong.json` beside the
+manifest. Each receipt binds `case_id`, `case_fingerprint`, and two independent
+`scores` with verdicts and evidence. Calculate the case fingerprint over the
+case object without its `controls` key, and the receipt fingerprint over its
+full JSON object. Use `benchmarks.runtime.fingerprint` for both. The runner
+validates the recorded verdicts and identities and executes the built-in
+control pairs before model runs from the public cases.
+Keep graders' expected behavior in the rubric. Use distinct
 project or case-family cluster labels for independent groups. The `analysis`
 object sets `minimum_effect` (a success-rate fraction), `min_clusters`,
 `alpha: 0.05`, and `claim_count` (the number of predeclared comparisons).
@@ -99,7 +116,8 @@ weight across repetitions and resample clusters. Improvement flags require
 eligible evidence and the same conclusion under unfavorable missing outcomes.
 With incomplete child telemetry, run-wide tokens and price stay unavailable.
 Keep the campaign directory, credentials, raw outputs, and review inputs private.
-The structured report omits raw traces, free-form judgments, and reviewer identities.
+The structured report omits raw traces, free-form judgments, reviewer identities,
+and held-out case names and product paths.
 Check the report and any excerpts before sharing them. No live improvement
 is claimed by the deterministic checks.
 
