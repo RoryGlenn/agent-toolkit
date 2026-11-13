@@ -1,5 +1,110 @@
 # Public development benchmark
 
+## Matched Codex comparisons
+
+### One-file review demo
+
+From the toolkit checkout on Ubuntu or macOS, with Python 3.11 or newer and Git:
+
+```bash
+python3 -m benchmarks demo --output .benchmark-runs/sqlite-demo
+```
+
+Review `stock/workspace` and `default-toolkit/workspace` under the output directory
+in separate fresh Codex sessions. Use a Codex profile free of personal toolkit
+instructions, the same model and effort, and read-only workspace access. Send
+exactly **Review this diff.** in both sessions. Use `--case rollback-clean` and
+a new output directory to repeat the review with the clean patch.
+
+After completing both reviews, run `python3 -m benchmarks demo-check`. The original
+and clean variant leave zero rows after rollback. The refactor leaves one
+because `executescript()` commits the caller's pending transaction in SQLite
+legacy transaction mode. All three pass the startup check. The fixture proves the
+bug. Measuring review quality requires completing and grading the two reviews.
+
+### Run a sealed campaign
+
+Use a signed-in Codex CLI on a Linux or macOS host where the native preflight passes.
+Run these commands from the toolkit checkout, replacing `MODEL` and the auth path
+with your selected model and regular Codex auth file:
+
+```bash
+python3 -m benchmarks validate --matched
+python3 -m benchmarks plan --comparison demo --model MODEL \
+  --output .benchmark-runs/demo-plan.json
+python3 -m benchmarks run .benchmark-runs/demo-plan.json \
+  --auth-source /absolute/path/to/codex/auth.json --output .benchmark-runs/demo
+python3 -m benchmarks export-reviews .benchmark-runs/demo \
+  --output .benchmark-runs/demo-review-packets
+python3 -m benchmarks report .benchmark-runs/demo
+```
+
+The planner pins the CLI, interpreter, Git, and host identity. It defaults to
+medium effort and 180 seconds for each matched session. `run` generates a private
+schedule and results directory, including Markdown and JSON reports. A setup
+failure keeps its slot and does not start a model. Use `prepare PLAN --index N
+--output NEW_DIRECTORY` to inspect a staged slot without starting it.
+
+| Study | Plan options | Compared setups |
+| --- | --- | --- |
+| Minimal review | `--comparison demo` | Stock Codex with native agents available, default project bootstrap |
+| Whole toolkit | `--comparison toolkit` | Same setups across implementation, data, review, and routine work |
+| Explicit single-agent control | `--comparison toolkit --include-single-agent` | Also run stock Codex with child agents disabled |
+| Individual role | `--comparison role --role NAME` | Single-agent Codex, generic worker, and named worker |
+| Calibration | `--comparison pilot` | 40 planned root sessions across toolkit, reviewer, and DDIA comparisons |
+
+Use `--case ID` to select public cases within a track and `--attempts N` for
+fresh repetitions. The [role case matrix](comparison_cases.py) contains two
+public tasks for each of the seven named roles. The default project install uses
+the normal bootstrap. Named-worker arms expose only the selected role and its
+required runtime skill guidance. Root coordination is matched between
+generic and named workers. Grades come from the frozen product or direct worker
+response. Missing native dispatch, settings, handoff, or worker output leaves a
+delegated result unverified.
+
+### Grade and interpret the results
+
+Send the exported review packets to independent graders. The packets contain
+randomized IDs, the prompt, the original diff where applicable, frozen outputs,
+and the grading instructions. Keep the campaign directory and assignment key
+with the curator. Worker prose may still reveal a chosen workflow, so record
+that if it happens. Use `report RUN --reviews REVIEWS.json --output REPORT.json`
+to bind judgments to the sealed submissions and regenerate the report.
+
+The review file maps each packet ID to `scores`, an array of objects with
+`reviewer`, `pass`, and `evidence`. The `evidence` should explain why the frozen
+submission meets or misses the rubric. For the SQLite seeded diff also include
+`flags` with `caught_regression`, `false_positive`, and `safe_correction`. For the
+clean diff include `flags` with `false_positive`. The verdict must agree with
+these flags. A seeded review passes when it catches the regression, supplies a
+safe correction, and avoids false positives. A clean review passes when it
+avoids false positives.
+
+Keep public cases exploratory. After calibration, use a private
+`--held-out MANIFEST.json` with `--comparison toolkit` or `--comparison role`.
+Each `cases` entry has a unique case ID and `prompt`, `files` (path to base text),
+`diff` (path to changed text, or an empty object), `rubric`, `cluster`, and
+`read_only`. Keep graders' expected behavior in the rubric. Use distinct
+project or case-family cluster labels for independent groups. The `analysis`
+object sets `minimum_effect` (a success-rate fraction), `min_clusters`,
+`alpha: 0.05`, and `claim_count` (the number of predeclared comparisons).
+The report requires two independent held-out judgments. When they disagree,
+include `adjudication` with a third reviewer's verdict and evidence.
+Set the study size, sample provenance, minimum useful effect, and aggregate
+budget before reviewing any held-out outputs.
+
+The report keeps all scheduled attempts, false positives, comparison outcomes,
+latency, and observed usage visible. Held-out estimates give each task equal
+weight across repetitions and resample clusters. Improvement flags require
+eligible evidence and the same conclusion under unfavorable missing outcomes.
+With incomplete child telemetry, run-wide tokens and price stay unavailable.
+Keep the campaign directory, credentials, raw outputs, and review inputs private.
+The structured report omits raw traces, free-form judgments, and reviewer identities.
+Check the report and any excerpts before sharing them. No live improvement
+is claimed by the deterministic checks.
+
+## Historical development suite
+
 This is a runnable, twelve-task development benchmark for the toolkit's three book-based
 specialists and integrated workflow. It measures objective task behavior separately from
 independent design/documentation review. The cases are public, small and deliberately

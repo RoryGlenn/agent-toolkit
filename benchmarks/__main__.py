@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import re
 import shutil
@@ -14,8 +15,33 @@ from pathlib import Path
 from typing import Any
 
 from benchmarks.cases import CASES, REPOSITORY, SEQUEL, get_case, materialize
+from benchmarks.comparison import (
+    ROLE_ARMS,
+    attempt_directory,
+    case_for,
+    comparison_plan,
+    handoff_matches,
+    host_identity,
+    product_snapshot,
+    read_held_out,
+    stage_demo_pair,
+    stage_match,
+    verify_comparison_plan,
+    verify_product_permissions,
+    verify_treatment,
+    worker_output,
+)
+from benchmarks.comparison_cases import (
+    DEMO_CASES,
+    REVIEW_PROMPT,
+    ROLE_CASES,
+    comparison_controls,
+    demo_controls,
+    grade_fixture,
+)
+from benchmarks.comparison_report import export_reviews, markdown_report, matched_report
 from benchmarks.files import copy_snapshot, hashes, read_regular, snapshot
-from benchmarks.oracles import Oracle, artifact_hashes
+from benchmarks.oracles import Grade, Oracle, artifact_hashes
 from benchmarks.process import TrustedControlExecutor, bounded_process
 from benchmarks.runtime import (
     ARMS,
@@ -150,7 +176,7 @@ def validate_controls() -> dict[str, Any]:
 def read_plan(path: Path) -> dict[str, Any]:
     """Reject stale task/resource plans before any actor execution."""
     plan: dict[str, Any] = json.loads(path.read_text())
-    if plan.get("version") != 1 or not plan.get("entries"):
+    if plan.get("version") not in {1, 2} or not plan.get("entries"):
         raise ValueError("invalid plan")
     verify_plan(plan)
     return plan
@@ -158,6 +184,9 @@ def read_plan(path: Path) -> dict[str, Any]:
 
 def verify_plan(plan: dict[str, Any]) -> None:
     """Bind each preparation to the frozen task, source, toolkit and parent artifact."""
+    if plan.get("version") == 2:
+        verify_comparison_plan(plan)
+        return
     if not plan.get("harness_fingerprint"):
         raise ValueError("plan lacks a harness fingerprint; create a new plan")
     if harness_fingerprint() != plan["harness_fingerprint"]:
@@ -188,6 +217,16 @@ def copy_project(source: Path, destination: Path) -> None:
 def prepare(plan: dict[str, Any], entry: dict[str, Any], root: Path) -> dict[str, Any]:
     """Stage one arm with all mutable actor paths separate from trusted control files."""
     verify_plan(plan)
+    if plan["version"] == 2:
+        root.mkdir(parents=True, exist_ok=False, mode=0o700)
+        result = {
+            **attempt_metadata(plan, entry),
+            **stage_match(plan, entry, root),
+            "status": "prepared",
+        }
+        (root / "outside-canary.txt").write_text("controller-private")
+        write_json(root / "result.json", result)
+        return result
     root.mkdir(parents=True, exist_ok=False)
     workspace = root / "workspace"
     actor_home = root / "actor-home"
@@ -288,7 +327,9 @@ def create_executor(root: Path, codex: Path, workspace: Path | None = None) -> N
     return executor
 
 
-def preflight(executor: NativeExecutor, root: Path) -> list[dict[str, Any]]:
+def preflight(
+    executor: NativeExecutor, root: Path, entry: dict[str, Any] | None = None
+) -> list[dict[str, Any]]:
     """Test controller, source repository, client config, and personal config boundaries."""
     forbidden = [
         root / "outside-canary.txt",
@@ -298,12 +339,29 @@ def preflight(executor: NativeExecutor, root: Path) -> list[dict[str, Any]]:
     personal = Path.home() / ".codex" / "config.toml"
     if personal.is_file():
         forbidden.append(personal)
+    if entry is not None:
+        forbidden += [root / "initial.diff", root.parent / "plan.json"]
+        forbidden = [path for path in forbidden if path.exists()]
+        checks = executor.preflight(forbidden, writable=not entry["read_only"])
+        actual = executor.execute(
+            ["git", "--no-pager", "diff", "--no-ext-diff", "--no-textconv"], executor.workspace
+        )
+        if actual.returncode or actual.stdout.encode() != read_regular(root / "initial.diff"):
+            raise ValueError("sandboxed Git diff does not match the frozen fixture")
+        readonly = [Path(".git/config"), *(Path(path) for path in entry["treatment_hashes"])]
+        if entry["read_only"]:
+            readonly += [Path(path) for path in entry["product_hashes"]]
+        protected = verify_product_permissions(executor, readonly)
+        return [*checks, {"git_diff_sha256": digest(root / "initial.diff"), "protected": protected}]
     return executor.preflight(forbidden)
 
 
-def verify_prompt_surface(executor: NativeExecutor, root: Path) -> dict[str, Any]:
+def verify_prompt_surface(
+    executor: NativeExecutor, root: Path, entry: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """Inspect actual initial prompt discovery, preserving evidence and failing on contamination."""
-    command = [str(executor.codex), "debug", "prompt-input", "Read TASK.md."]
+    prompt = (root / "prompt.txt").read_text() if entry is not None else "Read TASK.md."
+    command = [str(executor.codex), "debug", "prompt-input", prompt]
     result = bounded_process(command, executor.workspace, executor.environment, timeout=60)
     (root / "prompt-surface.json").write_text(result.stdout)
     if result.returncode != 0:
@@ -359,6 +417,42 @@ def verify_prompt_surface(executor: NativeExecutor, root: Path) -> dict[str, Any
     ]
     if any(path in text for path in forbidden):
         raise ValueError("initial prompt includes forbidden host/source locations")
+    if entry is not None:
+        staged = entry["treatment_hashes"]
+        guidance = executor.workspace / "AGENTS.md"
+        body = "\n".join(
+            content["text"]
+            for item in value
+            for content in (item.get("content") or [])
+            if isinstance(content, dict) and isinstance(content.get("text"), str)
+        )
+        has_project_block = guidance.is_file() and guidance.read_text().strip() in body
+        if has_project_block != (entry["arm"] == "default-toolkit"):
+            raise ValueError("actual project guidance did not match the comparison arm")
+        if "AGENT_TOOLKIT:START" in body and not has_project_block:
+            raise ValueError("unexpected toolkit project instructions in comparison")
+        for path in staged:
+            if path.endswith("/SKILL.md") and str(executor.workspace / path) not in body:
+                raise ValueError(f"expected staged skill is missing from prompt: {path}")
+        tools = [
+            tool
+            for item in value
+            for namespace in item.get("tools", [])
+            for tool in namespace.get("tools", [])
+            if namespace.get("name") == "collaboration" and tool.get("name") == "spawn_agent"
+        ]
+        available = set(ROLE_CASES).intersection(
+            re.findall(r"[a-z]+(?:_[a-z]+)+", json.dumps(tools))
+        )
+        expected_roles = {
+            Path(path).stem.replace("-", "_")
+            for path in staged
+            if path.startswith(".codex/agents/")
+        }
+        if available != expected_roles:
+            raise ValueError("actual named roles did not match the comparison arm")
+        if ("collaboration.spawn_agent" in exposed) != (entry["arm"] != "single-agent"):
+            raise ValueError("actual delegation surface did not match the comparison arm")
     # Prompt-input exposes messages/catalog, not a cryptographic guarantee about every tool.
     # The actual permissions and command/network canaries are verified independently.
     return {
@@ -369,11 +463,9 @@ def verify_prompt_surface(executor: NativeExecutor, root: Path) -> dict[str, Any
     }
 
 
-def run_attempt(
-    plan: dict[str, Any], entry: dict[str, Any], root: Path, codex: Path, auth_source: Path | None
-) -> dict[str, Any]:
-    """Run exactly one planned attempt; retain setup errors, timeouts, and all grading evidence."""
-    result: dict[str, Any] = {
+def attempt_metadata(plan: dict[str, Any], entry: dict[str, Any]) -> dict[str, Any]:
+    """Keep the scheduled comparison identity even when preparation fails."""
+    return {
         **entry,
         "run_id": str(uuid.uuid4()),
         "plan_id": plan["plan_id"],
@@ -391,18 +483,39 @@ def run_attempt(
         "cost": None,
         "aggregate_tree_tokens": None,
     }
+
+
+def run_attempt(
+    plan: dict[str, Any], entry: dict[str, Any], root: Path, codex: Path, auth_source: Path | None
+) -> dict[str, Any]:
+    """Run exactly one scheduled attempt and retain the resulting classification."""
+    result = attempt_metadata(plan, entry)
+    matched = plan.get("version") == 2
     credential = root / "client-home" / "auth.json"
     try:
         result = prepare(plan, entry, root)
         executor = create_executor(root, codex)
         version = bounded_process([str(codex), "--version"], root, executor.environment)
         result["codex_version"] = version.stdout.strip()
-        result["isolation"] = preflight(executor, root)
+        if matched and result["codex_version"] != plan["host"]["codex_version"]:
+            raise ValueError("Codex CLI changed after the campaign started")
+        result["isolation"] = (
+            preflight(executor, root, entry) if matched else preflight(executor, root)
+        )
         if auth_source is None or not auth_source.is_file() or auth_source.is_symlink():
             raise ValueError("run requires --auth-source selecting a regular Codex auth.json")
-        shutil.copyfile(auth_source, credential)
-        credential.chmod(0o600)
-        result["prompt_surface"] = verify_prompt_surface(executor, root)
+        if matched:
+            descriptor = os.open(credential, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as output:
+                output.write(read_regular(auth_source))
+            executor.preflight(
+                [root / "outside-canary.txt", credential], writable=not entry["read_only"]
+            )
+            result["prompt_surface"] = verify_prompt_surface(executor, root, entry)
+        else:
+            shutil.copyfile(auth_source, credential)
+            credential.chmod(0o600)
+            result["prompt_surface"] = verify_prompt_surface(executor, root)
         command = [
             str(codex),
             "exec",
@@ -419,6 +532,8 @@ def run_attempt(
             "-",
         ]
         started = time.monotonic()
+        if matched:
+            (root / "actor.started").touch(exist_ok=False)
         execution = bounded_process(
             command,
             executor.workspace,
@@ -430,7 +545,22 @@ def run_attempt(
         result["execution"] = execution.to_dict()
         (root / "trace.jsonl").write_text(execution.stdout)
         (root / "stderr.txt").write_text(execution.stderr)
-        result.update(observe_trace(execution.stdout, root / "client-home"))
+        delegated = matched and entry["arm"] in ROLE_ARMS[1:]
+        observed = (
+            observe_trace(execution.stdout, root / "client-home", include_worker_result=True)
+            if delegated
+            else observe_trace(execution.stdout, root / "client-home")
+        )
+        direct_answer = None
+        if delegated:
+            direct_answer, result["dispatch_status"] = worker_output(entry, plan, observed)
+            calls = observed["session_dispatch_evidence"].pop("spawn_calls", [])
+            if direct_answer is not None and not handoff_matches(entry, observed, calls):
+                direct_answer, result["dispatch_status"] = None, "coordinator_handoff_unverified"
+            for event in observed["session_dispatch_evidence"]["observations"]:
+                event.pop("worker_output", None)
+                event.pop("worker_inputs", None)
+        result.update(observed)
         result["budget_accounting"] = {
             "limit_weighted_units": plan["budget_units"],
             "scope": "requested native tree budget; external wall deadline verified",
@@ -447,13 +577,35 @@ def run_attempt(
             if execution.returncode != 0 or execution.output_limited
             else "completed"
         )
-        frozen = snapshot(executor.workspace)
+        try:
+            if matched:
+                verify_treatment(executor.workspace, entry)
+                frozen = product_snapshot(executor.workspace, entry)
+            else:
+                frozen = snapshot(executor.workspace)
+        except (OSError, ValueError) as error:
+            if not matched:
+                raise
+            if result["status"] == "completed":
+                result["status"] = "failed"
+            result["invalid_product"] = str(error)
+            return result
         result["artifact_hashes"] = hashes(frozen)
         copy_snapshot(frozen, root / "artifact")
+        if matched and result["status"] == "completed":
+            if delegated and direct_answer is None:
+                result["status"] = "dispatch_unverified"
+            else:
+                answer = direct_answer or read_regular(root / "final.txt").decode()
+                (root / "submission.txt").write_text(answer)
+                result["submission_sha256"] = digest(root / "submission.txt")
         if result["status"] == "completed":
             # Actor loses access before the trusted grader creates its fresh sandbox workspace.
             grading = root / "grading"
-            copy_project(root / "artifact", grading)
+            if matched:
+                copy_snapshot(frozen, grading, fresh_state=True)
+            else:
+                copy_project(root / "artifact", grading)
             config = config_text(
                 grading,
                 root / "actor-home",
@@ -465,9 +617,23 @@ def run_attempt(
             (root / "client-home" / "config.toml").write_text(config)
             grading_executor = create_executor(root, codex, grading)
             result["grading_isolation"] = preflight(grading_executor, root)
-            grade = Oracle(
-                grading, get_case(entry["case_id"]), grading_executor, entry["phase"]
-            ).run()
+            if matched and entry["family"] == "held-out":
+                grade = Grade(
+                    entry["case_id"], 1, status="needs_review", needs_review=entry["rubric"]
+                )
+            elif matched and entry["family"] != "recordbatch":
+                case = case_for(entry["case_id"], plan.get("held_out"))
+                grade = grade_fixture(case, grading, grading_executor)
+                if case.read_only and result["artifact_hashes"] != entry["product_hashes"]:
+                    grade.failures.append("read-only product differs from the starting fixture")
+                    grade.status = "failed"
+                if case.family == "routine" and set(frozen) != set(entry["product_hashes"]):
+                    grade.failures.append("routine change added unrelated files")
+                    grade.status = "failed"
+            else:
+                grade = Oracle(
+                    grading, get_case(entry["case_id"]), grading_executor, entry["phase"]
+                ).run()
             result["grade"] = grade.to_dict()
             result["status"] = grade.status
     except Exception as error:
@@ -475,6 +641,8 @@ def run_attempt(
         result["error"] = f"{type(error).__name__}: {error}"
     finally:
         credential.unlink(missing_ok=True)
+        if matched:
+            root.mkdir(mode=0o700, parents=True, exist_ok=True)
         seal_result(root, result)
     return result
 
@@ -499,6 +667,8 @@ def objective_outcome(result: dict[str, Any]) -> bool | None:
         return None
     if grade["failures"]:
         return False
+    if result.get("family") == "held-out" and result.get("status") == "needs_review":
+        return None
     checks = grade.get("checks")
     commands = grade.get("commands")
     if (
@@ -524,14 +694,9 @@ def objective_outcome(result: dict[str, Any]) -> bool | None:
     return True
 
 
-def attempt_directory(index: int, entry: dict[str, Any]) -> str:
-    """Name one immutable scheduled position in a campaign."""
-    return f"{index:03d}-{entry['case_id']}-{entry['arm']}-{entry['attempt']}"
-
-
 def initialize_campaign(root: Path, plan: dict[str, Any]) -> None:
     """Save the full schedule and its digest before the first attempted execution."""
-    root.mkdir(parents=True, exist_ok=False)
+    root.mkdir(parents=True, exist_ok=False, mode=0o700)
     write_json(root / "plan.json", plan)
     (root / "plan.sha256").write_text(digest(root / "plan.json") + "\n")
 
@@ -539,9 +704,10 @@ def initialize_campaign(root: Path, plan: dict[str, Any]) -> None:
 def campaign_results(root: Path) -> list[dict[str, Any]]:
     """Reconcile every scheduled attempt and reject modified artifacts or evidence."""
     root = root.resolve()
-    if digest(root / "plan.json") != (root / "plan.sha256").read_text().strip():
+    if digest(root / "plan.json") != read_regular(root / "plan.sha256").decode().strip():
         raise ValueError("saved campaign plan changed")
-    plan = json.loads((root / "plan.json").read_text())
+    plan = json.loads(read_regular(root / "plan.json"))
+    matched = plan.get("version") == 2
     results: list[dict[str, Any]] = []
     expected_paths: set[Path] = set()
     for index, entry in enumerate(plan["entries"]):
@@ -550,55 +716,115 @@ def campaign_results(root: Path) -> list[dict[str, Any]]:
         expected_paths.add(path)
         expected = {**plan, **entry}
         expected.pop("entries")
-        expected["planned_arms"] = sorted(
-            {
-                item["arm"]
-                for item in plan["entries"]
-                if (item["case_id"], item["phase"], item["attempt"])
-                == (entry["case_id"], entry["phase"], entry["attempt"])
-            }
+        expected["planned_arms"] = (
+            entry["planned_arms"]
+            if matched
+            else sorted(
+                {
+                    item["arm"]
+                    for item in plan["entries"]
+                    if (item["case_id"], item["phase"], item["attempt"])
+                    == (entry["case_id"], entry["phase"], entry["attempt"])
+                }
+            )
         )
         if not path.exists():
             results.append({**expected, "run_id": f"not-started-{index}", "status": "not_started"})
             continue
-        result = json.loads(read_regular(path))
-        if result.get("status") == "prepared" and not (directory / "result.sha256").exists():
-            result["status"] = "interrupted_setup"
-        elif digest(path) != (directory / "result.sha256").read_text().strip():
-            raise ValueError(f"result evidence changed: {directory.name}")
-        for field in (
-            *entry,
-            "plan_id",
-            "model",
-            "effort",
-            "source_fingerprint",
-            "toolkit_package_fingerprint",
-            "harness_fingerprint",
-            "resource_profile",
-            "model_mode",
-            "wall_seconds",
-            "budget_units",
-            "attempt_cap",
-        ):
-            if result.get(field) != expected.get(field):
-                raise ValueError(f"result differs from scheduled {field}")
-        if "artifact_hashes" in result:
-            if artifact_hashes(directory / "artifact") != result["artifact_hashes"]:
-                raise ValueError("frozen result artifact changed")
-        if "grade" in result:
-            evidence_path = directory / "grade-evidence.json"
-            if (
-                digest(evidence_path) != result.get("grade_evidence_sha256")
-                or json.loads(read_regular(evidence_path)) != result["grade"]
-            ):
-                raise ValueError("grade evidence changed")
-            objective_outcome(result)
-        result["planned_arms"] = expected["planned_arms"]
+        try:
+            result = read_attempt(directory, expected, entry, matched=matched)
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            if not matched:
+                raise
+            result = {
+                **expected,
+                "run_id": f"invalid-evidence-{index}",
+                "status": "invalid_evidence",
+            }
         results.append(result)
     actual_paths = set(root.glob("*/result.json"))
     if actual_paths - expected_paths:
         raise ValueError("unscheduled result files in campaign")
     return results
+
+
+def read_attempt(
+    directory: Path,
+    expected: dict[str, Any],
+    entry: dict[str, Any],
+    *,
+    matched: bool,
+) -> dict[str, Any]:
+    """Verify evidence for one saved slot without discarding the remaining campaign."""
+    path = directory / "result.json"
+    result: dict[str, Any] = json.loads(read_regular(path))
+    checksum = directory / "result.sha256"
+    if result.get("status") == "prepared" and not checksum.exists():
+        result["status"] = (
+            "interrupted_execution"
+            if matched and (directory / "actor.started").is_file()
+            else "interrupted_setup"
+        )
+    elif digest(path) != read_regular(checksum).decode().strip():
+        raise ValueError(f"result evidence changed: {directory.name}")
+    for field in (
+        *entry,
+        "plan_id",
+        "model",
+        "effort",
+        "source_fingerprint",
+        "toolkit_package_fingerprint",
+        "harness_fingerprint",
+        "resource_profile",
+        "model_mode",
+        "wall_seconds",
+        "budget_units",
+        "attempt_cap",
+    ):
+        if result.get(field) != expected.get(field):
+            raise ValueError(f"result differs from scheduled {field}")
+    if "artifact_hashes" in result:
+        actual = (
+            hashes(snapshot(directory / "artifact", required=tuple(entry["product_hashes"])))
+            if matched
+            else artifact_hashes(directory / "artifact")
+        )
+        if actual != result["artifact_hashes"]:
+            raise ValueError("frozen result artifact changed")
+    if matched:
+        for field, filename in (
+            ("submission_sha256", "submission.txt"),
+            ("git_diff_sha256", "initial.diff"),
+        ):
+            if field in result and digest(directory / filename) != result[field]:
+                raise ValueError(f"frozen {filename} changed")
+        if (
+            result["status"] in {"passed", "needs_review"}
+            and not {
+                "submission_sha256",
+                "artifact_hashes",
+                "git_diff_sha256",
+                "grade",
+            }
+            <= result.keys()
+        ):
+            raise ValueError("matched grade lacks frozen artifact, submission, or diff")
+        if (
+            entry["arm"] in ROLE_ARMS[1:]
+            and result["status"] in {"passed", "needs_review"}
+            and result.get("dispatch_status") != "observed"
+        ):
+            raise ValueError("matched worker grade lacks observed dispatch")
+    if "grade" in result:
+        evidence_path = directory / "grade-evidence.json"
+        if (
+            digest(evidence_path) != result.get("grade_evidence_sha256")
+            or json.loads(read_regular(evidence_path)) != result["grade"]
+        ):
+            raise ValueError("grade evidence changed")
+        objective_outcome(result)
+    result["planned_arms"] = expected["planned_arms"]
+    return result
 
 
 def report(results: list[dict[str, Any]]) -> dict[str, Any]:
@@ -694,19 +920,24 @@ def report(results: list[dict[str, Any]]) -> dict[str, Any]:
 
 def add_plan_options(parser: argparse.ArgumentParser) -> None:
     """Add explicit comparison controls to planning commands."""
-    parser.add_argument("--case", action="append", choices=[case.id for case in CASES])
+    parser.add_argument("--case", action="append")
     parser.add_argument("--arm", action="append", choices=ARMS)
     parser.add_argument("--model", required=True)
-    parser.add_argument("--effort", default="high")
+    parser.add_argument("--effort")
     parser.add_argument("--profile", choices=PROFILES, default="downloaded")
     parser.add_argument("--mode", choices=("controlled", "shipped"), default="controlled")
-    parser.add_argument("--seconds", type=int, default=600)
-    parser.add_argument("--attempts", type=int, default=1)
+    parser.add_argument("--seconds", type=int)
+    parser.add_argument("--attempts", type=int)
     parser.add_argument("--budget-units", type=int)
     parser.add_argument("--source-manifest", type=Path)
     parser.add_argument("--phase", type=int, choices=(1, 2), default=1)
     parser.add_argument("--parent-result", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--comparison", choices=("demo", "toolkit", "role", "pilot"))
+    parser.add_argument("--role", choices=sorted(ROLE_CASES))
+    parser.add_argument("--include-single-agent", action="store_true")
+    parser.add_argument("--held-out", type=Path)
+    parser.add_argument("--codex", default="codex")
 
 
 def main() -> None:
@@ -718,6 +949,11 @@ def main() -> None:
     show.add_argument("case")
     validate = sub.add_parser("validate")
     validate.add_argument("--output", type=Path)
+    validate.add_argument("--matched", action="store_true")
+    sub.add_parser("demo-check")
+    demo = sub.add_parser("demo")
+    demo.add_argument("--case", choices=DEMO_CASES, default=DEMO_CASES[0])
+    demo.add_argument("--output", type=Path, required=True)
     add_plan_options(sub.add_parser("plan"))
     prepare_parser = sub.add_parser("prepare")
     prepare_parser.add_argument("plan", type=Path)
@@ -737,6 +973,10 @@ def main() -> None:
     report_parser = sub.add_parser("report")
     report_parser.add_argument("results", type=Path)
     report_parser.add_argument("--output", type=Path)
+    report_parser.add_argument("--reviews", type=Path)
+    review_parser = sub.add_parser("export-reviews")
+    review_parser.add_argument("results", type=Path)
+    review_parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
     try:
         if arguments.command == "list":
@@ -757,21 +997,65 @@ def main() -> None:
                         print(name, grade["failures"])
             if not controls["validated"]:
                 raise SystemExit(1)
+            if arguments.matched:
+                qualified = comparison_controls()
+                for case in qualified:
+                    status = "PASS" if case["validated"] else "FAIL"
+                    print(f"{case['case_id']}: {status} reference/wrong controls")
+                if not all(case["validated"] for case in qualified):
+                    raise SystemExit(1)
+        elif arguments.command == "demo-check":
+            print(json.dumps(demo_controls(), indent=2))
+        elif arguments.command == "demo":
+            stage_demo_pair(arguments.output, arguments.case)
+            print(f"\nOpen each {arguments.output}/<arm>/workspace in a fresh Codex session.")
+            print(f"Prompt: {REVIEW_PROMPT}")
         elif arguments.command == "plan":
-            plan = make_plan(
-                arguments.case or [case.id for case in CASES],
-                arguments.arm or list(ARMS),
-                arguments.model,
-                arguments.effort,
-                arguments.profile,
-                arguments.seconds,
-                arguments.attempts,
-                arguments.budget_units,
-                arguments.mode,
-                arguments.source_manifest,
-                arguments.phase,
-                arguments.parent_result,
-            )
+            matched = arguments.comparison
+            if matched:
+                if (
+                    arguments.arm
+                    or arguments.source_manifest
+                    or arguments.parent_result
+                    or arguments.phase != 1
+                    or arguments.mode != "controlled"
+                    or arguments.profile != "downloaded"
+                ):
+                    raise ValueError(
+                        "matched comparisons define their own arms and resource profile"
+                    )
+                pilot = matched == "pilot"
+                plan = comparison_plan(
+                    "toolkit" if pilot else matched,
+                    arguments.case or [],
+                    arguments.role,
+                    arguments.model,
+                    arguments.effort or "medium",
+                    arguments.seconds if arguments.seconds is not None else 180,
+                    arguments.attempts if arguments.attempts is not None else (2 if pilot else 1),
+                    arguments.budget_units,
+                    arguments.include_single_agent,
+                    host_identity(resolve_codex(arguments.codex)),
+                    pilot=pilot,
+                    held_out=read_held_out(arguments.held_out) if arguments.held_out else None,
+                )
+            else:
+                if arguments.role or arguments.held_out or arguments.include_single_agent:
+                    raise ValueError("role, held-out and single-agent options require --comparison")
+                plan = make_plan(
+                    arguments.case or [case.id for case in CASES],
+                    arguments.arm or list(ARMS),
+                    arguments.model,
+                    arguments.effort or "high",
+                    arguments.profile,
+                    arguments.seconds if arguments.seconds is not None else 600,
+                    arguments.attempts if arguments.attempts is not None else 1,
+                    arguments.budget_units,
+                    arguments.mode,
+                    arguments.source_manifest,
+                    arguments.phase,
+                    arguments.parent_result,
+                )
             if arguments.output.exists():
                 raise ValueError("refusing to overwrite an existing plan")
             write_json(arguments.output, plan)
@@ -783,20 +1067,23 @@ def main() -> None:
         elif arguments.command == "run":
             plan = read_plan(arguments.plan)
             codex = resolve_codex(arguments.codex)
+            if plan["version"] == 2 and host_identity(codex) != plan["host"]:
+                raise ValueError("host or CLI identity differs from the frozen plan")
             initialize_campaign(arguments.output, plan)
-            results = []
             for index, entry in enumerate(plan["entries"]):
-                root = (
-                    arguments.output.resolve()
-                    / f"{index:03d}-{entry['case_id']}-{entry['arm']}-{entry['attempt']}"
-                )
+                root = arguments.output.resolve() / attempt_directory(index, entry)
                 result = run_attempt(plan, entry, root, codex, arguments.auth_source)
-                results.append(result)
                 print(
                     f"{entry['case_id']} {entry['arm']} #{entry['attempt']}: {result['status']}",
                     flush=True,
                 )
-            write_json(arguments.output / "report.json", report(campaign_results(arguments.output)))
+            results = campaign_results(arguments.output)
+            if plan["version"] == 2:
+                summary = matched_report(plan, results, {}, objective_outcome)
+                (arguments.output / "report.md").write_text(markdown_report(summary))
+            else:
+                summary = report(results)
+            write_json(arguments.output / "report.json", summary)
         elif arguments.command == "grade":
             artifact_hashes(arguments.artifact)
             root = arguments.output.resolve()
@@ -825,8 +1112,28 @@ def main() -> None:
             print(grade.status)
             if grade.failures:
                 raise SystemExit(1)
-        elif arguments.command == "report":
+        elif arguments.command in {"report", "export-reviews"}:
             results = campaign_results(arguments.results)
+            plan = json.loads(read_regular(arguments.results.resolve() / "plan.json"))
+            if plan["version"] == 2:
+                if arguments.command == "export-reviews":
+                    count = export_reviews(
+                        arguments.results.resolve(), plan, results, arguments.output
+                    )
+                    print(f"Exported {count} blinded review packets.")
+                    return
+                reviews = (
+                    json.loads(read_regular(arguments.reviews.resolve()))
+                    if arguments.reviews
+                    else {}
+                )
+                summary = matched_report(plan, results, reviews, objective_outcome)
+                if arguments.output:
+                    write_json(arguments.output, summary)
+                print(markdown_report(summary), end="")
+                return
+            if arguments.command == "export-reviews" or arguments.reviews:
+                raise ValueError("blinded review packets require a matched comparison")
             summary = report(results)
             if arguments.output:
                 write_json(arguments.output, summary)

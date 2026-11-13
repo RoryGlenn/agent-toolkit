@@ -49,7 +49,12 @@ def read_regular(path: Path) -> bytes:
         os.close(descriptor)
 
 
-def snapshot(root: Path) -> dict[str, bytes]:
+def snapshot(
+    root: Path,
+    *,
+    required: tuple[str, ...] = ("recordbatch.py", "build.py", "README.md"),
+    excluded_root_entries: frozenset[str] = frozenset(),
+) -> dict[str, bytes]:
     """Traverse through held directory descriptors, rejecting every alias and special file."""
     if root.is_symlink():
         raise ValueError("symlink artifact root rejected")
@@ -60,6 +65,8 @@ def snapshot(root: Path) -> dict[str, bytes]:
     def visit(directory: int, prefix: Path) -> None:
         nonlocal total
         for name in sorted(os.listdir(directory)):
+            if prefix == Path() and name in excluded_root_entries:
+                continue
             relative = prefix / name
             metadata = os.stat(name, dir_fd=directory, follow_symlinks=False)
             if stat.S_ISLNK(metadata.st_mode):
@@ -89,7 +96,7 @@ def snapshot(root: Path) -> dict[str, bytes]:
         visit(descriptor, Path())
     finally:
         os.close(descriptor)
-    for name in ("recordbatch.py", "build.py", "README.md"):
+    for name in required:
         if name not in result:
             raise ValueError(f"required artifact missing: {name}")
     return result
