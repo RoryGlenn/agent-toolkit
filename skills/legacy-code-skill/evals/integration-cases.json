@@ -1,0 +1,41 @@
+{
+  "schema": "legacy-code-integration-cases/v1",
+  "status": "authored_not_execution_evidence",
+  "cases": [
+    {
+      "case_id": "LC11",
+      "starting_role": "legacy_code_agent",
+      "turns": [
+        "Review this hard-to-test constructor, advice only.",
+        "Now write the supplied command's short getting-started guide; no product edits.",
+        "Now compare two well-tested module boundaries by caller knowledge."
+      ],
+      "checks": [
+        "Actual relevant legacy, documentation and software-design guidance reads or real consultations on their respective turns.",
+        "No wrong-domain detour, recursive handoff, invented product behavior or edits."
+      ],
+      "shared_routing_cases": [
+        "legacy-to-docs",
+        "legacy-to-design"
+      ]
+    },
+    {
+      "case_id": "LC12",
+      "starting_role": "legacy_code_agent",
+      "variants": [
+        "Assigned read-only legacy subtask; no further domain routing.",
+        "No named legacy role, skill present; direct skill fallback.",
+        "No original source; honest source-attribution gap.",
+        "Explicit no-delegation; complete bounded available analysis."
+      ],
+      "checks": [
+        "Real trace identifies available skill reads, actual role dispatch where possible, and exact missing capabilities.",
+        "One owner, no recursive rerouting or unauthorized edits."
+      ],
+      "shared_routing_cases": [
+        "legacy-bounded-fallback",
+        "legacy-mixed-data"
+      ]
+    }
+  ]
+}

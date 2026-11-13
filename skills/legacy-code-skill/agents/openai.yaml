@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legacy Code Skill"
+  short_description: "Make bounded changes to poorly tested existing code"
+  default_prompt: "Use $legacy-code-skill to identify the relevant behavior, test boundary, and safe sequence for this change."

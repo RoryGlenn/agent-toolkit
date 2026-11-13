@@ -271,3 +271,12 @@ succeeded. The new consequential consultation control tests actual independent d
 | `skills/simplify-or-delete-skill/SKILL.md` | `e17d3a9f815484a912f18b269c1400195d72efdcb822b27661e8f94c899a42d9` |
 | `skills/software-design-skill/SKILL.md` | `dcd947d581971024c3870d1d78a95b8fced1c2a587451eeda44fe4425f34c264` |
 | `skills/task-routing-skill/SKILL.md` | `cac5c86f197b564060cd7b21ae3d43eac1089ebe335eb43a832fd57f013fbff8` |
+
+## Legacy-code extension, 2026-11-13
+
+The new optional safe-change route and its five authored cases are reassessed in
+[legacy-code.md](legacy-code.md#shared-routing-extension-reassessment). The current
+entrypoint fingerprint is recorded in adoption.json. Original routing hashes, runtime
+manifests and observations above keep their historical scope; they do not demonstrate
+new legacy routing or named-role behavior. Source-level reassessment precedes this
+fingerprint update; live isolation/effort limits and independent review remain separate.

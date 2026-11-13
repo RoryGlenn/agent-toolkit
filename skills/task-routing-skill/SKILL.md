@@ -29,6 +29,7 @@ facts about the user's product.
 | Reader-focused documentation, examples or documentation review | `documentation-skill` | `documentation_agent` |
 | Data ownership, consistency, transactions, replication, replay or recovery | `ddia-skill` | `ddia_agent` |
 | Module boundaries, API contracts and maintenance complexity | `software-design-skill` | `software_design_agent` |
+| Safe changes obstructed by missing relevant tests or hard-to-isolate dependencies | `legacy-code-skill` | `legacy_code_agent` |
 | Accepted nontrivial implementation | `issue-to-tested-pr-skill` | Its writer/reviewer/verifier workflow |
 | Independent diff review | `independent-diff-review-skill` | Its reviewer/verifier workflow |
 | Exact artifact and release verification | `release-and-docs-skill` | Available review/verification workers |
@@ -37,6 +38,11 @@ facts about the user's product.
 The seven optional `ddia-<mode>-skill` entrypoints expose the shared DDIA assess, design,
 review, validate, migrate, operate and explain procedures. Use the relevant procedure;
 do not load every entrypoint or consult every specialist.
+
+Choose legacy-code guidance for an actual change/feedback obstacle, and software-design
+guidance for a boundary or caller-contract decision. Code age or size alone does not
+establish a legacy-code task. A mixed change retains its implementation owner; legacy
+advice does not replace data-guarantee reasoning or independent verification.
 
 ## Act at the smallest useful scope
 

@@ -1,0 +1,1245 @@
+{
+  "schema": "legacy-code-source-coverage/v1",
+  "source": {
+    "title": "Working Effectively with Legacy Code",
+    "author": "Michael C. Feathers",
+    "edition": "First edition, copyright 2005",
+    "isbn": "9780132931755",
+    "source_sha256": "2878ffaa3d5a8a3c9128e1c80a90e3d93a3a21a425d0092ce63627a7963e3a1d"
+  },
+  "study": {
+    "status": "complete_for_declared_scope",
+    "scope": "All 25 chapters and 24 techniques including nested steps, appendix, glossary, preface, introduction and foreword; relevant code and substantive figures.",
+    "substantive_figures_inspected": 88,
+    "excluded_artwork": "Cover/logo artwork is nonoperational; navigation/index inventoried only.",
+    "evidence": "Private source/member/asset-bound study; see the public assessment for its separate execution limits."
+  },
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Changing Software",
+      "source_refs": [
+        "OEBPS/html/ch01.html",
+        "OEBPS/html/ch01.html#ch01",
+        "OEBPS/html/ch01.html#ch01sec1lev1",
+        "OEBPS/html/ch01.html#ch01sec2lev1",
+        "OEBPS/html/ch01.html#ch01sec2lev2",
+        "OEBPS/html/ch01.html#ch01sec2lev3",
+        "OEBPS/html/ch01.html#ch01sec2lev4",
+        "OEBPS/html/ch01.html#ch01sec1lev2"
+      ],
+      "study_status": "studied",
+      "decision": "Separate intended changes from preserved functionality",
+      "qualifications": [
+        "Refactoring can still change resource usage."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01",
+        "LC03"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 2,
+      "title": "Working with Feedback",
+      "source_refs": [
+        "OEBPS/html/ch02.html",
+        "OEBPS/html/ch02.html#ch02",
+        "OEBPS/html/ch02.html#ch02sec1lev1",
+        "OEBPS/html/ch02.html#ch02sec1lev2",
+        "OEBPS/html/ch02.html#ch02sec1lev3",
+        "OEBPS/html/ch02.html#ch02sec1lev4",
+        "OEBPS/html/ch02.html#ch02sec2lev1",
+        "OEBPS/html/ch02.html#ch02sec2lev2",
+        "OEBPS/html/ch02.html#ch02sec2lev3",
+        "OEBPS/html/ch02.html#ch02sec2lev4",
+        "OEBPS/html/ch02.html#ch02sec2lev5",
+        "OEBPS/html/ch02.html#ch02sec2lev6"
+      ],
+      "study_status": "studied",
+      "decision": "Choose useful localized feedback and a conservative bootstrap",
+      "qualifications": [
+        "Broad integration checks remain useful; historical time thresholds are not current measurements."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01",
+        "LC02"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 3,
+      "title": "Sensing and Separation",
+      "source_refs": [
+        "OEBPS/html/ch03.html",
+        "OEBPS/html/ch03.html#ch03",
+        "OEBPS/html/ch03.html#ch03sec1lev1",
+        "OEBPS/html/ch03.html#ch03sec2lev1",
+        "OEBPS/html/ch03.html#ch03sec2lev2",
+        "OEBPS/html/ch03.html#ch03sec2lev3",
+        "OEBPS/html/ch03.html#ch03sec2lev4"
+      ],
+      "study_status": "studied",
+      "decision": "Distinguish observing effects from separating dependencies",
+      "qualifications": [
+        "A fake interaction does not verify real hardware or transport."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01",
+        "LC02"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 4,
+      "title": "The Seam Model",
+      "source_refs": [
+        "OEBPS/html/ch04.html",
+        "OEBPS/html/ch04.html#ch04",
+        "OEBPS/html/ch04.html#ch04sec1lev1",
+        "OEBPS/html/ch04.html#ch04sec1lev2",
+        "OEBPS/html/ch04.html#ch04sec1lev3",
+        "OEBPS/html/ch04.html#ch04sec2lev1",
+        "OEBPS/html/ch04.html#ch04sec2lev2",
+        "OEBPS/html/ch04.html#ch04sec2lev3"
+      ],
+      "study_status": "studied",
+      "decision": "Identify the seam and its actual enabling point",
+      "qualifications": [
+        "Language, runtime, linker and preprocessing rules determine selection."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md",
+        "references/dependency-breaking.md"
+      ],
+      "evaluation_ids": [
+        "LC02",
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 5,
+      "title": "Tools",
+      "source_refs": [
+        "OEBPS/html/ch05.html",
+        "OEBPS/html/ch05.html#ch05",
+        "OEBPS/html/ch05.html#ch05sec1lev1",
+        "OEBPS/html/ch05.html#ch05sec1lev2",
+        "OEBPS/html/ch05.html#ch05sec1lev3",
+        "OEBPS/html/ch05.html#ch05sec2lev1",
+        "OEBPS/html/ch05.html#ch05sec2lev2",
+        "OEBPS/html/ch05.html#ch05sec2lev3",
+        "OEBPS/html/ch05.html#ch05sec2lev4",
+        "OEBPS/html/ch05.html#ch05sec1lev4",
+        "OEBPS/html/ch05.html#ch05sec2lev5",
+        "OEBPS/html/ch05.html#ch05sec2lev6"
+      ],
+      "study_status": "studied",
+      "decision": "Use suitable existing tools for controlled feedback",
+      "qualifications": [
+        "Historic tool examples are not supported current setup instructions."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC07"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 6,
+      "title": "I Don’t Have Much Time and I Have to Change It",
+      "source_refs": [
+        "OEBPS/html/ch06.html",
+        "OEBPS/html/ch06.html#ch06",
+        "OEBPS/html/ch06.html#ch06sec1lev1",
+        "OEBPS/html/ch06.html#ch06sec2lev1",
+        "OEBPS/html/ch06.html#ch06sec1lev2",
+        "OEBPS/html/ch06.html#ch06sec2lev2",
+        "OEBPS/html/ch06.html#ch06sec1lev3",
+        "OEBPS/html/ch06.html#ch06sec2lev3",
+        "OEBPS/html/ch06.html#ch06sec1lev4",
+        "OEBPS/html/ch06.html#ch06sec1lev5"
+      ],
+      "study_status": "studied",
+      "decision": "Choose a bounded sprout, wrapper or harness under pressure",
+      "qualifications": [
+        "Tested new behavior leaves an unexercised caller connection unproven."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC10"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 7,
+      "title": "It Takes Forever to Make a Change",
+      "source_refs": [
+        "OEBPS/html/ch07.html",
+        "OEBPS/html/ch07.html#ch07",
+        "OEBPS/html/ch07.html#ch07sec1lev1",
+        "OEBPS/html/ch07.html#ch07sec1lev2",
+        "OEBPS/html/ch07.html#ch07sec1lev3",
+        "OEBPS/html/ch07.html#ch07sec2lev1",
+        "OEBPS/html/ch07.html#ch07sec1lev4"
+      ],
+      "study_status": "studied",
+      "decision": "Measure the actual change/feedback bottleneck",
+      "qualifications": [
+        "Incremental build improvements can increase clean rebuild costs."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 8,
+      "title": "How Do I Add a Feature?",
+      "source_refs": [
+        "OEBPS/html/ch08.html",
+        "OEBPS/html/ch08.html#ch08",
+        "OEBPS/html/ch08.html#ch08sec1lev1",
+        "OEBPS/html/ch08.html#ch08sec2lev1",
+        "OEBPS/html/ch08.html#ch08sec2lev2",
+        "OEBPS/html/ch08.html#ch08sec2lev3",
+        "OEBPS/html/ch08.html#ch08sec2lev4",
+        "OEBPS/html/ch08.html#ch08sec2lev5",
+        "OEBPS/html/ch08.html#ch08sec2lev6",
+        "OEBPS/html/ch08.html#ch08sec2lev7",
+        "OEBPS/html/ch08.html#ch08sec2lev8",
+        "OEBPS/html/ch08.html#ch08sec2lev9",
+        "OEBPS/html/ch08.html#ch08sec2lev10",
+        "OEBPS/html/ch08.html#ch08sec2lev11",
+        "OEBPS/html/ch08.html#ch08sec2lev12",
+        "OEBPS/html/ch08.html#ch08sec1lev2",
+        "OEBPS/html/ch08.html#ch08sec1lev3"
+      ],
+      "study_status": "studied",
+      "decision": "Separate new feature expectations from preserved behavior",
+      "qualifications": [
+        "Check actual wiring, dispatch and current language semantics."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC03",
+        "LC10"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 9,
+      "title": "I Can’t Get This Class into a Test Harness",
+      "source_refs": [
+        "OEBPS/html/ch09.html",
+        "OEBPS/html/ch09.html#ch09",
+        "OEBPS/html/ch09.html#ch09sec1lev1",
+        "OEBPS/html/ch09.html#ch09sec1lev2",
+        "OEBPS/html/ch09.html#ch09sec1lev3",
+        "OEBPS/html/ch09.html#ch09sec1lev4",
+        "OEBPS/html/ch09.html#ch09sec1lev5",
+        "OEBPS/html/ch09.html#ch09sec1lev6",
+        "OEBPS/html/ch09.html#ch09sec1lev7"
+      ],
+      "study_status": "studied",
+      "decision": "Make construction possible with the smallest useful dependency seam",
+      "qualifications": [
+        "Replacement after construction cannot undo constructor effects."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md",
+        "references/dependency-breaking.md"
+      ],
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 10,
+      "title": "I Can’t Run This Method in a Test Harness",
+      "source_refs": [
+        "OEBPS/html/ch10.html",
+        "OEBPS/html/ch10.html#ch10",
+        "OEBPS/html/ch10.html#ch10sec1lev1",
+        "OEBPS/html/ch10.html#ch10sec1lev2",
+        "OEBPS/html/ch10.html#ch10sec1lev3"
+      ],
+      "study_status": "studied",
+      "decision": "Exercise the real behavior through a suitable public or extracted boundary",
+      "qualifications": [
+        "Loosening private access and faking vendor APIs have separate costs."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md",
+        "references/dependency-breaking.md"
+      ],
+      "evaluation_ids": [
+        "LC02",
+        "LC08"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 11,
+      "title": "I Need to Make a Change. What Methods Should I Test?",
+      "source_refs": [
+        "OEBPS/html/ch11.html",
+        "OEBPS/html/ch11.html#ch11",
+        "OEBPS/html/ch11.html#ch11sec1lev1",
+        "OEBPS/html/ch11.html#ch11sec1lev2",
+        "OEBPS/html/ch11.html#ch11sec1lev3",
+        "OEBPS/html/ch11.html#ch11sec1lev4",
+        "OEBPS/html/ch11.html#ch11sec1lev5",
+        "OEBPS/html/ch11.html#ch11sec1lev6"
+      ],
+      "study_status": "studied",
+      "decision": "Select observations by effect propagation from the planned edits",
+      "qualifications": [
+        "Account for globals, aliases, errors, repeated calls and inherited clients."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 12,
+      "title": "I Need to Make Many Changes in One Area. Do I Have to Break Dependencies for All the Classes Involved?",
+      "source_refs": [
+        "OEBPS/html/ch12.html",
+        "OEBPS/html/ch12.html#ch12",
+        "OEBPS/html/ch12.html#ch12sec1lev1",
+        "OEBPS/html/ch12.html#ch12sec2lev1",
+        "OEBPS/html/ch12.html#ch12sec2lev2",
+        "OEBPS/html/ch12.html#ch12sec1lev2",
+        "OEBPS/html/ch12.html#ch12sec1lev3"
+      ],
+      "study_status": "studied",
+      "decision": "Use a sufficient shared test boundary for related changes",
+      "qualifications": [
+        "Pinch points are edit-relative and can have bypass paths."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01",
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 13,
+      "title": "I Need to Make a Change, but I Don’t Know What Tests to Write",
+      "source_refs": [
+        "OEBPS/html/ch13.html",
+        "OEBPS/html/ch13.html#ch13",
+        "OEBPS/html/ch13.html#ch13sec1lev1",
+        "OEBPS/html/ch13.html#ch13sec1lev2",
+        "OEBPS/html/ch13.html#ch13sec1lev3",
+        "OEBPS/html/ch13.html#ch13sec1lev4"
+      ],
+      "study_status": "studied",
+      "decision": "Characterize actual behavior with discriminating edit-sensitive inputs",
+      "qualifications": [
+        "Observed defects do not become approved requirements."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC03"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 14,
+      "title": "Dependencies on Libraries Are Killing Me",
+      "source_refs": [
+        "OEBPS/html/ch14.html",
+        "OEBPS/html/ch14.html#ch14"
+      ],
+      "study_status": "studied",
+      "decision": "Own a narrow boundary around an obstructive library dependency",
+      "qualifications": [
+        "Avoid mirroring a whole vendor API without a concrete need."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 15,
+      "title": "My Application Is All API Calls",
+      "source_refs": [
+        "OEBPS/html/ch15.html",
+        "OEBPS/html/ch15.html#ch15"
+      ],
+      "study_status": "studied",
+      "decision": "Find transformations and effect policy inside API-heavy code",
+      "qualifications": [
+        "Fakes do not establish real delivery, deletion or vendor behavior."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC09"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 16,
+      "title": "I Don’t Understand the Code Well Enough to Change It",
+      "source_refs": [
+        "OEBPS/html/ch16.html",
+        "OEBPS/html/ch16.html#ch16",
+        "OEBPS/html/ch16.html#ch16sec1lev1",
+        "OEBPS/html/ch16.html#ch16sec1lev2",
+        "OEBPS/html/ch16.html#ch16sec2lev1",
+        "OEBPS/html/ch16.html#ch16sec2lev2",
+        "OEBPS/html/ch16.html#ch16sec2lev3",
+        "OEBPS/html/ch16.html#ch16sec2lev4",
+        "OEBPS/html/ch16.html#ch16sec1lev3",
+        "OEBPS/html/ch16.html#ch16sec1lev4"
+      ],
+      "study_status": "studied",
+      "decision": "Build a source-backed working explanation of unfamiliar flow",
+      "qualifications": [
+        "Scratch refactoring requires authorized write scope and isolation."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC08"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 17,
+      "title": "My Application Has No Structure",
+      "source_refs": [
+        "OEBPS/html/ch17.html",
+        "OEBPS/html/ch17.html#ch17",
+        "OEBPS/html/ch17.html#ch17sec1lev1",
+        "OEBPS/html/ch17.html#ch17sec1lev2",
+        "OEBPS/html/ch17.html#ch17sec1lev3"
+      ],
+      "study_status": "studied",
+      "decision": "Explain actual responsibilities and exceptions to the first structural story",
+      "qualifications": [
+        "An explanatory sketch alone does not justify a rewrite."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 18,
+      "title": "My Test Code Is in the Way",
+      "source_refs": [
+        "OEBPS/html/ch18.html",
+        "OEBPS/html/ch18.html#ch18",
+        "OEBPS/html/ch18.html#ch18sec1lev1",
+        "OEBPS/html/ch18.html#ch18sec1lev2"
+      ],
+      "study_status": "studied",
+      "decision": "Keep tests understandable and their production separation explicit",
+      "qualifications": [
+        "Use current project conventions rather than a historical layout mandate."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC05"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 19,
+      "title": "My Project Is Not Object Oriented. How Do I Make Safe Changes?",
+      "source_refs": [
+        "OEBPS/html/ch19.html",
+        "OEBPS/html/ch19.html#ch19",
+        "OEBPS/html/ch19.html#ch19sec1lev1",
+        "OEBPS/html/ch19.html#ch19sec1lev2",
+        "OEBPS/html/ch19.html#ch19sec1lev3",
+        "OEBPS/html/ch19.html#ch19sec1lev4",
+        "OEBPS/html/ch19.html#ch19sec1lev5"
+      ],
+      "study_status": "studied",
+      "decision": "Select procedural seams from the actual build and language",
+      "qualifications": [
+        "Check real/test link selection, ABI, lifetime and global state."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md",
+        "references/dependency-breaking.md"
+      ],
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 20,
+      "title": "This Class Is Too Big and I Don’t Want It to Get Any Bigger",
+      "source_refs": [
+        "OEBPS/html/ch20.html",
+        "OEBPS/html/ch20.html#ch20",
+        "OEBPS/html/ch20.html#ch20sec1lev1",
+        "OEBPS/html/ch20.html#ch20sec1lev2",
+        "OEBPS/html/ch20.html#ch20sec1lev3",
+        "OEBPS/html/ch20.html#ch20sec2lev1",
+        "OEBPS/html/ch20.html#ch20sec2lev2",
+        "OEBPS/html/ch20.html#ch20sec1lev4"
+      ],
+      "study_status": "studied",
+      "decision": "Extract a responsibility only when current work benefits",
+      "qualifications": [
+        "Size and method counts alone do not establish the right split."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 21,
+      "title": "I’m Changing the Same Code All Over the Place",
+      "source_refs": [
+        "OEBPS/html/ch21.html",
+        "OEBPS/html/ch21.html#ch21",
+        "OEBPS/html/ch21.html#ch21sec1lev1"
+      ],
+      "study_status": "studied",
+      "decision": "Consolidate repeated semantic responsibility while preserving useful callers",
+      "qualifications": [
+        "Byte layout, field order and exact effects can matter more than textual similarity."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 22,
+      "title": "I Need to Change a Monster Method and I Can’t Write Tests for It",
+      "source_refs": [
+        "OEBPS/html/ch22.html",
+        "OEBPS/html/ch22.html#ch22",
+        "OEBPS/html/ch22.html#ch22sec1lev1",
+        "OEBPS/html/ch22.html#ch22sec2lev1",
+        "OEBPS/html/ch22.html#ch22sec2lev2",
+        "OEBPS/html/ch22.html#ch22sec1lev2",
+        "OEBPS/html/ch22.html#ch22sec1lev3",
+        "OEBPS/html/ch22.html#ch22sec2lev3",
+        "OEBPS/html/ch22.html#ch22sec2lev4",
+        "OEBPS/html/ch22.html#ch22sec2lev5",
+        "OEBPS/html/ch22.html#ch22sec2lev6",
+        "OEBPS/html/ch22.html#ch22sec1lev4",
+        "OEBPS/html/ch22.html#ch22sec2lev7",
+        "OEBPS/html/ch22.html#ch22sec2lev8",
+        "OEBPS/html/ch22.html#ch22sec2lev9",
+        "OEBPS/html/ch22.html#ch22sec2lev10",
+        "OEBPS/html/ch22.html#ch22sec2lev11"
+      ],
+      "study_status": "studied",
+      "decision": "Protect the relevant portion of a large method before bounded extractions",
+      "qualifications": [
+        "A boolean sensing flag cannot establish counts, values or event order."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC01",
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 23,
+      "title": "How Do I Know That I’m Not Breaking Anything?",
+      "source_refs": [
+        "OEBPS/html/ch23.html",
+        "OEBPS/html/ch23.html#ch23",
+        "OEBPS/html/ch23.html#ch23sec1lev1",
+        "OEBPS/html/ch23.html#ch23sec1lev2",
+        "OEBPS/html/ch23.html#ch23sec1lev3",
+        "OEBPS/html/ch23.html#ch23sec1lev4",
+        "OEBPS/html/ch23.html#ch23sec2lev1"
+      ],
+      "study_status": "studied",
+      "decision": "Reduce bootstrap risk through focused mechanical steps and independent checking",
+      "qualifications": [
+        "Compiler success does not prove values, dispatch, effects or equivalence."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC02",
+        "LC08"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 24,
+      "title": "We Feel Overwhelmed. It Isn’t Going to Get Any Better",
+      "source_refs": [
+        "OEBPS/html/ch24.html",
+        "OEBPS/html/ch24.html#ch24"
+      ],
+      "study_status": "studied",
+      "decision": "Make feasible incremental progress under real team constraints",
+      "qualifications": [
+        "Small protected areas do not prove system-wide safety or quantified payoff."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md"
+      ],
+      "evaluation_ids": [
+        "LC10"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    },
+    {
+      "chapter": 25,
+      "title": "Dependency-Breaking Techniques",
+      "source_refs": [
+        "OEBPS/html/ch25.html",
+        "OEBPS/html/ch25.html#ch25",
+        "OEBPS/html/ch25.html#ch25sec1lev1",
+        "OEBPS/html/ch25.html#ch25sec2lev1",
+        "OEBPS/html/ch25.html#ch25sec1lev2",
+        "OEBPS/html/ch25.html#ch25sec2lev2",
+        "OEBPS/html/ch25.html#ch25sec1lev3",
+        "OEBPS/html/ch25.html#ch25sec2lev3",
+        "OEBPS/html/ch25.html#ch25sec1lev4",
+        "OEBPS/html/ch25.html#ch25sec2lev4",
+        "OEBPS/html/ch25.html#ch25sec1lev5",
+        "OEBPS/html/ch25.html#ch25sec2lev5",
+        "OEBPS/html/ch25.html#ch25sec1lev6",
+        "OEBPS/html/ch25.html#ch25sec2lev6",
+        "OEBPS/html/ch25.html#ch25sec1lev7",
+        "OEBPS/html/ch25.html#ch25sec2lev7",
+        "OEBPS/html/ch25.html#ch25sec1lev8",
+        "OEBPS/html/ch25.html#ch25sec2lev8",
+        "OEBPS/html/ch25.html#ch25sec1lev9",
+        "OEBPS/html/ch25.html#ch25sec2lev9",
+        "OEBPS/html/ch25.html#ch25sec2lev10",
+        "OEBPS/html/ch25.html#ch25sec1lev10",
+        "OEBPS/html/ch25.html#ch25sec2lev11",
+        "OEBPS/html/ch25.html#ch25sec1lev11",
+        "OEBPS/html/ch25.html#ch25sec2lev12",
+        "OEBPS/html/ch25.html#ch25sec1lev12",
+        "OEBPS/html/ch25.html#ch25sec2lev13",
+        "OEBPS/html/ch25.html#ch25sec1lev13",
+        "OEBPS/html/ch25.html#ch25sec2lev14",
+        "OEBPS/html/ch25.html#ch25sec1lev14",
+        "OEBPS/html/ch25.html#ch25sec2lev15",
+        "OEBPS/html/ch25.html#ch25sec1lev15",
+        "OEBPS/html/ch25.html#ch25sec2lev16",
+        "OEBPS/html/ch25.html#ch25sec1lev16",
+        "OEBPS/html/ch25.html#ch25sec2lev17",
+        "OEBPS/html/ch25.html#ch25sec1lev17",
+        "OEBPS/html/ch25.html#ch25sec2lev18",
+        "OEBPS/html/ch25.html#ch25sec1lev18",
+        "OEBPS/html/ch25.html#ch25sec2lev19",
+        "OEBPS/html/ch25.html#ch25sec1lev19",
+        "OEBPS/html/ch25.html#ch25sec2lev20",
+        "OEBPS/html/ch25.html#ch25sec1lev20",
+        "OEBPS/html/ch25.html#ch25sec2lev21",
+        "OEBPS/html/ch25.html#ch25sec1lev21",
+        "OEBPS/html/ch25.html#ch25sec2lev22",
+        "OEBPS/html/ch25.html#ch25sec1lev22",
+        "OEBPS/html/ch25.html#ch25sec2lev23",
+        "OEBPS/html/ch25.html#ch25sec1lev23",
+        "OEBPS/html/ch25.html#ch25sec2lev24",
+        "OEBPS/html/ch25.html#ch25sec1lev24",
+        "OEBPS/html/ch25.html#ch25sec2lev25"
+      ],
+      "study_status": "studied",
+      "decision": "Select a dependency-breaking mechanism by its assumptions and trade-offs",
+      "qualifications": [
+        "Each mechanism still needs current-language and real production-path validation."
+      ],
+      "guidance": [
+        "SKILL.md",
+        "references/safe-change.md",
+        "references/dependency-breaking.md"
+      ],
+      "evaluation_ids": [
+        "LC02",
+        "LC04"
+      ],
+      "evaluation_gap": "Authored cases exercise selected applications only; no chapter-wide reliability or measured performance claim."
+    }
+  ],
+  "techniques": [
+    {
+      "number": 1,
+      "title": "Adapt Parameter",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev1",
+        "OEBPS/html/ch25.html#ch25sec2lev1"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 1,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 2,
+      "title": "Break Out Method Object",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev2",
+        "OEBPS/html/ch25.html#ch25sec2lev2"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 2,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 3,
+      "title": "Definition Completion",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev3",
+        "OEBPS/html/ch25.html#ch25sec2lev3"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 3,
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 4,
+      "title": "Encapsulate Global References",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev4",
+        "OEBPS/html/ch25.html#ch25sec2lev4"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 4,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 5,
+      "title": "Expose Static Method",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev5",
+        "OEBPS/html/ch25.html#ch25sec2lev5"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 5,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 6,
+      "title": "Extract and Override Call",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev6",
+        "OEBPS/html/ch25.html#ch25sec2lev6"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 6,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 7,
+      "title": "Extract and Override Factory Method",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev7",
+        "OEBPS/html/ch25.html#ch25sec2lev7"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 7,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 8,
+      "title": "Extract and Override Getter",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev8",
+        "OEBPS/html/ch25.html#ch25sec2lev8"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 8,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 9,
+      "title": "Extract Implementer",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev9",
+        "OEBPS/html/ch25.html#ch25sec2lev9",
+        "OEBPS/html/ch25.html#ch25sec2lev10"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 9,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 10,
+      "title": "Extract Interface",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev10",
+        "OEBPS/html/ch25.html#ch25sec2lev11"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 10,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 11,
+      "title": "Introduce Instance Delegator",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev11",
+        "OEBPS/html/ch25.html#ch25sec2lev12"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 11,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 12,
+      "title": "Introduce Static Setter",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev12",
+        "OEBPS/html/ch25.html#ch25sec2lev13"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 12,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 13,
+      "title": "Link Substitution",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev13",
+        "OEBPS/html/ch25.html#ch25sec2lev14"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 13,
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 14,
+      "title": "Parameterize Constructor",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev14",
+        "OEBPS/html/ch25.html#ch25sec2lev15"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 14,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 15,
+      "title": "Parameterize Method",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev15",
+        "OEBPS/html/ch25.html#ch25sec2lev16"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 15,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 16,
+      "title": "Primitivize Parameter",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev16",
+        "OEBPS/html/ch25.html#ch25sec2lev17"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 16,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 17,
+      "title": "Pull Up Feature",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev17",
+        "OEBPS/html/ch25.html#ch25sec2lev18"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 17,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 18,
+      "title": "Push Down Dependency",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev18",
+        "OEBPS/html/ch25.html#ch25sec2lev19"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 18,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 19,
+      "title": "Replace Function with Function Pointer",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev19",
+        "OEBPS/html/ch25.html#ch25sec2lev20"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 19,
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 20,
+      "title": "Replace Global Reference with Getter",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev20",
+        "OEBPS/html/ch25.html#ch25sec2lev21"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 20,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 21,
+      "title": "Subclass and Override Method",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev21",
+        "OEBPS/html/ch25.html#ch25sec2lev22"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 21,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 22,
+      "title": "Supersede Instance Variable",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev22",
+        "OEBPS/html/ch25.html#ch25sec2lev23"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 22,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 23,
+      "title": "Template Redefinition",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev23",
+        "OEBPS/html/ch25.html#ch25sec2lev24"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 23,
+      "evaluation_ids": [
+        "LC04"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    },
+    {
+      "number": 24,
+      "title": "Text Redefinition",
+      "source_refs": [
+        "OEBPS/html/ch25.html#ch25sec1lev24",
+        "OEBPS/html/ch25.html#ch25sec2lev25"
+      ],
+      "study_status": "studied",
+      "guidance": [
+        "references/dependency-breaking.md"
+      ],
+      "guidance_row": 24,
+      "evaluation_ids": [
+        "LC02"
+      ],
+      "evaluation_gap": "Family-level decision case only; no dedicated live trial of this individual technique is claimed."
+    }
+  ],
+  "supporting_material": [
+    {
+      "ref": "OEBPS/html/cover.html",
+      "title": "Cover page",
+      "study_status": "publishing_matter",
+      "reason": "Source identity, publishing or decorative matter; no operational procedure inferred."
+    },
+    {
+      "ref": "OEBPS/html/pre01.html",
+      "title": "Working Effectively with Legacy Code",
+      "study_status": "publishing_matter",
+      "reason": "Source identity, publishing or decorative matter; no operational procedure inferred."
+    },
+    {
+      "ref": "OEBPS/html/title.html",
+      "title": "Title Page",
+      "study_status": "publishing_matter",
+      "reason": "Source identity, publishing or decorative matter; no operational procedure inferred."
+    },
+    {
+      "ref": "OEBPS/html/copy.html",
+      "title": "Copyright Page",
+      "study_status": "publishing_matter",
+      "reason": "Source identity, publishing or decorative matter; no operational procedure inferred."
+    },
+    {
+      "ref": "OEBPS/html/ded.html",
+      "title": "Working Effectively with Legacy Code",
+      "study_status": "publishing_matter",
+      "reason": "Source identity, publishing or decorative matter; no operational procedure inferred."
+    },
+    {
+      "ref": "OEBPS/html/toc.html",
+      "title": "Contents",
+      "study_status": "navigation_only",
+      "reason": "Inventoried navigation; not a substitute for the original arguments."
+    },
+    {
+      "ref": "OEBPS/html/pre02.html",
+      "title": "Foreword",
+      "study_status": "studied",
+      "reason": "Read for framing, qualifications, terminology or change mechanics."
+    },
+    {
+      "ref": "OEBPS/html/pre03.html",
+      "title": "Preface",
+      "study_status": "studied",
+      "reason": "Read for framing, qualifications, terminology or change mechanics."
+    },
+    {
+      "ref": "OEBPS/html/pre04.html",
+      "title": "Introduction",
+      "study_status": "studied",
+      "reason": "Read for framing, qualifications, terminology or change mechanics."
+    },
+    {
+      "ref": "OEBPS/html/part01.html",
+      "title": "Part I: The Mechanics of Change",
+      "study_status": "navigation_only",
+      "reason": "Inventoried navigation; not a substitute for the original arguments."
+    },
+    {
+      "ref": "OEBPS/html/part02.html",
+      "title": "Part II: Changing Software",
+      "study_status": "navigation_only",
+      "reason": "Inventoried navigation; not a substitute for the original arguments."
+    },
+    {
+      "ref": "OEBPS/html/part03.html",
+      "title": "Part III: Dependency-Breaking Techniques",
+      "study_status": "navigation_only",
+      "reason": "Inventoried navigation; not a substitute for the original arguments."
+    },
+    {
+      "ref": "OEBPS/html/app01.html",
+      "title": "Appendix: Refactoring",
+      "study_status": "studied",
+      "reason": "Read for framing, qualifications, terminology or change mechanics."
+    },
+    {
+      "ref": "OEBPS/html/gloss.html",
+      "title": "Glossary",
+      "study_status": "studied",
+      "reason": "Read for framing, qualifications, terminology or change mechanics."
+    },
+    {
+      "ref": "OEBPS/html/index.html",
+      "title": "Index",
+      "study_status": "navigation_only",
+      "reason": "Inventoried navigation; not a substitute for the original arguments."
+    }
+  ],
+  "evaluation_status": "Authored cases are not passing model behavior; execution and comparative claims belong to the revision-bound review."
+}

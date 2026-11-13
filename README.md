@@ -171,6 +171,7 @@ actual role names from their definitions.
 | [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) | None (skills only) |
 | [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) | None (skills only) |
 | [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) | None (skills only) |
+| [legacy-code-skill](skills/legacy-code-skill/SKILL.md) | Safe changes, characterization, and dependency breaking, using *Working Effectively with Legacy Code*. | [legacy_code_agent](agents/codex/legacy-code-agent.toml) | None (skills only) |
 
 ### DDIA workflow skills
 
@@ -416,6 +417,77 @@ The synthetic EPUB tests exercise section boundaries, complete body retrieval, c
 search, source/index tampering, safe image materialization, and selected install/restore.
 These checks establish retrieval and packaging behavior. Actual role execution and judgment
 need a separate host/behavior check; they do not follow from a valid TOML file alone.
+
+## Legacy code skill and agent
+
+`legacy-code-skill` applies Michael C. Feathers' *Working Effectively with Legacy Code*
+to a specific change whose behavior is poorly tested or whose dependencies obstruct useful
+feedback. It helps characterize existing behavior, find a test boundary, choose a minimal
+dependency-breaking step, and sequence the change with relevant checks. Software Design
+Skill contributes boundary and caller-contract judgment; the existing writer, reviewer,
+and verifier retain their responsibilities. Routine changes with adequate checks do not
+need a new seam or specialist consultation.
+
+Select this optional capability explicitly; it is included by `--all`, while the default
+project profile stays unchanged:
+
+```bash
+python3 install.py install --target codex --skill legacy-code-skill --dry-run
+python3 install.py install --target codex --skill legacy-code-skill
+```
+
+In a fresh session, use `$legacy-code-skill`, or ask the parent to delegate a bounded
+question to `legacy_code_agent`. The role inherits model and reasoning settings.
+Consultation and review return findings without edits; implementation requires assigned
+sole ownership. A host without named-role dispatch can load the skill directly and must
+describe that fallback accurately. Copilot installation supplies skills only.
+
+The original book is optional private evidence, separate from the installed package.
+Initialize its supported first-edition EPUB (ISBN 9780132931755) from your own local file:
+
+```bash
+LEGACY_CODE_TOOLS="$HOME/.agents/skills/legacy-code-skill"
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" init --epub /path/to/your-copy.epub
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" verify
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" catalog --chapter 13
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" read --ref 'OEBPS/html/ch13.html#ch13sec1lev1'
+```
+
+Success means initialization reports 25 chapters, `verify` confirms the source hash and
+complete index, and the section read identifies its exact locator. Follow any printed
+`CONTINUES` command to finish a long section. `search 'enabling point' --chapter 4` performs
+a case-insensitive literal-text search, retaining phrase order and code punctuation, and
+returns bounded excerpts and locators. Read the original section before a consequential attribution.
+`asset --ref <IMAGE-member>` returns an indexed local raster image for inspection. Code
+breaks and table cells are retained; CSS positioning is not reconstructed.
+
+The source, index, cached images, and optional private study live under
+`~/.local/share/legacy-code-specialist/`, outside the toolkit and project copies. Every
+source-dependent operation rechecks the complete source-derived index. Identical
+initialization preserves existing files; conflicting or incomplete state fails rather than
+overwriting it. Existing library and asset-cache directories must have no group/other
+access; permissive directories are refused without changing their permissions. Use a new
+private location or explicitly restrict the chosen library/cache directory first.
+Preserve conflicting state before rebuilding, or use `--data-dir /new/private/path`
+before the command to select a separate library. Missing source permits useful bounded
+advice with an explicit attribution gap. Indexing establishes access; source-study and
+behavior-evaluation evidence have their own scope.
+
+Book operations perform no network requests. Model inference follows your configured
+Codex provider and permissions; local retrieval does not make that inference offline.
+The package distributes original guidance and synthetic fixtures, without the EPUB,
+extracted source text, private study, or raw model runs.
+
+Use the installation's printed receipt to preview and restore that installation:
+
+```bash
+python3 install.py restore /path/to/receipt.json --dry-run
+python3 install.py restore /path/to/receipt.json
+```
+
+Restore preserves the independently managed book library and protects shared dependencies
+still needed by another selection. Project copies use the existing manifest-based update
+rules; the personal `restore` command does not restore a project copy.
 
 ## Existing installations and restore
 
