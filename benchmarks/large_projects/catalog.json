@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "purpose": "Curator handoff for issue #5; contains answers, not candidate input.",
+  "ready_for_model_comparison": false,
+  "cases": [
+    {
+      "id": "vscode-snippet-selections",
+      "repository": "microsoft/vscode",
+      "url": "https://github.com/microsoft/vscode.git",
+      "parent": "34ea765f33a758e910b81cd39aeb3cf2da10b065",
+      "fixed": "e4c1b808d40768546d9e45a1d7b614730f288e4f",
+      "domain": "Desktop editor and TypeScript APIs",
+      "difficulty_hypothesis": "medium",
+      "test_paths": [
+        "src/vs/editor/contrib/snippet/test/browser/snippetController2.test.ts",
+        "src/vs/editor/contrib/snippet/test/browser/snippetSession.test.ts"
+      ],
+      "test_patch_sha256": "6ae6ae0775d659ca471f9ace8bd749b63836ee7cb34aaafa6acfbf6f92bdf810",
+      "ready_for_model_comparison": false,
+      "task": "When a caller applies one snippet edit for each of several selections, selection-dependent variables can repeat the wrong selection value. For example, wrapping the three lines aaa, bbb, ccc with if(${1:cond}) {$TM_SELECTED_TEXT}$0 should preserve each line inside its own wrapper. Fix this behavior in the existing editor. Line and cursor variables must reflect the appropriate edit; cursor numbering must respect the caller-provided order even when edits arrive out of document order. Preserve linked placeholders, correct offsets when resolved values have different lengths, existing single-edit behavior, and undo restoration of both text and the original selection. Add appropriate regression coverage and explain the changed contract."
+    },
+    {
+      "id": "cpython-import-locks",
+      "repository": "python/cpython",
+      "url": "https://github.com/python/cpython.git",
+      "parent": "081f6fba35f2b1be8a3166104237f9682b620f90",
+      "fixed": "7159b152a0b6205941ad7f14ced3f7d9ec20f68b",
+      "domain": "Language runtime and Python concurrency",
+      "difficulty_hypothesis": "hard",
+      "test_paths": [
+        "Lib/test/test_importlib/import_/test_packages.py",
+        "Lib/test/test_importlib/test_threaded_import.py"
+      ],
+      "test_patch_sha256": "faafd8128f2d6310ad8e5c0f9a5eb87b0960f6dcedb5f1abf75586b006605fff",
+      "ready_for_model_comparison": false,
+      "task": "Fix concurrent first-import failures in CPython. In a fresh interpreter, one thread imports alpha.leaf while another imports beta.leaf. alpha.__init__ performs slow initialization but imports neither package; alpha.leaf imports X from beta.leaf; beta.__init__ imports alpha; beta.leaf defines X. Either serial order succeeds. With overlapping initialization, concurrent execution can instead raise an import deadlock or report a partially initialized module even though this dependency graph has no cycle. Similar failures affect nested packages and a finished package can remain unavailable while a different module continues executing. Both import statements and importlib.import_module must preserve their supported behavior. Correct this while retaining existing protections for genuinely concurrent initialization and circular imports, late package path/module injection, and retry after failed import. Preserve public compatibility, existing tests, and the repository build process. Add focused deterministic regression coverage. Do not add dependencies or change unrelated subsystems.",
+      "reproducer_inputs": {
+        "alpha/__init__.py": "slow initialization that overlaps the second thread",
+        "alpha/leaf.py": "from beta.leaf import X",
+        "beta/__init__.py": "import alpha",
+        "beta/leaf.py": "X = 1"
+      }
+    },
+    {
+      "id": "otel-queue-cancellation",
+      "repository": "open-telemetry/opentelemetry-collector",
+      "url": "https://github.com/open-telemetry/opentelemetry-collector.git",
+      "parent": "324fb02bf0cc6acbe1b0b5f852fcfc3f57cb5c4d",
+      "fixed": "e8d7aa2906c67a3411045c29cfea3f7a1ede9a68",
+      "domain": "Observability pipeline and Go concurrency",
+      "difficulty_hypothesis": "hard",
+      "test_paths": [
+        "exporter/exporterhelper/internal/queue/cond_test.go"
+      ],
+      "test_patch_sha256": "68b51b65f290865ce10e03a00bf030566adff589293b7dc70807165111793b1d",
+      "ready_for_model_comparison": false,
+      "task": "Fix a sending-queue concurrency defect. With block_on_overflow enabled, cancelling producers while they wait for capacity can prevent queue progress. Ensure cancelled offers return, pending live offers can proceed when capacity becomes available, and completed work releases capacity correctly. Preserve memory and persistent queue behavior, shutdown, notification accounting and queue reuse. Add appropriate regression coverage."
+    },
+    {
+      "id": "postgres-tablespace-locking",
+      "repository": "postgres/postgres",
+      "url": "https://github.com/postgres/postgres.git",
+      "parent": "412ef97d925c54d6135afb4c22cceccb6421d8a2",
+      "fixed": "a12600b762c36d91450ce085fa25ef75250bc1c2",
+      "domain": "Database engine and C transaction semantics",
+      "difficulty_hypothesis": "hard",
+      "test_paths": [
+        "src/test/isolation/expected/tablespace-dependency-locking.out",
+        "src/test/isolation/isolation_schedule",
+        "src/test/isolation/specs/tablespace-dependency-locking.spec"
+      ],
+      "test_patch_sha256": "e005ce672db2aec099007346b6864a931ad0f8f8efaef5c7534aa6cc57353104",
+      "ready_for_model_comparison": false,
+      "task": "Fix concurrent tablespace operations that can leave a committed catalog dependency referring to a tablespace that has already been dropped. Preserve correct behavior whichever operation reaches the dependency first. Ensure related rename, option, ownership and privilege operations remain safe under concurrent DROP TABLESPACE without introducing a lock-order deadlock. Add appropriate isolation regression coverage."
+    }
+  ],
+  "test_patch_format": "Canonical Git unified delta: full blob IDs, fixed prefixes/context/algorithm, no external/textconv/rename/color, no hunk function labels."
+}

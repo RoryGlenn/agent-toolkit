@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "kind": "Sanitized summary of prior local validation, not replayable signed evidence.",
+  "observed_platform": "macOS arm64",
+  "observed_date": "2026-10-29",
+  "independent_audit": "Passed source, patch, receipt and artifact checks; original logs remain local.",
+  "cases": [
+    {
+      "id": "vscode-snippet-selections",
+      "status": "qualified_behavioral_regression",
+      "observed_result": "Six behavioral assertions fail on parent and pass with the fix. Selected suites: 80 pass / 6 fail / 1 upstream pending before; 86 pass / 0 fail / 1 pending after. 78 existing controls pass on both.",
+      "original_qualification_sha256": "297680360ed41361628e7438150505ba75f2e080f2ee6d26b6b1d4159f7ba193",
+      "limitations": [
+        "No full desktop app packaging or extension integration validation.",
+        "Optional unrelated Copilot LFS simulation cache remains a pointer.",
+        "One upstream test inspects a private _snippet field; behavioral acceptance must not require its specific representation."
+      ],
+      "runtime": {
+        "node": "v22.22.1",
+        "arch": "arm64",
+        "npm": "10.9.4",
+        "playwright": "1.56.1",
+        "typescriptNative": "7.0.0-dev.20260506.1"
+      },
+      "oracle_review": "All six failures are user-observable values. The passing private-field backfill check is retained as reference validation but must not constrain alternative implementations in future grading.",
+      "pending_test": "Upstream-skipped Snippet transformation does not work after inserting variable using intellisense, #112362."
+    },
+    {
+      "id": "cpython-import-locks",
+      "status": "qualified_with_environment_and_oracle_limits",
+      "observed_result": "Two observable import regressions and one lock-state diagnostic fail before and pass after. Six existing controls pass before (five upstream memory skips). Seven fixed suites: 1,915 pass and 79 skip. Deterministic scheduling uses private lock state.",
+      "original_qualification_sha256": "63989e0e834b0cd48cc14b15b03852c2f3704d7655a2b6f42fbb1562f44fc135",
+      "limitations": [
+        "Only native macOS arm64 with the GIL enabled was tested; no Windows, Linux, free-threaded, sanitizer, or performance evaluation.",
+        "Five optional extension modules are absent; 79 broader tests skip for upstream platform, optional-dependency, memory-resource, known-flaky, or unsupported-behavior reasons.",
+        "Nearby broader suites were run on the fixed reference; parent validation used the selected three regressions and eleven preexisting threaded controls.",
+        "No claim of agent difficulty, book-guidance benefit, general benchmark validity, or model ranking follows from this qualification.",
+        "No code fixes were authored: only exact upstream patches were applied in an isolated validation worktree.",
+        "The sibling and nested import tests assert observable import outcomes, but their deterministic scheduling helper reads private importlib._bootstrap._blocking_on and lock.name/owner. They qualify the historical regression, but need an adapter or an explicitly preserved internal contract before grading alternative lock representations."
+      ],
+      "optional_modules_missing": [
+        "_decimal",
+        "_gdbm",
+        "_lzma",
+        "_tkinter",
+        "_zstd"
+      ],
+      "oracle_constraints": {
+        "unchanged_upstream_tests": true,
+        "implementation_specific_not_general_acceptance_oracle": [
+          "test_submodule_enters_cross_thread_cycle_after_parents_resolved",
+          "test_parent_removed_before_submodule_is_loaded"
+        ],
+        "reason": "The two implementation-specific upstream tests monkeypatch newly introduced _resolve_parents; require behavioral acceptance independent of that private helper. They remain unmodified in the fixed reference suite.",
+        "these_tests_ran_on_fixed_reference": true,
+        "all_original_test_files_retained": true,
+        "test_masking": false,
+        "evaluation_access": "Keep fixed revisions, patches, upstream discussions, task evidence, and future Git objects outside future agent sandboxes. A source worktree linked to this clone is evaluator preparation only, not an isolated benchmark sandbox.",
+        "task_draft": "task-draft.json",
+        "scheduler_dependency": "The sibling and nested import tests assert observable import outcomes, but their deterministic scheduling helper reads private importlib._bootstrap._blocking_on and lock.name/owner. They qualify the historical regression, but need an adapter or an explicitly preserved internal contract before grading alternative lock representations."
+      }
+    },
+    {
+      "id": "otel-queue-cancellation",
+      "status": "historical_reproduction_qualified_with_private_interface_limitations",
+      "observed_result": "Two private condition-contract regressions fail before and pass after; two other new checks are passing controls. Combined oracle fails 3/3 before and passes 3/3 after. Six existing control groups pass both versions; fixed full queue package passes with race detection.",
+      "original_qualification_sha256": "fac9efbf32e9089297a08999559651dee1a36633c84a07a46a2db574befce314",
+      "limitations": [
+        "Unchanged upstream test file compiles references to private helpers, counters and queue locks; a valid internal redesign may need future evaluator adaptation.",
+        "No assertion requires the upstream NumCPU buffer sizing or exact lock-release algorithm.",
+        "These are in-process Go tests with a race detector and mock persistent storage, not a real Collector deployment or crash-durability test.",
+        "No candidate model was evaluated. Historical source, reference patches and public answers must be kept outside future candidate context.",
+        "Individual observation phases initially expected a passing test to screen behavior; their raw nonzero results are preserved and explicitly classified here."
+      ],
+      "individual_tests": [
+        {
+          "test": "TestCondSignalDoesNotBlockBehindCanceledWaiters",
+          "parent_exit": 1,
+          "fixed_exit": 0,
+          "classification": "behavioral_regression_at_existing_private_cond_contract",
+          "failure": "Signal blocked while holding the condition lock",
+          "constraints": "Uses newCond, L, Wait, Signal and an instrumented sync.Locker; no waiting-counter or channel-capacity assertion in this test."
+        },
+        {
+          "test": "TestCondSignalAccounting",
+          "parent_exit": 0,
+          "fixed_exit": 0,
+          "classification": "passing_reference_control_with_private_counter_checks",
+          "constraints": "Calls checkCondReuse, which requires c.waiting==0; not a fail-before discriminator."
+        },
+        {
+          "test": "TestCondCancellationNotification",
+          "parent_exit": 1,
+          "fixed_exit": 0,
+          "classification": "behavioral_deadlock_regression_with_additional_representation_checks",
+          "failure": "cancel_then_signal_without_live_waiters: panic: deadlock: all goroutines in bubble are blocked",
+          "constraints": "Actual parent failure occurs before reuse-counter assertions; the complete test also asserts private c.waiting through checkCondReuse."
+        },
+        {
+          "test": "TestBlockedOfferCancellationDoesNotConsumeCapacityNotification",
+          "parent_exit": 0,
+          "fixed_exit": 0,
+          "classification": "passing_queue_behavior_control_with_private_lock_injection",
+          "constraints": "Accesses memory/persistent concrete queue types, q.hasMoreSpace, q.mu and replaces the condition lock; mock storage only; not a fail-before discriminator."
+        }
+      ]
+    },
+    {
+      "id": "postgres-tablespace-locking",
+      "status": "historical_reproduction_qualified",
+      "observed_result": "All six SQL concurrency permutations differ from expected before and match after. Three repeated failures before and three passes after. Three existing isolation controls pass both versions. Temporary servers are stopped.",
+      "original_qualification_sha256": "06c5978c64c7bd01566f4b58da17b1eaeeb18f6dc7d26b30dfb765da1176d949",
+      "limitations": [
+        "Tests cover six prescribed schedules, not all possible interleavings.",
+        "Golden files assert exact SQL diagnostics and waiting/completion order; future evaluation should distinguish behavior changes from equivalent diagnostic wording.",
+        "Uses the upstream allow_in_place_tablespaces test setting and ephemeral local PostgreSQL 20devel servers; no external service, real data, or recovery durability was tested.",
+        "Three nearby isolation controls were run on both revisions; full PostgreSQL regression, TAP and check-world suites were not run.",
+        "ICU, readline and zlib were disabled; chosen tests do not use those features.",
+        "Public solution/source history remains evaluator-visible and must be isolated from future candidate agents. No candidate models were run."
+      ],
+      "configuration": {
+        "assertions": true,
+        "debug_symbols": true,
+        "disabled_optional_features": [
+          "ICU",
+          "readline",
+          "zlib"
+        ],
+        "tap_enabled": false,
+        "why": "Chosen isolation test uses core catalogs and SQL, not those optional features. Existing Bison 2.3 meets pinned source minimum."
+      },
+      "permutations": [
+        {
+          "index": 1,
+          "steps": "s1_begin s1_create_table_in_tablespace s2_drop_tablespace s1_commit s1_drop_table s1_drop_tablespace",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "core dependency-race behavior"
+        },
+        {
+          "index": 2,
+          "steps": "s1_begin s1_alter_tablespace s2_drop_tablespace s3_create_table_in_dropped_tablespace s1_rollback",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "core dependency-race behavior"
+        },
+        {
+          "index": 3,
+          "steps": "s1_begin s1_alter_tablespace s2_drop_tablespace s1_create_table_in_tablespace s1_commit",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "related command dependency-error and ordering behavior"
+        },
+        {
+          "index": 4,
+          "steps": "s1_begin s1_rename_tablespace s2_drop_tablespace s1_create_table_in_renamed_tablespace s1_commit",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "related command dependency-error and ordering behavior"
+        },
+        {
+          "index": 5,
+          "steps": "s1_begin s1_reassign_owned s2_drop_tablespace s1_create_table_in_tablespace s1_commit",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "related command dependency-error and ordering behavior"
+        },
+        {
+          "index": 6,
+          "steps": "s1_begin s1_drop_owned s2_drop_tablespace s1_create_table_in_tablespace s1_commit",
+          "parent_differs": true,
+          "fixed_matches": true,
+          "kind": "related command dependency-error and ordering behavior"
+        }
+      ],
+      "cleanup": true
+    }
+  ]
+}
