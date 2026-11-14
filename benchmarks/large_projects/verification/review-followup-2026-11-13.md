@@ -101,3 +101,13 @@ A fresh runtime qualification on this combined source again stopped at nested tm
 mounting with `EACCES`, exit one and zero OOM events; cleanup completed. Actual
 native/budget proof and all four project gates remain unexecuted. No model study ran.
 The source-bound local receipts are retained in the publication verification directory.
+
+## Published code checkpoint
+
+DCO-signed-off code commit `0b90a72c8ece8260139f6d553660aa807afe72ea` was pushed to
+the existing PR #6 branch. Its [push CI](https://github.com/RoryGlenn/agent-toolkit/actions/runs/43547834118)
+and [pull-request CI](https://github.com/RoryGlenn/agent-toolkit/actions/runs/43547838193)
+both passed Python 3.11 and 3.13 checks. The opt-in large-project qualification job was
+skipped in these ordinary runs; that skip supplies no runtime qualification evidence.
+The PR remains a draft and unqualified. This delivery receipt is a documentation-only
+follow-up to that tested code checkpoint.

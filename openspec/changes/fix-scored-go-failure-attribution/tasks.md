@@ -23,5 +23,6 @@ unexecuted. See `benchmarks/large_projects/verification/review-followup-2026-11-
 
 ## Workflow follow-up
 
-- Commit and push only with the user's separate delivery authorization, then verify hosted CI and PR state.
+- With the user's separate authorization, code commit `0b90a72` was pushed to PR #6;
+  both hosted CI events passed Python 3.11/3.13. The linked verification record retains the receipts.
 - Archive after all required qualification and review gates pass; preserve this active record if a gate remains unavailable.
