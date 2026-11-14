@@ -1,0 +1,8 @@
+WARNING: proceeding, even though we could not create PATH aliases: Read-only file system (os error 30)
+2026-10-31T16:12:04.688697Z  WARN codex_state::runtime::logs_maintenance: failed to prune diagnostic logs: error returned from database: (code: 8) attempt to write a readonly database
+2026-10-31T16:12:04.689298Z  WARN codex_state::runtime::logs_maintenance: failed to checkpoint diagnostic logs: error returned from database: (code: 8) attempt to write a readonly database
+Reading additional input from stdin...
+2026-10-31T16:12:04.694676Z  INFO codex_cloud_config::service: Cloud config bundle load completed (none) elapsed_ms=0
+2026-10-31T16:12:04.696623Z  INFO codex_cloud_config::service: Cloud config bundle load completed (none) elapsed_ms=0
+2026-10-31T16:12:04.703122Z  INFO codex_http_client::custom_ca: using system root certificates because no CA override environment variable was selected codex_ca_certificate_configured=false ssl_cert_file_configured=false
+Error: failed to initialize in-process app-server client: Read-only file system (os error 30)

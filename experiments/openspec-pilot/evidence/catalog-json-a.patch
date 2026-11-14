@@ -1,0 +1,215 @@
+diff --git a/README.md b/README.md
+index 9f19133..ec621b2 100644
+--- a/README.md
++++ b/README.md
+@@ -164,6 +164,14 @@ current installation. **None** means the installer supplies the skill without a
+ for that host. `python3 install.py list` reads these associations from `install.py` and the
+ actual role names from their definitions.
+ 
++For machine-readable output, run `python3 install.py list --json`. Standard output is
++one JSON object with `schema_version: 1` and a `skills` list sorted by name. Each entry
++contains `name`, `description`, sorted direct `dependencies` (skill names, without
++expanding transitive dependencies), and `roles`, which maps every supported host to
++sorted runtime role names. Hosts that install only skills have empty role lists.
++Both list formats validate the package and leave user configuration and installation
++directories untouched.
++
+ ### Book-based skills and their agents
+ 
+ | Skill | Use it for | Codex roles installed | Copilot roles installed |
+diff --git a/install.py b/install.py
+index bef2874..8b88a30 100644
+--- a/install.py
++++ b/install.py
+@@ -214,6 +214,37 @@ def print_catalog(root: Path, skills: dict[str, str]) -> None:
+         print()
+ 
+ 
++def print_json_catalog(root: Path, skills: dict[str, str]) -> None:
++    """Emit versioned catalog data from validated skills and installation associations."""
++    previous_bytecode = sys.dont_write_bytecode
++    try:
++        sys.dont_write_bytecode = True
++        from project_bootstrap import SKILL_DEPENDENCIES, resolve_skills
++    finally:
++        sys.dont_write_bytecode = previous_bytecode
++
++    resolve_skills(list(skills), skills)
++    entries = []
++    for skill, description in sorted(skills.items()):
++        roles = {}
++        for host, groups in AGENTS.items():
++            roles[host] = sorted(
++                tomllib.loads((root / "agents" / host / filename).read_text(encoding="utf-8"))[
++                    "name"
++                ]
++                for filename in groups.get(skill, [])
++            )
++        entries.append(
++            {
++                "name": skill,
++                "description": description,
++                "dependencies": sorted(SKILL_DEPENDENCIES.get(skill, ())),
++                "roles": roles,
++            }
++        )
++    print(json.dumps({"schema_version": 1, "skills": entries}, indent=2))
++
++
+ def locations(home: Path, codex_home: Path) -> dict[str, Path]:
+     """Return host directories without reading or changing host configuration."""
+     return {
+@@ -625,7 +656,10 @@ def main(argv: list[str] | None = None) -> int:
+     """Run the command-line interface and return a process exit status."""
+     parser = argparse.ArgumentParser(description=__doc__)
+     commands = parser.add_subparsers(dest="command", required=True)
+-    commands.add_parser("list", help="List packaged skills and associated named agent roles.")
++    catalog = commands.add_parser(
++        "list", help="List packaged skills and associated named agent roles."
++    )
++    catalog.add_argument("--json", action="store_true", help="Emit a versioned JSON catalog.")
+     commands.add_parser("check", help="Validate package sources without installing.")
+     apply = commands.add_parser("install", help="Link selected skills into an agent host.")
+     apply.add_argument("--target", choices=tuple(AGENTS), required=True)
+@@ -660,7 +694,10 @@ def main(argv: list[str] | None = None) -> int:
+         else:
+             skills = inventory(ROOT)
+             if args.command == "list":
+-                print_catalog(ROOT, skills)
++                if args.json:
++                    print_json_catalog(ROOT, skills)
++                else:
++                    print_catalog(ROOT, skills)
+             elif args.command == "check":
+                 counts = {
+                     host: len({name for names in groups.values() for name in names})
+diff --git a/tests/test_install.py b/tests/test_install.py
+index 19e00fe..855cd2c 100644
+--- a/tests/test_install.py
++++ b/tests/test_install.py
+@@ -64,7 +64,7 @@ class InstallerTests(unittest.TestCase):
+             dry_run=dry_run,
+         )
+ 
+-    def list_catalog(self) -> str:
++    def list_catalog(self, *args: str) -> str:
+         """Run the list command against the disposable package and host."""
+         output = io.StringIO()
+         with (
+@@ -72,9 +72,102 @@ class InstallerTests(unittest.TestCase):
+             patch.object(Path, "home", return_value=self.home),
+             contextlib.redirect_stdout(output),
+         ):
+-            self.assertEqual(install.main(["list"]), 0)
++            self.assertEqual(install.main(["list", *args]), 0)
+         return output.getvalue()
+ 
++    def test_json_catalog_schema_and_live_associations(self) -> None:
++        """Machine output exposes canonical metadata, direct dependencies and runtime roles."""
++        data = json.loads(self.list_catalog("--json"))
++        self.assertEqual(set(data), {"schema_version", "skills"})
++        self.assertEqual(data["schema_version"], 1)
++        skills = install.inventory(self.root)
++        self.assertEqual([entry["name"] for entry in data["skills"]], sorted(skills))
++        entries = {entry["name"]: entry for entry in data["skills"]}
++        for entry in data["skills"]:
++            self.assertEqual(set(entry), {"name", "description", "dependencies", "roles"})
++            self.assertEqual(entry["description"], skills[entry["name"]])
++            self.assertEqual(entry["dependencies"], sorted(entry["dependencies"]))
++            self.assertEqual(set(entry["roles"]), set(install.AGENTS))
++            self.assertEqual(entry["roles"]["copilot"], [])
++        self.assertEqual(entries["task-routing-skill"]["dependencies"], [])
++        self.assertEqual(
++            entries["ddia-design-skill"]["dependencies"], ["ddia-skill", "task-routing-skill"]
++        )
++        self.assertEqual(entries["documentation-skill"]["dependencies"], ["task-routing-skill"])
++        self.assertEqual(entries["release-and-docs-skill"]["roles"], {"codex": [], "copilot": []})
++        self.assertEqual(entries["ddia-design-skill"]["roles"]["codex"], ["ddia_agent"])
++        self.assertEqual(
++            entries["issue-to-tested-pr-skill"]["roles"]["codex"],
++            ["adversarial_reviewer_agent", "implementation_owner_agent", "verifier_agent"],
++        )
++        self.assertFalse(self.home.exists())
++
++    def test_json_catalog_sorts_current_associations_and_keeps_dependencies_direct(self) -> None:
++        """Output follows current mappings while sorting lists and avoiding dependency closure."""
++        workflow = "issue-to-tested-pr-skill"
++        with (
++            patch.dict(
++                install.AGENTS["codex"],
++                {workflow: list(reversed(install.AGENTS["codex"][workflow]))},
++            ),
++            patch.dict(
++                "project_bootstrap.SKILL_DEPENDENCIES",
++                {
++                    workflow: ("task-routing-skill", "documentation-skill"),
++                    "documentation-skill": ("ddia-skill",),
++                },
++            ),
++        ):
++            entries = {
++                entry["name"]: entry for entry in json.loads(self.list_catalog("--json"))["skills"]
++            }
++        self.assertEqual(
++            entries[workflow]["dependencies"], ["documentation-skill", "task-routing-skill"]
++        )
++        roles = entries[workflow]["roles"]["codex"]
++        self.assertEqual(roles, sorted(roles))
++        self.assertNotIn("ddia-skill", entries[workflow]["dependencies"])
++
++    def test_json_catalog_rejects_invalid_sources_without_partial_stdout(self) -> None:
++        """A broken runtime role cannot become a seemingly valid machine-readable catalog."""
++        path = self.root / "agents/codex/documentation-agent.toml"
++        path.write_text(path.read_text().replace("documentation_agent", "invalid_agent"))
++        output, errors = io.StringIO(), io.StringIO()
++        with (
++            patch.object(install, "ROOT", self.root),
++            contextlib.redirect_stdout(output),
++            contextlib.redirect_stderr(errors),
++        ):
++            self.assertEqual(install.main(["list", "--json"]), 1)
++        self.assertEqual(output.getvalue(), "")
++        self.assertIn("name must match its filename", errors.getvalue())
++        self.assertFalse(self.home.exists())
++
++    def test_json_catalog_fresh_process_is_read_only(self) -> None:
++        """A CLI process emits only JSON and creates neither bytecode nor host directories."""
++        for filename in ("install.py", "project_bootstrap.py"):
++            shutil.copyfile(ROOT / filename, self.root / filename)
++        before = set(self.base.rglob("*"))
++        environment = {
++            key: value
++            for key, value in os.environ.items()
++            if key not in {"PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX"}
++        }
++        environment.update({"HOME": str(self.home), "CODEX_HOME": str(self.codex)})
++        result = subprocess.run(
++            [sys.executable, str(self.root / "install.py"), "list", "--json"],
++            cwd=self.base,
++            env=environment,
++            capture_output=True,
++            text=True,
++            check=False,
++        )
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.assertEqual(result.stderr, "")
++        self.assertEqual(json.loads(result.stdout)["schema_version"], 1)
++        self.assertEqual(set(self.base.rglob("*")), before)
++        self.assertFalse(self.home.exists())
++
+     def test_list_shows_skill_only_and_shared_role_associations(self) -> None:
+         """The catalog distinguishes no role, specialist roles, and shared workflow roles."""
+         output = self.list_catalog()
+@@ -354,8 +447,10 @@ class InstallerTests(unittest.TestCase):
+             }
+ 
+         before = snapshot()
+-        self.list_catalog()
+-        self.assertEqual(snapshot(), before)
++        for args in ((), ("--json",)):
++            with self.subTest(args=args):
++                self.list_catalog(*args)
++                self.assertEqual(snapshot(), before)
+ 
+     def test_selected_install_links_canonical_skill_and_agent(self) -> None:
+         """A selected docs install exposes the complete skill and its wrapper."""

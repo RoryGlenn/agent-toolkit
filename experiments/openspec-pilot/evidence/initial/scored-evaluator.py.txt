@@ -1,0 +1,501 @@
+"""Probe the public CLI contracts of a frozen OpenSpec pilot candidate.
+
+Run with the locked development interpreter. Candidate-owned tests do not supply
+the score. Every negative probe first requires its positive feature control.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+from typing import Any, Callable
+
+
+def snapshot(root: Path) -> dict[str, tuple[int, int, int, str]]:
+    """Capture names, identities, modes and content without following links."""
+    result: dict[str, tuple[int, int, int, str]] = {}
+    if not root.exists():
+        return result
+    for path in [root, *sorted(root.rglob("*"))]:
+        info = path.lstat()
+        content = (
+            os.readlink(path)
+            if stat.S_ISLNK(info.st_mode)
+            else hashlib.sha256(path.read_bytes()).hexdigest()
+            if stat.S_ISREG(info.st_mode)
+            else "directory"
+        )
+        result[str(path.relative_to(root))] = (
+            info.st_ino,
+            info.st_mode,
+            info.st_mtime_ns,
+            content,
+        )
+    return result
+
+
+class Fixture:
+    """Keep a fresh source and destinations together on one filesystem."""
+
+    def __init__(
+        self, candidate: Path, scratch: Path, receipts: list[dict[str, Any]]
+    ) -> None:
+        self.temporary = tempfile.TemporaryDirectory(prefix="probe-", dir=scratch)
+        self.base = Path(self.temporary.name)
+        self.source = self.base / "source"
+        self.project = self.base / "application"
+        self.host = self.base / "personal"
+        self.receipts = receipts
+        shutil.copytree(
+            candidate,
+            self.source,
+            ignore=shutil.ignore_patterns(
+                ".git",
+                ".venv",
+                ".agents",
+                "openspec",
+                "books",
+                ".pilot-tmp",
+                "__pycache__",
+                ".ruff_cache",
+                ".mypy_cache",
+                "*.log",
+            ),
+        )
+
+    def close(self) -> None:
+        """Remove only this probe's temporary source and destinations."""
+        self.temporary.cleanup()
+
+    def run(self, *args: str) -> subprocess.CompletedProcess[str]:
+        """Run the candidate CLI and retain bounded command evidence."""
+        environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        started = time.monotonic()
+        result = subprocess.run(
+            [sys.executable, "install.py", *args],
+            cwd=self.source,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        self.receipts.append(
+            {
+                "argv": [
+                    "python",
+                    "install.py",
+                    *[a.replace(str(self.base), "$SANDBOX") for a in args],
+                ],
+                "cwd": "$SANDBOX/source",
+                "exit_code": result.returncode,
+                "stdout": result.stdout.replace(str(self.base), "$SANDBOX")[:24000],
+                "stderr": result.stderr.replace(str(self.base), "$SANDBOX")[:24000],
+                "seconds": round(time.monotonic() - started, 4),
+            }
+        )
+        return result
+
+    def bootstrap(self) -> dict[str, Any]:
+        """Install a project fixture and require check to accept the intact result."""
+        result = self.run(
+            "bootstrap",
+            "--project",
+            str(self.project),
+            "--target",
+            "codex",
+            "--skill",
+            "documentation-skill",
+        )
+        assert result.returncode == 0, result.stderr
+        before = snapshot(self.base)
+        result = self.check_project()
+        assert result.returncode == 0, "Positive check control failed: " + result.stderr
+        assert snapshot(self.base) == before, "First project check changed its inputs"
+        return json.loads((self.project / ".agent-toolkit/manifest.json").read_text())
+
+    def check_project(
+        self, *extra: str, project: Path | None = None
+    ) -> subprocess.CompletedProcess[str]:
+        """Inspect recorded project ownership through the new public mode."""
+        return self.run(
+            "bootstrap", "--project", str(project or self.project), "--check", *extra
+        )
+
+    def install(
+        self,
+        target: str = "codex",
+        skill: str = "documentation-skill",
+        all_: bool = False,
+        custom: bool = False,
+    ) -> None:
+        """Create a real selected personal installation and its positive control."""
+        selection = ["--all"] if all_ else ["--skill", skill]
+        extra = ["--codex-home", str(self.base / "custom-codex")] if custom else []
+        result = self.run(
+            "install", "--target", target, *selection, "--home", str(self.host), *extra
+        )
+        assert result.returncode == 0, result.stderr
+        before = snapshot(self.base)
+        result = self.status(target=target, skill=skill, all_=all_, custom=custom)
+        assert result.returncode == 0, (
+            "Positive status control failed: " + result.stderr
+        )
+        assert snapshot(self.base) == before, (
+            "First status inspection changed its inputs"
+        )
+
+    def status(
+        self,
+        target: str = "codex",
+        skill: str = "documentation-skill",
+        all_: bool = False,
+        custom: bool = False,
+        host: Path | None = None,
+        json_: bool = True,
+    ) -> subprocess.CompletedProcess[str]:
+        """Inspect a personal layout, using explicit destinations exclusively."""
+        selection = ["--all"] if all_ else ["--skill", skill]
+        extra = ["--codex-home", str(self.base / "custom-codex")] if custom else []
+        return self.run(
+            "status",
+            "--target",
+            target,
+            *selection,
+            "--home",
+            str(host or self.host),
+            *extra,
+            *(["--json"] if json_ else []),
+        )
+
+
+def rejected(result: subprocess.CompletedProcess[str]) -> None:
+    """Require an honest failure rather than an exception trace or false success."""
+    assert result.returncode != 0, "Invalid state was accepted"
+    assert "Traceback" not in result.stderr, result.stderr
+
+
+def catalog_probes(f: Fixture, expected: dict[str, Any], human: str, mode: str) -> None:
+    """Check exact catalog data, deterministic output and legacy rendering."""
+    before_first = snapshot(f.base)
+    first = f.run("list", "--json")
+    assert first.returncode == 0, first.stderr
+    assert snapshot(f.base) == before_first, (
+        "First catalog inspection changed its inputs"
+    )
+    before = snapshot(f.base)
+    if mode == "contract":
+        assert json.loads(first.stdout) == expected, (
+            "Catalog differs from independently derived inventory"
+        )
+    elif mode == "deterministic":
+        assert f.run("list", "--json").stdout == first.stdout, (
+            "JSON is not deterministic"
+        )
+    elif mode == "human":
+        assert f.run("list").stdout == human, "Default human output changed"
+    elif mode == "readonly":
+        assert f.run("list", "--json").returncode == 0
+    elif mode == "dynamic-description":
+        skill = f.source / "skills/documentation-skill/SKILL.md"
+        lines = skill.read_text().splitlines(keepends=True)
+        skill.write_text(
+            "".join(
+                "description: Held-out description probe.\n"
+                if line.startswith("description:")
+                else line
+                for line in lines
+            )
+        )
+        changed = json.loads(f.run("list", "--json").stdout)
+        entry = next(x for x in changed["skills"] if x["name"] == "documentation-skill")
+        assert entry["description"] == "Held-out description probe."
+        return
+    elif mode == "dynamic-dependencies":
+        module = f.source / "project_bootstrap.py"
+        module.write_text(
+            module.read_text()
+            + '\nSKILL_DEPENDENCIES["documentation-skill"] = ("ddia-skill",)\n'
+        )
+        changed = json.loads(f.run("list", "--json").stdout)
+        entry = next(x for x in changed["skills"] if x["name"] == "documentation-skill")
+        assert entry["dependencies"] == ["ddia-skill"]
+        return
+    elif mode == "invalid-source":
+        skill = f.source / "skills/documentation-skill/SKILL.md"
+        skill.write_text(
+            skill.read_text().replace("name: documentation-skill", "name: invalid-name")
+        )
+        result = f.run("list", "--json")
+        rejected(result)
+        assert not result.stdout, "Invalid catalog appeared on JSON stdout"
+        return
+    assert snapshot(f.base) == before, (
+        "Catalog inspection changed the source or destinations"
+    )
+
+
+def project_probe(f: Fixture, mode: str) -> None:
+    """Exercise a project state with a passing pristine-install control first."""
+    manifest = f.bootstrap()
+    managed = f.project / next(iter(manifest["files"]))
+    instructions = f.project / "AGENTS.md"
+    manifest_path = f.project / ".agent-toolkit/manifest.json"
+    target = f.project
+    extra: tuple[str, ...] = ()
+    should_pass = mode in {"intact", "unowned", "source-change"}
+    if mode == "edited":
+        managed.write_bytes(managed.read_bytes() + b"\nuser edit\n")
+    elif mode == "missing":
+        managed.unlink()
+    elif mode == "block":
+        instructions.write_bytes(
+            instructions.read_bytes().replace(
+                b"<!-- AGENT_TOOLKIT:START -->", b"<!-- broken -->"
+            )
+        )
+    elif mode == "unowned":
+        instructions.write_bytes(
+            b"Project-specific instructions.\n"
+            + instructions.read_bytes()
+            + b"\nMore instructions.\n"
+        )
+        (f.project / "notes.txt").write_text("unowned content\n")
+    elif mode == "source-change":
+        source_skill = f.source / "skills/documentation-skill/SKILL.md"
+        source_skill.write_bytes(
+            source_skill.read_bytes() + b"\nNew upstream guidance.\n"
+        )
+    elif mode == "malformed":
+        manifest_path.write_text("{invalid")
+    elif mode == "unsafe":
+        manifest["files"]["../outside.txt"] = "0" * 64
+        manifest_path.write_text(json.dumps(manifest))
+    elif mode == "symlink":
+        data = managed.read_bytes()
+        managed.unlink()
+        outside = f.base / "outside.txt"
+        outside.write_bytes(data)
+        managed.symlink_to(outside)
+    elif mode in {"absent", "unbootstrapped"}:
+        target = f.base / "other-application"
+        if mode == "unbootstrapped":
+            target.mkdir()
+            (target / "keep.txt").write_text("preserve\n")
+    elif mode.startswith("conflict:"):
+        extra = tuple(mode.split(":", 1)[1].split())
+    before = snapshot(f.base)
+    result = f.check_project(*extra, project=target)
+    if should_pass:
+        assert result.returncode == 0, result.stderr
+    else:
+        rejected(result)
+    assert snapshot(f.base) == before, "Check mutated project/source/link targets"
+
+
+def personal_probe(f: Fixture, mode: str) -> None:
+    """Exercise actual linkage identity, selections and no-write behavior."""
+    target = "copilot" if mode == "copilot-all" else "codex"
+    skill = "ddia-design-skill" if mode == "dependencies" else "documentation-skill"
+    all_ = mode == "copilot-all"
+    custom = mode == "custom-home"
+    f.install(target=target, skill=skill, all_=all_, custom=custom)
+    role = f.host / ".codex/agents/documentation-agent.toml"
+    source_role = f.source / "agents/codex/documentation-agent.toml"
+    skill_link = f.host / ".agents/skills/documentation-skill"
+    host = f.host
+    expected_state = "current"
+    if mode == "missing-home":
+        host = f.base / "absent-home"
+        expected_state = "missing"
+    elif mode == "missing-role":
+        role.unlink()
+        expected_state = "missing"
+    elif mode == "copied-role":
+        data = role.read_bytes()
+        role.unlink()
+        role.write_bytes(data)
+        expected_state = "different"
+    elif mode == "atomic-source":
+        replacement = source_role.with_suffix(".replacement")
+        replacement.write_bytes(source_role.read_bytes())
+        replacement.replace(source_role)
+        expected_state = "different"
+    elif mode == "role-symlink":
+        role.unlink()
+        role.symlink_to(source_role)
+        expected_state = "different"
+    elif mode in {"foreign-skill", "broken-skill"}:
+        skill_link.unlink()
+        foreign = f.base / "foreign"
+        if mode == "foreign-skill":
+            foreign.mkdir()
+        skill_link.symlink_to(foreign)
+        expected_state = "different"
+    before = snapshot(f.base)
+    result = f.status(target=target, skill=skill, all_=all_, custom=custom, host=host)
+    document = json.loads(result.stdout)
+    assert document["schema_version"] == 1
+    entries = document["entries"]
+    assert entries, "No destinations inspected"
+    assert entries == sorted(entries, key=lambda x: (x["area"], x["name"])), (
+        "Unstable entry order"
+    )
+    assert all({"area", "name", "state"} <= entry.keys() for entry in entries)
+    if expected_state == "current":
+        assert result.returncode == 0 and all(x["state"] == "current" for x in entries)
+    else:
+        rejected(result)
+        assert expected_state in {x["state"] for x in entries}, entries
+    if mode == "dependencies":
+        assert {"ddia-design-skill", "ddia-skill", "task-routing-skill"} <= {
+            x["name"] for x in entries
+        }
+    if target == "copilot":
+        assert all(x["area"] == "copilot-skills" for x in entries), entries
+    if mode == "human":
+        human = f.status(json_=False)
+        assert human.returncode == 0 and "current" in human.stdout.lower()
+    assert snapshot(f.base) == before, (
+        "Status changed source, home, receipts or linked targets"
+    )
+
+
+def main() -> int:
+    """Run all predeclared probes for a case and save machine-readable evidence."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "case", choices=("catalog-json", "project-check", "personal-status")
+    )
+    parser.add_argument("candidate", type=Path)
+    parser.add_argument("--baseline", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--scratch-root", type=Path, required=True)
+    args = parser.parse_args()
+    args.scratch_root.mkdir(parents=True, exist_ok=True)
+    results: list[dict[str, Any]] = []
+    modes = {
+        "project-check": [
+            "intact",
+            "edited",
+            "missing",
+            "block",
+            "unowned",
+            "source-change",
+            "malformed",
+            "unsafe",
+            "symlink",
+            "absent",
+            "unbootstrapped",
+            "conflict:--update",
+            "conflict:--dry-run",
+            "conflict:--all",
+            "conflict:--target codex",
+            "conflict:--skill documentation-skill",
+        ],
+        "personal-status": [
+            "intact",
+            "missing-home",
+            "missing-role",
+            "copied-role",
+            "atomic-source",
+            "role-symlink",
+            "foreign-skill",
+            "broken-skill",
+            "dependencies",
+            "copilot-all",
+            "custom-home",
+            "human",
+        ],
+    }
+    expected: dict[str, Any] = {}
+    human = ""
+    if args.case == "catalog-json":
+        expression = (
+            "import json,tomllib,install,project_bootstrap as p; "
+            "print(json.dumps({'schema_version':1,'skills':[{'name':n,'description':d,"
+            "'dependencies':sorted(p.SKILL_DEPENDENCIES.get(n,())),"
+            "'roles':{h:sorted(tomllib.loads((install.ROOT/'agents'/h/f).read_text())['name'] "
+            "for f in groups.get(n,[])) for h,groups in install.AGENTS.items()}} "
+            "for n,d in sorted(install.inventory().items())]}))"
+        )
+        result = subprocess.run(
+            [sys.executable, "-B", "-c", expression],
+            cwd=args.baseline,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        expected = json.loads(result.stdout)
+        human = subprocess.run(
+            [sys.executable, "-B", "install.py", "list"],
+            cwd=args.baseline,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+    probes: list[tuple[str, Callable[[Fixture], None]]] = []
+    if args.case == "catalog-json":
+        for mode in (
+            "contract",
+            "deterministic",
+            "human",
+            "readonly",
+            "dynamic-description",
+            "dynamic-dependencies",
+            "invalid-source",
+        ):
+            probes.append(
+                (mode, lambda f, m=mode: catalog_probes(f, expected, human, m))
+            )
+    else:
+        for mode in modes[args.case]:
+            function = project_probe if args.case == "project-check" else personal_probe
+            probes.append((mode, lambda f, m=mode, fn=function: fn(f, m)))
+    for name, function in probes:
+        receipts: list[dict[str, Any]] = []
+        fixture = Fixture(
+            args.candidate.resolve(), args.scratch_root.resolve(), receipts
+        )
+        started = time.monotonic()
+        status, detail = "passed", ""
+        try:
+            function(fixture)
+        except AssertionError as error:
+            status, detail = "failed", str(error)
+        except Exception as error:
+            status, detail = "error", f"{type(error).__name__}: {error}"
+        finally:
+            fixture.close()
+        results.append(
+            {
+                "name": name,
+                "status": status,
+                "detail": detail,
+                "seconds": round(time.monotonic() - started, 4),
+                "commands": receipts,
+            }
+        )
+    report = {
+        "case": args.case,
+        "checks": results,
+        "passed": sum(r["status"] == "passed" for r in results),
+        "total": len(results),
+    }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps({k: v for k, v in report.items() if k != "checks"}))
+    return 0 if report["passed"] == report["total"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

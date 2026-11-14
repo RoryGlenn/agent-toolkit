@@ -1,0 +1,1590 @@
+{
+  "commit": "0b36e7d4e95300b16a713edf831c8613dba46b69",
+  "tree": "173fc826479ad7859d34d106a525b62ba1725a58",
+  "manifest_sha256": "569613b0f7badb1980e171077fd6bc27715b3ea83893d9889f3b18d616f633fd",
+  "manifest_matches_git_tree": true,
+  "git_commands": [
+    [
+      "git",
+      "-C",
+      "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+      "ls-tree",
+      "-r",
+      "-z",
+      "0b36e7d4e95300b16a713edf831c8613dba46b69"
+    ],
+    [
+      "git",
+      "-C",
+      "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+      "rev-parse",
+      "0b36e7d4e95300b16a713edf831c8613dba46b69^{tree}"
+    ]
+  ],
+  "file_count": 195,
+  "all_blob_and_mode_checks_passed": true,
+  "extra_entries": [],
+  "missing_entries": [],
+  "files": [
+    {
+      "path": ".github/workflows/checks.yml",
+      "expected_blob_sha": "d43851468097f2bfc4e556048b5dcaff93c38ce0",
+      "actual_blob_sha": "d43851468097f2bfc4e556048b5dcaff93c38ce0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": ".github/workflows/documentation-browser.yml",
+      "expected_blob_sha": "1ea3011b5f9fe6b17efbc4ce8c85a6b2ac7b8fb8",
+      "actual_blob_sha": "1ea3011b5f9fe6b17efbc4ce8c85a6b2ac7b8fb8",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": ".gitignore",
+      "expected_blob_sha": "706871a4e6352fbd666fa3bc9bcb50d26ddd8911",
+      "actual_blob_sha": "706871a4e6352fbd666fa3bc9bcb50d26ddd8911",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "AGENTS.md",
+      "expected_blob_sha": "2a9dcd6fecc80fbeec65923883db6fe217e82df3",
+      "actual_blob_sha": "2a9dcd6fecc80fbeec65923883db6fe217e82df3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "README.md",
+      "expected_blob_sha": "9f1913316b38381c3b86b800312e5cd7d62f3f06",
+      "actual_blob_sha": "9f1913316b38381c3b86b800312e5cd7d62f3f06",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/adversarial-reviewer-agent.toml",
+      "expected_blob_sha": "c21763b5399030a4ed89712094ddbbc97c90372c",
+      "actual_blob_sha": "c21763b5399030a4ed89712094ddbbc97c90372c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/ddia-agent.toml",
+      "expected_blob_sha": "f099611de65e1bc40ddf6b50d78ab0da672e89a3",
+      "actual_blob_sha": "f099611de65e1bc40ddf6b50d78ab0da672e89a3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/documentation-agent.toml",
+      "expected_blob_sha": "ff4e4706cb3672e820e0eec620a00c0233f81cdd",
+      "actual_blob_sha": "ff4e4706cb3672e820e0eec620a00c0233f81cdd",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/implementation-owner-agent.toml",
+      "expected_blob_sha": "580a67a5a6a45e44462adf47566dd737d5086b6d",
+      "actual_blob_sha": "580a67a5a6a45e44462adf47566dd737d5086b6d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/software-design-agent.toml",
+      "expected_blob_sha": "cd0500262b1aab37b19a8000e59f172d435e7ad2",
+      "actual_blob_sha": "cd0500262b1aab37b19a8000e59f172d435e7ad2",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "agents/codex/verifier-agent.toml",
+      "expected_blob_sha": "62bbbbb76a4fc7dbabe4d7d202b3b8be25813dd8",
+      "actual_blob_sha": "62bbbbb76a4fc7dbabe4d7d202b3b8be25813dd8",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "authoring.py",
+      "expected_blob_sha": "41e795c1c6277767fa8a8efaaa27bff741017a63",
+      "actual_blob_sha": "41e795c1c6277767fa8a8efaaa27bff741017a63",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/CURATOR.md",
+      "expected_blob_sha": "e701abe175a507a8168ea85642c427dc4ce32462",
+      "actual_blob_sha": "e701abe175a507a8168ea85642c427dc4ce32462",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/README.md",
+      "expected_blob_sha": "7d7958a37df23f9f0af68fbbab55dced5717d943",
+      "actual_blob_sha": "7d7958a37df23f9f0af68fbbab55dced5717d943",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/__init__.py",
+      "expected_blob_sha": "25a81d696721d5d1bb6ecad7b9eec6be07567fb0",
+      "actual_blob_sha": "25a81d696721d5d1bb6ecad7b9eec6be07567fb0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/__main__.py",
+      "expected_blob_sha": "3f5567a5799d164b26f53649145c3124bc441b43",
+      "actual_blob_sha": "3f5567a5799d164b26f53649145c3124bc441b43",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/cases.py",
+      "expected_blob_sha": "dd86a7624002bc7f3e976354b142128c258001d1",
+      "actual_blob_sha": "dd86a7624002bc7f3e976354b142128c258001d1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/files.py",
+      "expected_blob_sha": "9ee594418c1efc1b5584561ff11770927221a467",
+      "actual_blob_sha": "9ee594418c1efc1b5584561ff11770927221a467",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/oracles.py",
+      "expected_blob_sha": "987db6f4b8176a38fe8d42603f47b8a134ed7a0c",
+      "actual_blob_sha": "987db6f4b8176a38fe8d42603f47b8a134ed7a0c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/process.py",
+      "expected_blob_sha": "f2388e5fc20057c5a249d9869a209ceff6a2f8c4",
+      "actual_blob_sha": "f2388e5fc20057c5a249d9869a209ceff6a2f8c4",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/recordbatch/README.md",
+      "expected_blob_sha": "5b32f7ac779ebad01e81766d7b8d60ed5de01608",
+      "actual_blob_sha": "5b32f7ac779ebad01e81766d7b8d60ed5de01608",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/recordbatch/build.py",
+      "expected_blob_sha": "7ea0d2c98e47f6910896c0c3b0206919699977fc",
+      "actual_blob_sha": "7ea0d2c98e47f6910896c0c3b0206919699977fc",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/recordbatch/recordbatch.py",
+      "expected_blob_sha": "f353acff2265fde249732d868dc7a0312869121a",
+      "actual_blob_sha": "f353acff2265fde249732d868dc7a0312869121a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "benchmarks/runtime.py",
+      "expected_blob_sha": "bcd6eb998d48ec3bba1ab707fb5a55745a88bba7",
+      "actual_blob_sha": "bcd6eb998d48ec3bba1ab707fb5a55745a88bba7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "books/designing-data-intensive-applications-2nd-edition.epub",
+      "expected_blob_sha": "c407597ea76aa7365da9d0a1d6c4c753af1a5a5f",
+      "actual_blob_sha": "c407597ea76aa7365da9d0a1d6c4c753af1a5a5f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "books/docs-for-developers-2nd-edition.epub",
+      "expected_blob_sha": "9c2683d6f85eb96d12961a2284a3e220da62019a",
+      "actual_blob_sha": "9c2683d6f85eb96d12961a2284a3e220da62019a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "docs/validation/doc-agent-2026-09-26.md",
+      "expected_blob_sha": "2073c42402b4ac05feef1b15fdbf01324e5ddcbe",
+      "actual_blob_sha": "2073c42402b4ac05feef1b15fdbf01324e5ddcbe",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "install.py",
+      "expected_blob_sha": "bef2874411675ff2ee5f6f492792f827dcadb780",
+      "actual_blob_sha": "bef2874411675ff2ee5f6f492792f827dcadb780",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "project_bootstrap.py",
+      "expected_blob_sha": "dd1aae46aece3335773e31a2a3a25828cb712446",
+      "actual_blob_sha": "dd1aae46aece3335773e31a2a3a25828cb712446",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "pyproject.toml",
+      "expected_blob_sha": "eef8ac92c3ff19e3fccfe09e8ac5c00646877526",
+      "actual_blob_sha": "eef8ac92c3ff19e3fccfe09e8ac5c00646877526",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/README.md",
+      "expected_blob_sha": "3b2b5e26ec40f1fd700e511a9e1e0d440a7e0a8a",
+      "actual_blob_sha": "3b2b5e26ec40f1fd700e511a9e1e0d440a7e0a8a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/UPSTREAM.json",
+      "expected_blob_sha": "65e9d79141d050b336a5e60c21615027417f2b01",
+      "actual_blob_sha": "65e9d79141d050b336a5e60c21615027417f2b01",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/__init__.py",
+      "expected_blob_sha": "57d1ebfc81a9012e7cc3bc0b0975f1e04567e98c",
+      "actual_blob_sha": "57d1ebfc81a9012e7cc3bc0b0975f1e04567e98c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/__main__.py",
+      "expected_blob_sha": "388025afea8fd89670ed1b3098d474931f95a230",
+      "actual_blob_sha": "388025afea8fd89670ed1b3098d474931f95a230",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/native.py",
+      "expected_blob_sha": "ba02528be35190539ab0f499dfefa78014285d99",
+      "actual_blob_sha": "ba02528be35190539ab0f499dfefa78014285d99",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/LICENSE.txt",
+      "expected_blob_sha": "4f881c52d1f72f4cfb720e339e2d35c3058d01a9",
+      "actual_blob_sha": "4f881c52d1f72f4cfb720e339e2d35c3058d01a9",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/SKILL.md",
+      "expected_blob_sha": "65b3a402dbd09b8e83f9d637c6b553875189085c",
+      "actual_blob_sha": "65b3a402dbd09b8e83f9d637c6b553875189085c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/analyzer.md",
+      "expected_blob_sha": "14e41d6068635f4dd3fb878fd1626312395dda63",
+      "actual_blob_sha": "14e41d6068635f4dd3fb878fd1626312395dda63",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/comparator.md",
+      "expected_blob_sha": "80e00eb45db3ee53a132fc2ba97fd59a7339e563",
+      "actual_blob_sha": "80e00eb45db3ee53a132fc2ba97fd59a7339e563",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/agents/grader.md",
+      "expected_blob_sha": "558ab05c0a9a8bb062ef4c51823d4d76c3acf7c4",
+      "actual_blob_sha": "558ab05c0a9a8bb062ef4c51823d4d76c3acf7c4",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/eval-viewer/generate_review.py",
+      "expected_blob_sha": "7fa5978631fed1ed545591dbb2b0eb21ce3f3d08",
+      "actual_blob_sha": "7fa5978631fed1ed545591dbb2b0eb21ce3f3d08",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/eval-viewer/viewer.html",
+      "expected_blob_sha": "6d8e96348a02e66c3363d2ff3b3ae58ac11e6382",
+      "actual_blob_sha": "6d8e96348a02e66c3363d2ff3b3ae58ac11e6382",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/references/schemas.md",
+      "expected_blob_sha": "b6eeaa2d4a34c1653069585c6c5603da39a5bdbe",
+      "actual_blob_sha": "b6eeaa2d4a34c1653069585c6c5603da39a5bdbe",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/anthropic/scripts/aggregate_benchmark.py",
+      "expected_blob_sha": "3e66e8c105be9bab9f0e9c61f0d1482619401580",
+      "actual_blob_sha": "3e66e8c105be9bab9f0e9c61f0d1482619401580",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/LICENSE",
+      "expected_blob_sha": "4606e72e042564097e8780d66c1d4dcb611869bd",
+      "actual_blob_sha": "4606e72e042564097e8780d66c1d4dcb611869bd",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/NOTICE",
+      "expected_blob_sha": "2805899d56d0332d175cfc613c67d45d6f006db7",
+      "actual_blob_sha": "2805899d56d0332d175cfc613c67d45d6f006db7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/SKILL.md",
+      "expected_blob_sha": "490ccc6c3e0015eb982bb5c108c2df083be2c6c2",
+      "actual_blob_sha": "490ccc6c3e0015eb982bb5c108c2df083be2c6c2",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/generate_openai_yaml.py",
+      "expected_blob_sha": "870eefcea9bd0184806b8eb305526e883d2f7241",
+      "actual_blob_sha": "870eefcea9bd0184806b8eb305526e883d2f7241",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/init_skill.py",
+      "expected_blob_sha": "2ed2fa3125c720fcce60a29f3dd82d04b14d9fa0",
+      "actual_blob_sha": "2ed2fa3125c720fcce60a29f3dd82d04b14d9fa0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/upstream/openai/scripts/quick_validate.py",
+      "expected_blob_sha": "e27023ece4bd259ef36560e19995eec7b6a345bf",
+      "actual_blob_sha": "e27023ece4bd259ef36560e19995eec7b6a345bf",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skill_authoring/workflow.py",
+      "expected_blob_sha": "05e9fb72a41c45cc55e2080d52b5e5b5e3c54518",
+      "actual_blob_sha": "05e9fb72a41c45cc55e2080d52b5e5b5e3c54518",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-assess-skill/SKILL.md",
+      "expected_blob_sha": "45a918f55233a82ae1141309648ac7146f5b9109",
+      "actual_blob_sha": "45a918f55233a82ae1141309648ac7146f5b9109",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-assess-skill/agents/openai.yaml",
+      "expected_blob_sha": "6cf52b3ecfbea4f791958aa34240ff36e25fe7ca",
+      "actual_blob_sha": "6cf52b3ecfbea4f791958aa34240ff36e25fe7ca",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-design-skill/SKILL.md",
+      "expected_blob_sha": "d5b528093eca165a43a3b41298e4700e39b4d3de",
+      "actual_blob_sha": "d5b528093eca165a43a3b41298e4700e39b4d3de",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-design-skill/agents/openai.yaml",
+      "expected_blob_sha": "c0505c7ef98ce38b4d8aee871cdd2f3919a285ae",
+      "actual_blob_sha": "c0505c7ef98ce38b4d8aee871cdd2f3919a285ae",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-explain-skill/SKILL.md",
+      "expected_blob_sha": "90b97e3c8d62424845a28375e5b19572b55a1bb1",
+      "actual_blob_sha": "90b97e3c8d62424845a28375e5b19572b55a1bb1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-explain-skill/agents/openai.yaml",
+      "expected_blob_sha": "a23211b7031a28acfaac844effd09852029aa959",
+      "actual_blob_sha": "a23211b7031a28acfaac844effd09852029aa959",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-migrate-skill/SKILL.md",
+      "expected_blob_sha": "18465eda3b740c02b7c759513399aaaed6db259a",
+      "actual_blob_sha": "18465eda3b740c02b7c759513399aaaed6db259a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-migrate-skill/agents/openai.yaml",
+      "expected_blob_sha": "ca7a9ef88abf78bc57c464591634510a47355300",
+      "actual_blob_sha": "ca7a9ef88abf78bc57c464591634510a47355300",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-operate-skill/SKILL.md",
+      "expected_blob_sha": "8d3e5a7dad6a05a55ea9c7edd5d7b765429f1537",
+      "actual_blob_sha": "8d3e5a7dad6a05a55ea9c7edd5d7b765429f1537",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-operate-skill/agents/openai.yaml",
+      "expected_blob_sha": "8d1a3682072b5ca293747e7038bd19c80e38e0c6",
+      "actual_blob_sha": "8d1a3682072b5ca293747e7038bd19c80e38e0c6",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-review-skill/SKILL.md",
+      "expected_blob_sha": "2d45f953e80da55386356ed3a0cfc45e7aaa10d5",
+      "actual_blob_sha": "2d45f953e80da55386356ed3a0cfc45e7aaa10d5",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-review-skill/agents/openai.yaml",
+      "expected_blob_sha": "7623b32fa9c7eb3aac3ea3410abf8432c2421aa3",
+      "actual_blob_sha": "7623b32fa9c7eb3aac3ea3410abf8432c2421aa3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/SKILL.md",
+      "expected_blob_sha": "c72ca600c6c70c5a410697ab820dc098defae169",
+      "actual_blob_sha": "c72ca600c6c70c5a410697ab820dc098defae169",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/agents/openai.yaml",
+      "expected_blob_sha": "10df6461548d582c03f03138559b9b5b65727b1f",
+      "actual_blob_sha": "10df6461548d582c03f03138559b9b5b65727b1f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/assets/data-contract.template.md",
+      "expected_blob_sha": "c13fbc10264288df747447827929b656dd28062c",
+      "actual_blob_sha": "c13fbc10264288df747447827929b656dd28062c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/assets/decision.template.md",
+      "expected_blob_sha": "4d5e134aab533e6d2d43693d4f55dcccd99b254b",
+      "actual_blob_sha": "4d5e134aab533e6d2d43693d4f55dcccd99b254b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/assets/handoff.template.md",
+      "expected_blob_sha": "0cc6141c801af8ab61796a8a7a8ed06d835d5c36",
+      "actual_blob_sha": "0cc6141c801af8ab61796a8a7a8ed06d835d5c36",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/README.md",
+      "expected_blob_sha": "2fec41e8339e98aaf8610069d92926f297205449",
+      "actual_blob_sha": "2fec41e8339e98aaf8610069d92926f297205449",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/cases.json",
+      "expected_blob_sha": "1302721da5aa811646ca732ddbedc601a1cec919",
+      "actual_blob_sha": "1302721da5aa811646ca732ddbedc601a1cec919",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/evals.json",
+      "expected_blob_sha": "3f223bcc36428d42925700710fba32886f8166ce",
+      "actual_blob_sha": "3f223bcc36428d42925700710fba32886f8166ce",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/evaluate.py",
+      "expected_blob_sha": "b61dd55dc95f1c032e7a5c74b7fad8cdd3410d7d",
+      "actual_blob_sha": "b61dd55dc95f1c032e7a5c74b7fad8cdd3410d7d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/README.md",
+      "expected_blob_sha": "e7d159d161b7c319c452f2b497d2261784402cfa",
+      "actual_blob_sha": "e7d159d161b7c319c452f2b497d2261784402cfa",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/baseline.md",
+      "expected_blob_sha": "f2cb7272e2ad828bbf4d4eaac5d3c0608217a13d",
+      "actual_blob_sha": "f2cb7272e2ad828bbf4d4eaac5d3c0608217a13d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/current.md",
+      "expected_blob_sha": "92ce86734be109cf875ce2ea71b0f12fc45d065e",
+      "actual_blob_sha": "92ce86734be109cf875ce2ea71b0f12fc45d065e",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/independent-comparison.md",
+      "expected_blob_sha": "1d9112d28974e885ad7cbe3552d2a2484c9b15ea",
+      "actual_blob_sha": "1d9112d28974e885ad7cbe3552d2a2484c9b15ea",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/independent-scores.json",
+      "expected_blob_sha": "215ba494f2297a73e1f5b716b6624bed969771d3",
+      "actual_blob_sha": "215ba494f2297a73e1f5b716b6624bed969771d3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/manifest.json",
+      "expected_blob_sha": "80046b527533cf633ea5b97857cb4934b929b4b3",
+      "actual_blob_sha": "80046b527533cf633ea5b97857cb4934b929b4b3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/redesigned.md",
+      "expected_blob_sha": "47de0a39145b81c3d9a0b01120b5ddd6ac662304",
+      "actual_blob_sha": "47de0a39145b81c3d9a0b01120b5ddd6ac662304",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/requests.txt",
+      "expected_blob_sha": "2236adf9426098919ee86f8554a461ccbae3791b",
+      "actual_blob_sha": "2236adf9426098919ee86f8554a461ccbae3791b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/evals/pilots/issue-8/rubric.json",
+      "expected_blob_sha": "332e2a69a0ebc4749e5345ab6e42d308bbab6f70",
+      "actual_blob_sha": "332e2a69a0ebc4749e5345ab6e42d308bbab6f70",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/01.md",
+      "expected_blob_sha": "986f056e8b577abbdd1fcb2dfdeb6df9f623c24a",
+      "actual_blob_sha": "986f056e8b577abbdd1fcb2dfdeb6df9f623c24a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/02.md",
+      "expected_blob_sha": "1f66e8c1c33161a59a254701b434005826744237",
+      "actual_blob_sha": "1f66e8c1c33161a59a254701b434005826744237",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/03.md",
+      "expected_blob_sha": "5e568706a7de95c6d74b6b448753b1265cdc8e63",
+      "actual_blob_sha": "5e568706a7de95c6d74b6b448753b1265cdc8e63",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/04.md",
+      "expected_blob_sha": "7c89143a7135f0cdfacfa6a6a7a137fe3376f386",
+      "actual_blob_sha": "7c89143a7135f0cdfacfa6a6a7a137fe3376f386",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/05.md",
+      "expected_blob_sha": "ab1b7a4cfd1cce96609c42670b1111f248d62114",
+      "actual_blob_sha": "ab1b7a4cfd1cce96609c42670b1111f248d62114",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/06.md",
+      "expected_blob_sha": "8f1674b2df3eacbce67943796cbc7c2801e01d38",
+      "actual_blob_sha": "8f1674b2df3eacbce67943796cbc7c2801e01d38",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/07.md",
+      "expected_blob_sha": "9783d167ee67e1d6a68cf340909c6cf7e6a4563f",
+      "actual_blob_sha": "9783d167ee67e1d6a68cf340909c6cf7e6a4563f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/08.md",
+      "expected_blob_sha": "634fab730a316695d982a824a69988bfc2dbe15c",
+      "actual_blob_sha": "634fab730a316695d982a824a69988bfc2dbe15c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/09.md",
+      "expected_blob_sha": "c9ef00d68310e15ac97504cbd10a1e665b81bb85",
+      "actual_blob_sha": "c9ef00d68310e15ac97504cbd10a1e665b81bb85",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/10.md",
+      "expected_blob_sha": "85e5eca2b239bcf401088b88031b041da16665e1",
+      "actual_blob_sha": "85e5eca2b239bcf401088b88031b041da16665e1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/11.md",
+      "expected_blob_sha": "8a390e576b05059b18cc9cb0c9dfd2ff27cdb90f",
+      "actual_blob_sha": "8a390e576b05059b18cc9cb0c9dfd2ff27cdb90f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/12.md",
+      "expected_blob_sha": "e425c66cb51d12ac73c9b113c4b547a41a8d5a7d",
+      "actual_blob_sha": "e425c66cb51d12ac73c9b113c4b547a41a8d5a7d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/13.md",
+      "expected_blob_sha": "902b6dd5766ab27da342067ab455a9010405a4b3",
+      "actual_blob_sha": "902b6dd5766ab27da342067ab455a9010405a4b3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/chapters/14.md",
+      "expected_blob_sha": "4b3f17ef9e51f47604827b7705d0981ac8766d0e",
+      "actual_blob_sha": "4b3f17ef9e51f47604827b7705d0981ac8766d0e",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/coverage.json",
+      "expected_blob_sha": "95f3d0eac0f56c1a0219dc0197abf80f6fd51c7c",
+      "actual_blob_sha": "95f3d0eac0f56c1a0219dc0197abf80f6fd51c7c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/decision-process.md",
+      "expected_blob_sha": "82985c4cd57153546f66c6e81efa78fe45a83d6f",
+      "actual_blob_sha": "82985c4cd57153546f66c6e81efa78fe45a83d6f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/routing.md",
+      "expected_blob_sha": "2ec4afab50b4e826f88cfa68ba9e6b45e91ed4ce",
+      "actual_blob_sha": "2ec4afab50b4e826f88cfa68ba9e6b45e91ed4ce",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/assess.md",
+      "expected_blob_sha": "abc1440a45cf248c1aa8d5e0b424c03648d08cd6",
+      "actual_blob_sha": "abc1440a45cf248c1aa8d5e0b424c03648d08cd6",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/design.md",
+      "expected_blob_sha": "1b6deba1e27ec3b540ec5d311ac70f0b808206c8",
+      "actual_blob_sha": "1b6deba1e27ec3b540ec5d311ac70f0b808206c8",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/explain.md",
+      "expected_blob_sha": "f9f81a77fe19f527788e3c2197a8671bfc51a148",
+      "actual_blob_sha": "f9f81a77fe19f527788e3c2197a8671bfc51a148",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/migrate.md",
+      "expected_blob_sha": "57dcd0e0d0776223acf77a3dabe582379d8c4443",
+      "actual_blob_sha": "57dcd0e0d0776223acf77a3dabe582379d8c4443",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/operate.md",
+      "expected_blob_sha": "9068a9010fa9cdb4c2d7d51254b7520d83198689",
+      "actual_blob_sha": "9068a9010fa9cdb4c2d7d51254b7520d83198689",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/review.md",
+      "expected_blob_sha": "8aa1ab8d42c86584c7ad99408b76c0430b36b763",
+      "actual_blob_sha": "8aa1ab8d42c86584c7ad99408b76c0430b36b763",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/references/workflows/validate.md",
+      "expected_blob_sha": "db10c3b7cb81aed00cecca4f05ee54faf554fbb9",
+      "actual_blob_sha": "db10c3b7cb81aed00cecca4f05ee54faf554fbb9",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/scripts/book.py",
+      "expected_blob_sha": "58be4a1a5b7f6b7c974bea7486b73cedbfa33db1",
+      "actual_blob_sha": "58be4a1a5b7f6b7c974bea7486b73cedbfa33db1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/scripts/experiments.py",
+      "expected_blob_sha": "6ace0b1ad52370814a50f2f576e37178ec7e1379",
+      "actual_blob_sha": "6ace0b1ad52370814a50f2f576e37178ec7e1379",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-skill/scripts/guide.py",
+      "expected_blob_sha": "0958e387757fcdac1b1fcd6612f3d3e092427b64",
+      "actual_blob_sha": "0958e387757fcdac1b1fcd6612f3d3e092427b64",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-validate-skill/SKILL.md",
+      "expected_blob_sha": "b750a6345ac79823e6331805341b95800290c1ec",
+      "actual_blob_sha": "b750a6345ac79823e6331805341b95800290c1ec",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/ddia-validate-skill/agents/openai.yaml",
+      "expected_blob_sha": "ba30ec532d2c217bb1708c6721e160e7ee17d3d1",
+      "actual_blob_sha": "ba30ec532d2c217bb1708c6721e160e7ee17d3d1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/SKILL.md",
+      "expected_blob_sha": "cc910acad72a542b0665bbe9fb80c42ec589911e",
+      "actual_blob_sha": "cc910acad72a542b0665bbe9fb80c42ec589911e",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/agents/openai.yaml",
+      "expected_blob_sha": "39c632aee018e829bb89ee808c7941335d98de39",
+      "actual_blob_sha": "39c632aee018e829bb89ee808c7941335d98de39",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/assets/example-check.template.md",
+      "expected_blob_sha": "6125373928ff9ec2d3ad05a286b47e5ff27d7126",
+      "actual_blob_sha": "6125373928ff9ec2d3ad05a286b47e5ff27d7126",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/assets/project-context.template.md",
+      "expected_blob_sha": "85f8e91f3271a68b8df0971080b492face27bdfb",
+      "actual_blob_sha": "85f8e91f3271a68b8df0971080b492face27bdfb",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/README.md",
+      "expected_blob_sha": "81677e53421b25f62d0416e88fb1c67c7f281ce5",
+      "actual_blob_sha": "81677e53421b25f62d0416e88fb1c67c7f281ce5",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/draft/notes.md",
+      "expected_blob_sha": "64c5af37f173fff2e570d9feb80b5ab890988e15",
+      "actual_blob_sha": "64c5af37f173fff2e570d9feb80b5ab890988e15",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/draft/roster.py",
+      "expected_blob_sha": "8bce8062975c22b072754420527c4206897a65ee",
+      "actual_blob_sha": "8bce8062975c22b072754420527c4206897a65ee",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/draft/sample.csv",
+      "expected_blob_sha": "85894b750cbb5b018f36c37f8fa49cc4a6b265d6",
+      "actual_blob_sha": "85894b750cbb5b018f36c37f8fa49cc4a6b265d6",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/evals.json",
+      "expected_blob_sha": "14be178a3d90d2ea741e8dbf732d7605c6f5b2af",
+      "actual_blob_sha": "14be178a3d90d2ea741e8dbf732d7605c6f5b2af",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/maintenance-facts.md",
+      "expected_blob_sha": "0bdedd1c26c9c0abc183e05c7d7f7ba2a9c98f62",
+      "actual_blob_sha": "0bdedd1c26c9c0abc183e05c7d7f7ba2a9c98f62",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/reference-contract.md",
+      "expected_blob_sha": "c36bdebb3983ad888f174f4a70588d73db223ef6",
+      "actual_blob_sha": "c36bdebb3983ad888f174f4a70588d73db223ef6",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/review/contract-v2.md",
+      "expected_blob_sha": "4aa5d2beeff8261e33c4b4d649176c413e943ad3",
+      "actual_blob_sha": "4aa5d2beeff8261e33c4b4d649176c413e943ad3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/evals/review/draft.md",
+      "expected_blob_sha": "499910479c5fd74f7b6c32a81200a884aad15db7",
+      "actual_blob_sha": "499910479c5fd74f7b6c32a81200a884aad15db7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/references/book-foundation.md",
+      "expected_blob_sha": "14e14cf8a88ee0a0fba14effd806fe7b5f855bfb",
+      "actual_blob_sha": "14e14cf8a88ee0a0fba14effd806fe7b5f855bfb",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/references/content-patterns.md",
+      "expected_blob_sha": "82c338dfac7e2c54c5628de75c4fd877aebedc0c",
+      "actual_blob_sha": "82c338dfac7e2c54c5628de75c4fd877aebedc0c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/references/quality-and-maintenance.md",
+      "expected_blob_sha": "b7ca50e8ca5c90463cb75b591e30c239493b3cbc",
+      "actual_blob_sha": "b7ca50e8ca5c90463cb75b591e30c239493b3cbc",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/references/tool-routing.md",
+      "expected_blob_sha": "246b3bd44bc1fee28662d49630ccc65173f76e89",
+      "actual_blob_sha": "246b3bd44bc1fee28662d49630ccc65173f76e89",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/scripts/check_environment.py",
+      "expected_blob_sha": "83c2273ab94507d12237eeeb3a62a63d3e646d64",
+      "actual_blob_sha": "83c2273ab94507d12237eeeb3a62a63d3e646d64",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/.markdownlint-cli2.jsonc",
+      "expected_blob_sha": "ea684a8ea6dd0e8a27285ec2897ce9d8b51c4ab1",
+      "actual_blob_sha": "ea684a8ea6dd0e8a27285ec2897ce9d8b51c4ab1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/.vale.ini",
+      "expected_blob_sha": "ca20bb853125efcafba98bb566f274207631b494",
+      "actual_blob_sha": "ca20bb853125efcafba98bb566f274207631b494",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/README.md",
+      "expected_blob_sha": "4a1f8b98ce992975bd39c9a1d164876d4a57f8bc",
+      "actual_blob_sha": "4a1f8b98ce992975bd39c9a1d164876d4a57f8bc",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/lychee.toml",
+      "expected_blob_sha": "88c7a78721d6a783c7bf898cfa2623e0fb3fb7ae",
+      "actual_blob_sha": "88c7a78721d6a783c7bf898cfa2623e0fb3fb7ae",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/package-lock.json",
+      "expected_blob_sha": "2c4bc9be5a1abb98556ffc607d1e111573214625",
+      "actual_blob_sha": "2c4bc9be5a1abb98556ffc607d1e111573214625",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/package.json",
+      "expected_blob_sha": "06565d195cfd825e6e77638206b095ae5c65a65c",
+      "actual_blob_sha": "06565d195cfd825e6e77638206b095ae5c65a65c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/playwright.config.mjs",
+      "expected_blob_sha": "44c075279a216f20a269cd7d707ae1e1d2da0dfc",
+      "actual_blob_sha": "44c075279a216f20a269cd7d707ae1e1d2da0dfc",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/site-tests/documentation.spec.mjs",
+      "expected_blob_sha": "67a24399caf7561306eb37eed44bade9fc94703a",
+      "actual_blob_sha": "67a24399caf7561306eb37eed44bade9fc94703a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/documentation-skill/tooling/styles/DocAgent/PlainLanguage.yml",
+      "expected_blob_sha": "2c6cb636885e1bc869d89e19b987587ce27dfc95",
+      "actual_blob_sha": "2c6cb636885e1bc869d89e19b987587ce27dfc95",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/independent-diff-review-skill/SKILL.md",
+      "expected_blob_sha": "3b8e78e19d47682aa428763590ef6b02a2bed7a3",
+      "actual_blob_sha": "3b8e78e19d47682aa428763590ef6b02a2bed7a3",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/independent-diff-review-skill/evals/evals.json",
+      "expected_blob_sha": "ea29408ebafe2dcdcfab51d19809c2bc9843595f",
+      "actual_blob_sha": "ea29408ebafe2dcdcfab51d19809c2bc9843595f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/issue-to-tested-pr-skill/SKILL.md",
+      "expected_blob_sha": "aa626ddd18e48ca2356be0f90ee29d40e1928c43",
+      "actual_blob_sha": "aa626ddd18e48ca2356be0f90ee29d40e1928c43",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/issue-to-tested-pr-skill/evals/evals.json",
+      "expected_blob_sha": "14ecd1e0f9b7e1e3e08c2f4ac3380af579a0c5b8",
+      "actual_blob_sha": "14ecd1e0f9b7e1e3e08c2f4ac3380af579a0c5b8",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/release-and-docs-skill/SKILL.md",
+      "expected_blob_sha": "841d00f42aaae10ac3982f980356a2b51037a93d",
+      "actual_blob_sha": "841d00f42aaae10ac3982f980356a2b51037a93d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/release-and-docs-skill/evals/evals.json",
+      "expected_blob_sha": "ae0b35237fd16b69085bf34be67dcd613c8744b7",
+      "actual_blob_sha": "ae0b35237fd16b69085bf34be67dcd613c8744b7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/simplify-or-delete-skill/SKILL.md",
+      "expected_blob_sha": "9ce0080a6827e37433f615e7fbf14103b573a9d7",
+      "actual_blob_sha": "9ce0080a6827e37433f615e7fbf14103b573a9d7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/simplify-or-delete-skill/evals/evals.json",
+      "expected_blob_sha": "ec221517f93a030a938ba64e047a39f97c2ce591",
+      "actual_blob_sha": "ec221517f93a030a938ba64e047a39f97c2ce591",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/software-design-skill/SKILL.md",
+      "expected_blob_sha": "648fbec293d017a4cb4cd171295dbdbc5c1e668b",
+      "actual_blob_sha": "648fbec293d017a4cb4cd171295dbdbc5c1e668b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/software-design-skill/agents/openai.yaml",
+      "expected_blob_sha": "fd8abf07fc4a6338e170fe55e3335e0587913d39",
+      "actual_blob_sha": "fd8abf07fc4a6338e170fe55e3335e0587913d39",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/software-design-skill/evals/evals.json",
+      "expected_blob_sha": "499b500090276621b08b46de3b134f2b46feacfd",
+      "actual_blob_sha": "499b500090276621b08b46de3b134f2b46feacfd",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/software-design-skill/scripts/__init__.py",
+      "expected_blob_sha": "7e95d18db8ac12470f69420a5860199191dab60b",
+      "actual_blob_sha": "7e95d18db8ac12470f69420a5860199191dab60b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/software-design-skill/scripts/book.py",
+      "expected_blob_sha": "b462ddc8993c156c841b064c4e3709a5f1242b9b",
+      "actual_blob_sha": "b462ddc8993c156c841b064c4e3709a5f1242b9b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/task-routing-skill/SKILL.md",
+      "expected_blob_sha": "a00a6c08cd99857fdeeed09c9cf33d979456feae",
+      "actual_blob_sha": "a00a6c08cd99857fdeeed09c9cf33d979456feae",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/task-routing-skill/agents/openai.yaml",
+      "expected_blob_sha": "20129357b7614e3f051f5d40fae1b3443a2e97a2",
+      "actual_blob_sha": "20129357b7614e3f051f5d40fae1b3443a2e97a2",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/task-routing-skill/evals/README.md",
+      "expected_blob_sha": "c1a3578fb5dae1c3aff48f471cd13f961c5cb2fa",
+      "actual_blob_sha": "c1a3578fb5dae1c3aff48f471cd13f961c5cb2fa",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "skills/task-routing-skill/evals/cases.json",
+      "expected_blob_sha": "7c33a7a1e7a1ff1371403fe06fc2f433fea3942d",
+      "actual_blob_sha": "7c33a7a1e7a1ff1371403fe06fc2f433fea3942d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/README.md",
+      "expected_blob_sha": "b5290413577ecaf4b39c53778432c8bb491b164c",
+      "actual_blob_sha": "b5290413577ecaf4b39c53778432c8bb491b164c",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/adoption.json",
+      "expected_blob_sha": "f6f44954a6dd05b40a0dc04503cf01e3bcd3d868",
+      "actual_blob_sha": "f6f44954a6dd05b40a0dc04503cf01e3bcd3d868",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/research.md",
+      "expected_blob_sha": "4bb3747ff55f8d314afa4a4b09e45b048323b12a",
+      "actual_blob_sha": "4bb3747ff55f8d314afa4a4b09e45b048323b12a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/review.md",
+      "expected_blob_sha": "2b150bb498cc8c7d19db410181d5a5cdb344c865",
+      "actual_blob_sha": "2b150bb498cc8c7d19db410181d5a5cdb344c865",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/README.md",
+      "expected_blob_sha": "fb3dfe00234a49a0206b66b696b8089442d12b05",
+      "actual_blob_sha": "fb3dfe00234a49a0206b66b696b8089442d12b05",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/ddia.md",
+      "expected_blob_sha": "d6eae58b66b113f7ad39dd79d8b7f436a8d5ec05",
+      "actual_blob_sha": "d6eae58b66b113f7ad39dd79d8b7f436a8d5ec05",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/documentation.md",
+      "expected_blob_sha": "ec89c66b1e51c32c1797da62b8baaa9e9f2e4bad",
+      "actual_blob_sha": "ec89c66b1e51c32c1797da62b8baaa9e9f2e4bad",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/engineering.md",
+      "expected_blob_sha": "1194a38dbe38f76e9ed33c42d45e3560b487f152",
+      "actual_blob_sha": "1194a38dbe38f76e9ed33c42d45e3560b487f152",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/evidence.md",
+      "expected_blob_sha": "c03f47a530f1fcc71fc20933e6756306028b0c19",
+      "actual_blob_sha": "c03f47a530f1fcc71fc20933e6756306028b0c19",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/observations.json",
+      "expected_blob_sha": "929a0140b966edb4818a0b6528502dad214a3a9d",
+      "actual_blob_sha": "929a0140b966edb4818a0b6528502dad214a3a9d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/routing-observations.json",
+      "expected_blob_sha": "f7a039a6328a384831224b004307119114509066",
+      "actual_blob_sha": "f7a039a6328a384831224b004307119114509066",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/routing-runtime-sha256.json",
+      "expected_blob_sha": "34c2a9c7949d62967af409e33f1600a17a131e20",
+      "actual_blob_sha": "34c2a9c7949d62967af409e33f1600a17a131e20",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/routing.md",
+      "expected_blob_sha": "233b71059b42168b48c740b0e55b629d73e7c66d",
+      "actual_blob_sha": "233b71059b42168b48c740b0e55b629d73e7c66d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/runtime-sha256.json",
+      "expected_blob_sha": "dbac4226b8c8f959a50d2c53b5e2d5c022ecc19a",
+      "actual_blob_sha": "dbac4226b8c8f959a50d2c53b5e2d5c022ecc19a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/reviews/software-design.md",
+      "expected_blob_sha": "62757ae4eab21c122817983a3cd9504c7984d876",
+      "actual_blob_sha": "62757ae4eab21c122817983a3cd9504c7984d876",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/templates/SKILL.md.template",
+      "expected_blob_sha": "956ba1b2ff68037f3084e90acb149c6ebb62ff8b",
+      "actual_blob_sha": "956ba1b2ff68037f3084e90acb149c6ebb62ff8b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/templates/codex-agent.toml.template",
+      "expected_blob_sha": "a520b37a67d50a0c849a16b16dee1743138bf298",
+      "actual_blob_sha": "a520b37a67d50a0c849a16b16dee1743138bf298",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "standards/authoring/templates/evals.json.template",
+      "expected_blob_sha": "8c2baf565bc180b7f819ed1215660a157730f2c9",
+      "actual_blob_sha": "8c2baf565bc180b7f819ed1215660a157730f2c9",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/browser_regression.py",
+      "expected_blob_sha": "0a082f83c834c78cc182b46e93d6ae96774d93fe",
+      "actual_blob_sha": "0a082f83c834c78cc182b46e93d6ae96774d93fe",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/README.md",
+      "expected_blob_sha": "07f9d10c95545335325c0d91490455fe1fa46b4d",
+      "actual_blob_sha": "07f9d10c95545335325c0d91490455fe1fa46b4d",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-copilot-project.json",
+      "expected_blob_sha": "df57221849710fbeff1b522d5a6d1214c3c2686b",
+      "actual_blob_sha": "df57221849710fbeff1b522d5a6d1214c3c2686b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-project/.agent-toolkit/manifest.json",
+      "expected_blob_sha": "07354b8cf9767cfe32b6da48b1ee95c833293cc4",
+      "actual_blob_sha": "07354b8cf9767cfe32b6da48b1ee95c833293cc4",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-project/.agents/skills/release-and-docs-skill/SKILL.md",
+      "expected_blob_sha": "5c4b06aeb03902897e44ae7c7155586b6d4e3ab1",
+      "actual_blob_sha": "5c4b06aeb03902897e44ae7c7155586b6d4e3ab1",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-project/.agents/skills/release-and-docs-skill/evals/evals.json",
+      "expected_blob_sha": "ae0b35237fd16b69085bf34be67dcd613c8744b7",
+      "actual_blob_sha": "ae0b35237fd16b69085bf34be67dcd613c8744b7",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-project/AGENTS.md",
+      "expected_blob_sha": "4a23aaa68a1263ebe8da38bc2bcfc52ec2c21dc0",
+      "actual_blob_sha": "4a23aaa68a1263ebe8da38bc2bcfc52ec2c21dc0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-software/agents/codex/software-design-agent.toml",
+      "expected_blob_sha": "943b7c9dde120a6436684f257aebc19562a2849f",
+      "actual_blob_sha": "943b7c9dde120a6436684f257aebc19562a2849f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-software/receipts.json",
+      "expected_blob_sha": "9322a7fd32510735bc83671b97979538f8591c22",
+      "actual_blob_sha": "9322a7fd32510735bc83671b97979538f8591c22",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/fixtures/pre-routing-software/skills/software-design-skill/SKILL.md",
+      "expected_blob_sha": "b4956782cc88fdbc9dce832bafd2583a6ac8f671",
+      "actual_blob_sha": "b4956782cc88fdbc9dce832bafd2583a6ac8f671",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_authoring.py",
+      "expected_blob_sha": "ed66a06ba168bce57697b779338245c648a792b0",
+      "actual_blob_sha": "ed66a06ba168bce57697b779338245c648a792b0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_benchmark_revisions.py",
+      "expected_blob_sha": "7957a9b2a58f92fb87b690ff82988420667c269a",
+      "actual_blob_sha": "7957a9b2a58f92fb87b690ff82988420667c269a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_benchmark_sessions.py",
+      "expected_blob_sha": "75bedf2b078705616bfafc241c305f4bacb889a0",
+      "actual_blob_sha": "75bedf2b078705616bfafc241c305f4bacb889a0",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_benchmarks.py",
+      "expected_blob_sha": "7de7f0417942d95252006d558320cf97c17c53cb",
+      "actual_blob_sha": "7de7f0417942d95252006d558320cf97c17c53cb",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_ddia_book.py",
+      "expected_blob_sha": "40cdc7ef59279d841cf89ba91cd6648897761cca",
+      "actual_blob_sha": "40cdc7ef59279d841cf89ba91cd6648897761cca",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_ddia_suite.py",
+      "expected_blob_sha": "0b12aadff92af9a8918e0423d6f36ac30a6034d9",
+      "actual_blob_sha": "0b12aadff92af9a8918e0423d6f36ac30a6034d9",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_environment.py",
+      "expected_blob_sha": "fba6b142636169bb27d6583c60d68dd51243c83b",
+      "actual_blob_sha": "fba6b142636169bb27d6583c60d68dd51243c83b",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_install.py",
+      "expected_blob_sha": "19e00fede4dbd5dbb1b52fc4ea34876ee7120c88",
+      "actual_blob_sha": "19e00fede4dbd5dbb1b52fc4ea34876ee7120c88",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_project_bootstrap.py",
+      "expected_blob_sha": "1fa83c6f65893a1b898b49ba66e15ce7c1b13b7a",
+      "actual_blob_sha": "1fa83c6f65893a1b898b49ba66e15ce7c1b13b7a",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_routing.py",
+      "expected_blob_sha": "68a2633a705de365fac2c4b8d95fdcf87286bd00",
+      "actual_blob_sha": "68a2633a705de365fac2c4b8d95fdcf87286bd00",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_skill_authoring.py",
+      "expected_blob_sha": "c2fb6f5cce7bd0a546b3235ca1530fcd85a15737",
+      "actual_blob_sha": "c2fb6f5cce7bd0a546b3235ca1530fcd85a15737",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "tests/test_software_design_book.py",
+      "expected_blob_sha": "73df5bcd36bf922f86f227ca8daac6e9411de02f",
+      "actual_blob_sha": "73df5bcd36bf922f86f227ca8daac6e9411de02f",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    },
+    {
+      "path": "uv.lock",
+      "expected_blob_sha": "04a7d848201943e39b01282beb6aa169c7deb5b4",
+      "actual_blob_sha": "04a7d848201943e39b01282beb6aa169c7deb5b4",
+      "expected_mode": "100644",
+      "actual_mode": "100644",
+      "passed": true
+    }
+  ]
+}

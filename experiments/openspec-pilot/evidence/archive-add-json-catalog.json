@@ -1,0 +1,18 @@
+{
+  "archive": {
+    "change": "add-json-catalog",
+    "archivedAs": "2026-10-31-add-json-catalog",
+    "path": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/openspec/changes/archive/2026-10-31-add-json-catalog",
+    "specsUpdated": true,
+    "totals": {
+      "added": 3,
+      "modified": 0,
+      "removed": 0,
+      "renamed": 0
+    }
+  },
+  "root": {
+    "path": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+    "source": "nearest"
+  }
+}

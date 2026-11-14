@@ -1,0 +1,1140 @@
+{
+  "scope": "Independent raw stdout/state-entry review of all final positive candidate variants; no CLI reruns",
+  "results": [
+    {
+      "slot": "a",
+      "catalog_skill_count": 15,
+      "project_diagnostics": {
+        "intact": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "edited": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nEdited managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "missing": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nMissing managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "block": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nInvalid managed AGENTS.md routing block: AGENTS.md has incomplete or duplicate toolkit block markers."
+        },
+        "unowned": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "source-change": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "malformed": {
+          "exit_code": 1,
+          "output": "error: Malformed project toolkit manifest: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+        },
+        "unsafe": {
+          "exit_code": 1,
+          "output": "error: Invalid owned path in project manifest: '../outside.txt'"
+        },
+        "symlink": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nUnsafe or unreadable managed file .agents/skills/documentation-skill/SKILL.md: Expected a regular file, not a link or special file: $SANDBOX/application/.agents/skills/documentation-skill/SKILL.md"
+        },
+        "absent": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing .agent-toolkit/manifest.json: $SANDBOX/other-application"
+        },
+        "unbootstrapped": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing .agent-toolkit/manifest.json: $SANDBOX/other-application"
+        },
+        "conflict:--update": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --update"
+        },
+        "conflict:--dry-run": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --dry-run"
+        },
+        "conflict:--all": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --all"
+        },
+        "conflict:--target codex": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --target"
+        },
+        "conflict:--skill documentation-skill": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --skill"
+        }
+      },
+      "personal_states": {
+        "intact": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "missing-home": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "missing"
+            }
+          ]
+        },
+        "missing-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copied-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "atomic-source": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "role-symlink": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "foreign-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "broken-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "dependencies": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "ddia-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copilot-all": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "copilot-skills",
+              "name": "ddia-assess-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-explain-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-migrate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-operate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-validate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "independent-diff-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "issue-to-tested-pr-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "release-and-docs-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "simplify-or-delete-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "software-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "custom-home": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "human": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        }
+      },
+      "passed": true
+    },
+    {
+      "slot": "b",
+      "catalog_skill_count": 15,
+      "project_diagnostics": {
+        "intact": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and routing block."
+        },
+        "edited": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nEdited managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "missing": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nMissing managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "block": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nInvalid managed AGENTS.md routing block: AGENTS.md has incomplete or duplicate toolkit block markers."
+        },
+        "unowned": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and routing block."
+        },
+        "source-change": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and routing block."
+        },
+        "malformed": {
+          "exit_code": 1,
+          "output": "error: Invalid project manifest $SANDBOX/application/.agent-toolkit/manifest.json: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+        },
+        "unsafe": {
+          "exit_code": 1,
+          "output": "error: Invalid project manifest $SANDBOX/application/.agent-toolkit/manifest.json: Invalid owned path in project manifest: '../outside.txt'"
+        },
+        "symlink": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nUnsafe or unreadable managed file .agents/skills/documentation-skill/SKILL.md: Expected a regular file, not a link or special file: $SANDBOX/application/.agents/skills/documentation-skill/SKILL.md"
+        },
+        "absent": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing manifest: $SANDBOX/other-application/.agent-toolkit/manifest.json"
+        },
+        "unbootstrapped": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing manifest: $SANDBOX/other-application/.agent-toolkit/manifest.json"
+        },
+        "conflict:--update": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --update"
+        },
+        "conflict:--dry-run": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --dry-run"
+        },
+        "conflict:--all": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --all"
+        },
+        "conflict:--target codex": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --target"
+        },
+        "conflict:--skill documentation-skill": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --skill"
+        }
+      },
+      "personal_states": {
+        "intact": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "missing-home": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "missing"
+            }
+          ]
+        },
+        "missing-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copied-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "atomic-source": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "role-symlink": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "foreign-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "broken-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "dependencies": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "ddia-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copilot-all": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "copilot-skills",
+              "name": "ddia-assess-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-explain-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-migrate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-operate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-validate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "independent-diff-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "issue-to-tested-pr-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "release-and-docs-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "simplify-or-delete-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "software-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "custom-home": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "human": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        }
+      },
+      "passed": true
+    },
+    {
+      "slot": "integrated",
+      "catalog_skill_count": 15,
+      "project_diagnostics": {
+        "intact": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "edited": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nEdited managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "missing": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nMissing managed file: .agents/skills/documentation-skill/SKILL.md"
+        },
+        "block": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nInvalid managed AGENTS.md routing block: AGENTS.md has incomplete or duplicate toolkit block markers."
+        },
+        "unowned": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "source-change": {
+          "exit_code": 0,
+          "output": "Project toolkit integrity intact: 32 managed files and AGENTS.md."
+        },
+        "malformed": {
+          "exit_code": 1,
+          "output": "error: Malformed project toolkit manifest: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+        },
+        "unsafe": {
+          "exit_code": 1,
+          "output": "error: Invalid owned path in project manifest: '../outside.txt'"
+        },
+        "symlink": {
+          "exit_code": 1,
+          "output": "error: Project toolkit integrity check failed:\nUnsafe or unreadable managed file .agents/skills/documentation-skill/SKILL.md: Expected a regular file, not a link or special file: $SANDBOX/application/.agents/skills/documentation-skill/SKILL.md"
+        },
+        "absent": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing .agent-toolkit/manifest.json: $SANDBOX/other-application"
+        },
+        "unbootstrapped": {
+          "exit_code": 1,
+          "output": "error: Project is not bootstrapped; missing .agent-toolkit/manifest.json: $SANDBOX/other-application"
+        },
+        "conflict:--update": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,status,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --update"
+        },
+        "conflict:--dry-run": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,status,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --dry-run"
+        },
+        "conflict:--all": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,status,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --all"
+        },
+        "conflict:--target codex": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,status,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --target"
+        },
+        "conflict:--skill documentation-skill": {
+          "exit_code": 2,
+          "output": "usage: install.py [-h] {list,check,install,status,restore,bootstrap} ...\ninstall.py: error: --check cannot be combined with --skill"
+        }
+      },
+      "personal_states": {
+        "intact": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "missing-home": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "missing"
+            }
+          ]
+        },
+        "missing-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "missing"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copied-role": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "atomic-source": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "role-symlink": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "foreign-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "broken-skill": {
+          "exit_code": 1,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "different"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "dependencies": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "ddia-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "copilot-all": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "copilot-skills",
+              "name": "ddia-assess-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-explain-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-migrate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-operate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "ddia-validate-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "independent-diff-review-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "issue-to-tested-pr-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "release-and-docs-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "simplify-or-delete-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "software-design-skill",
+              "state": "current"
+            },
+            {
+              "area": "copilot-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "custom-home": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        },
+        "human": {
+          "exit_code": 0,
+          "entries": [
+            {
+              "area": "codex-agents",
+              "name": "documentation-agent.toml",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "documentation-skill",
+              "state": "current"
+            },
+            {
+              "area": "codex-skills",
+              "name": "task-routing-skill",
+              "state": "current"
+            }
+          ]
+        }
+      },
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

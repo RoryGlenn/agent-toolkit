@@ -1,0 +1,553 @@
+{
+  "label": "Final source-bound validation; no model retries",
+  "evaluator_sha256": "7006189575f84477b17452308a25debfba2d6daa5ea10a3668890018015781c7",
+  "baseline": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+  "concurrency": 3,
+  "frozen_before": {
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/a": "ab364eaf821142a3405090ecb02680c1d3fdcb882f0ad333f548cd241ba94b08",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/b": "6b9c41948054e61cc073176a1a4c3cc8beef17752f114be257ee7c3de06b1f86",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/a": "d98a51545546272beaad592a7e196f2cdd1073b6545b0e1b8e15732b3963a3eb",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/b": "9313b0bc389afec73232f113c5660691802bcaca1a759ea09d74703f90cbba00",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/a": "b0d45b6be65878e92b65f551f86bff237f65e780a9fd9b6f2ed0af29c2090e7d",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/b": "0114cba2dae05074649e65c6f2793d81808ee0d6f366465723c6c1467ace56af"
+  },
+  "fixed_original_before": "a32910ead7a1ee85b873a513ca661f3579142c6025ef1b2ac37a37deef221472",
+  "integrated_product_before": {
+    "scope": "Runtime product sources: install.py, project_bootstrap.py, skills/, agents/",
+    "sha256": "3584d556cf404a5a393be7bebade3aa082db1820867c90616f12e188af4746ae",
+    "components": {
+      "install.py": "0a432c40498a15a1c38bfc94f89dfe29a8aa29d2665ef28c6cf85cb77160b832",
+      "project_bootstrap.py": "67fa66f1a9990397694d3c2bf9bd1851bc89f92d708132331cdd3dff54618e3c",
+      "skills": "044ba9fa494f29591fe15ceee6d2e9f1cc5234def9af19df047f755b54fbd3da",
+      "agents": "b13037aab962aa34b4d70d4d68538bbdceab53d807192d91a5fa956154d76152"
+    }
+  },
+  "frozen_match_initial": true,
+  "runs": [
+    {
+      "case": "catalog-json",
+      "slot": "a",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "catalog-json",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/a",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-a-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-a-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"catalog-json\", \"passed\": 7, \"total\": 7}\n",
+      "stderr": "",
+      "seconds": 2.2311,
+      "score": {
+        "passed": 7,
+        "total": 7
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "catalog-json",
+      "slot": "b",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "catalog-json",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/b",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-b-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-b-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"catalog-json\", \"passed\": 7, \"total\": 7}\n",
+      "stderr": "",
+      "seconds": 2.1958,
+      "score": {
+        "passed": 7,
+        "total": 7
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "catalog-json",
+      "slot": "integrated",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "catalog-json",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-integrated-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-integrated-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"catalog-json\", \"passed\": 7, \"total\": 7}\n",
+      "stderr": "",
+      "seconds": 2.6585,
+      "score": {
+        "passed": 7,
+        "total": 7
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "catalog-json",
+      "slot": "original",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "catalog-json",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-original-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/catalog-json-original-grade.json",
+      "exit_code": 1,
+      "stdout": "{\"case\": \"catalog-json\", \"passed\": 0, \"total\": 7}\n",
+      "stderr": "",
+      "seconds": 0.9935,
+      "score": {
+        "passed": 0,
+        "total": 7
+      },
+      "failed_probes": [
+        {
+          "name": "contract",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "deterministic",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "human",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "readonly",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "dynamic-description",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "dynamic-dependencies",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        },
+        {
+          "name": "invalid-source",
+          "status": "failed",
+          "detail": "usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --json\n"
+        }
+      ]
+    },
+    {
+      "case": "personal-status",
+      "slot": "a",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "personal-status",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/a",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-a-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-a-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"personal-status\", \"passed\": 12, \"total\": 12}\n",
+      "stderr": "",
+      "seconds": 5.3666,
+      "score": {
+        "passed": 12,
+        "total": 12
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "personal-status",
+      "slot": "b",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "personal-status",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/b",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-b-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-b-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"personal-status\", \"passed\": 12, \"total\": 12}\n",
+      "stderr": "",
+      "seconds": 5.4213,
+      "score": {
+        "passed": 12,
+        "total": 12
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "personal-status",
+      "slot": "integrated",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "personal-status",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-integrated-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-integrated-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"personal-status\", \"passed\": 12, \"total\": 12}\n",
+      "stderr": "",
+      "seconds": 5.8163,
+      "score": {
+        "passed": 12,
+        "total": 12
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "personal-status",
+      "slot": "original",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "personal-status",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-original-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/personal-status-original-grade.json",
+      "exit_code": 1,
+      "stdout": "{\"case\": \"personal-status\", \"passed\": 0, \"total\": 12}\n",
+      "stderr": "",
+      "seconds": 2.6744,
+      "score": {
+        "passed": 0,
+        "total": 12
+      },
+      "failed_probes": [
+        {
+          "name": "intact",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "missing-home",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "missing-role",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "copied-role",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "atomic-source",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "role-symlink",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "foreign-skill",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "broken-skill",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "dependencies",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "copilot-all",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "custom-home",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        },
+        {
+          "name": "human",
+          "status": "failed",
+          "detail": "Positive status control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: argument command: invalid choice: 'status' (choose from 'list', 'check', 'install', 'restore', 'bootstrap')\n"
+        }
+      ]
+    },
+    {
+      "case": "project-check",
+      "slot": "a",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "project-check",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/a",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-a-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-a-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"project-check\", \"passed\": 16, \"total\": 16}\n",
+      "stderr": "",
+      "seconds": 7.1938,
+      "score": {
+        "passed": 16,
+        "total": 16
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "project-check",
+      "slot": "b",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "project-check",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/b",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-b-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-b-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"project-check\", \"passed\": 16, \"total\": 16}\n",
+      "stderr": "",
+      "seconds": 7.1664,
+      "score": {
+        "passed": 16,
+        "total": 16
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "project-check",
+      "slot": "integrated",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "project-check",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-integrated-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-integrated-grade.json",
+      "exit_code": 0,
+      "stdout": "{\"case\": \"project-check\", \"passed\": 16, \"total\": 16}\n",
+      "stderr": "",
+      "seconds": 7.6844,
+      "score": {
+        "passed": 16,
+        "total": 16
+      },
+      "failed_probes": []
+    },
+    {
+      "case": "project-check",
+      "slot": "original",
+      "argv": [
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/dev-venv/bin/python",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/agent-toolkit/experiments/openspec-pilot/evaluate.py",
+        "project-check",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--baseline",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-original",
+        "--output",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-original-grade.json",
+        "--scratch-root",
+        "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/pilot-tmp"
+      ],
+      "cwd": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4",
+      "output": "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/evidence/final/project-check-original-grade.json",
+      "exit_code": 1,
+      "stdout": "{\"case\": \"project-check\", \"passed\": 0, \"total\": 16}\n",
+      "stderr": "",
+      "seconds": 3.8331,
+      "score": {
+        "passed": 0,
+        "total": 16
+      },
+      "failed_probes": [
+        {
+          "name": "intact",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "edited",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "missing",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "block",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "unowned",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "source-change",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "malformed",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "unsafe",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "symlink",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "absent",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "unbootstrapped",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "conflict:--update",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "conflict:--dry-run",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "conflict:--all",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "conflict:--target codex",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        },
+        {
+          "name": "conflict:--skill documentation-skill",
+          "status": "failed",
+          "detail": "Positive check control failed: usage: install.py [-h] {list,check,install,restore,bootstrap} ...\ninstall.py: error: unrecognized arguments: --check\n"
+        }
+      ]
+    }
+  ],
+  "evaluator_after_sha256": "7006189575f84477b17452308a25debfba2d6daa5ea10a3668890018015781c7",
+  "frozen_after": {
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/a": "ab364eaf821142a3405090ecb02680c1d3fdcb882f0ad333f548cd241ba94b08",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/catalog-json/b": "6b9c41948054e61cc073176a1a4c3cc8beef17752f114be257ee7c3de06b1f86",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/a": "d98a51545546272beaad592a7e196f2cdd1073b6545b0e1b8e15732b3963a3eb",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/project-check/b": "9313b0bc389afec73232f113c5660691802bcaca1a759ea09d74703f90cbba00",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/a": "b0d45b6be65878e92b65f551f86bff237f65e780a9fd9b6f2ed0af29c2090e7d",
+    "/home/ubuntu/Documents/Codex/2026-10-31/new-chat-4/work/ab-pilot/frozen/personal-status/b": "0114cba2dae05074649e65c6f2793d81808ee0d6f366465723c6c1467ace56af"
+  },
+  "fixed_original_after": "a32910ead7a1ee85b873a513ca661f3579142c6025ef1b2ac37a37deef221472",
+  "integrated_product_after": {
+    "scope": "Runtime product sources: install.py, project_bootstrap.py, skills/, agents/",
+    "sha256": "3584d556cf404a5a393be7bebade3aa082db1820867c90616f12e188af4746ae",
+    "components": {
+      "install.py": "0a432c40498a15a1c38bfc94f89dfe29a8aa29d2665ef28c6cf85cb77160b832",
+      "project_bootstrap.py": "67fa66f1a9990397694d3c2bf9bd1851bc89f92d708132331cdd3dff54618e3c",
+      "skills": "044ba9fa494f29591fe15ceee6d2e9f1cc5234def9af19df047f755b54fbd3da",
+      "agents": "b13037aab962aa34b4d70d4d68538bbdceab53d807192d91a5fa956154d76152"
+    }
+  },
+  "frozen_unchanged": true,
+  "fixed_original_unchanged": true,
+  "integrated_product_unchanged": true
+}

@@ -1,0 +1,8 @@
+{
+  "old_sha256": "eedafb2fd16561258b2631b952cc34b24179b9b5e2848f0b8f69cf5b4e50752b",
+  "new_sha256": "7006189575f84477b17452308a25debfba2d6daa5ea10a3668890018015781c7",
+  "assertions_unchanged": true,
+  "old_assertion_count": 30,
+  "new_assertion_count": 30,
+  "review": "Diff reviewed: layout-only reformatting; Callable moved to collections.abc; typing.cast wraps JSON manifest without runtime conversion; functools.partial freezes the same mode/function arguments as lambda defaults. expected/human are not rebound after probe registration. No changed assertion, probe mode, mutation, command, snapshot, or exit rule."
+}
