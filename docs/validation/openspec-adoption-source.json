@@ -1,0 +1,347 @@
+{
+  "base_commit": "f24fc4193911768f0b0fe3dea2df50ea642d6295",
+  "openspec_version": "1.16.0",
+  "assessed_files": {
+    "AGENTS.md": {
+      "sha256": "30a3886a4a7ee3ac45ca97ff7cf16cfecb712b6898fa067189e29827b1af5a2f",
+      "bytes": 2113,
+      "lines": 33,
+      "baseline_bytes": 1703,
+      "baseline_lines": 27,
+      "added_lines": 6,
+      "removed_lines": 0
+    },
+    "README.md": {
+      "sha256": "69a3cc8dcf0df86fe61121a96b9e6b610d1d37ace0bfafdd95aa7cd314195a35",
+      "bytes": 57426,
+      "lines": 907,
+      "baseline_bytes": 54225,
+      "baseline_lines": 858,
+      "added_lines": 58,
+      "removed_lines": 9
+    },
+    "install.py": {
+      "sha256": "18a2597dec688809e39923dc093cf88b90ee4e1103aa5a9c4a51ac95310e70c2",
+      "bytes": 37579,
+      "lines": 883,
+      "baseline_bytes": 37279,
+      "baseline_lines": 877,
+      "added_lines": 7,
+      "removed_lines": 1
+    },
+    "project_bootstrap.py": {
+      "sha256": "068341129c31f5ce8d5b4f68de3296633983103da94c7c59e619fbef35d0e64e",
+      "bytes": 29776,
+      "lines": 678,
+      "baseline_bytes": 27911,
+      "baseline_lines": 645,
+      "added_lines": 67,
+      "removed_lines": 34
+    },
+    "skills/issue-to-tested-pr-skill/SKILL.md": {
+      "sha256": "7b04d23f7308c4ba78e630269a07fb487e0fbcac9c0a55e48916688c4d4a5cb2",
+      "bytes": 5693,
+      "lines": 93,
+      "baseline_bytes": 7295,
+      "baseline_lines": 155,
+      "added_lines": 63,
+      "removed_lines": 125
+    },
+    "skills/issue-to-tested-pr-skill/evals/evals.json": {
+      "sha256": "ce9ca966b5c31c9eb9c6c186a0eaa6d10ca9a823520c1a1d8d6403cec2921d9f",
+      "bytes": 5196,
+      "lines": 82,
+      "baseline_bytes": 1949,
+      "baseline_lines": 38,
+      "added_lines": 44,
+      "removed_lines": 0
+    },
+    "tests/test_project_reconfiguration.py": {
+      "sha256": "552ee7dc5d0dd7a5bd538dcc4b691edcd48d5f4aabd56e68807c8914800972b7",
+      "bytes": 13584,
+      "lines": 296,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 296,
+      "removed_lines": 0
+    }
+  },
+  "generated_files": {
+    ".agents/skills/.openspec-target": {
+      "sha256": "243b0dc9b847e66c440dca985e10fe0ce9e29c379b018ddd5747ba8948f84cc8",
+      "bytes": 6,
+      "lines": 1,
+      "baseline_bytes": 6,
+      "baseline_lines": 1,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-apply-change/SKILL.md": {
+      "sha256": "c190210594f5b0c6b76f1b23d8ea261f94987adeed727ac0864b732ef7cdea75",
+      "bytes": 11579,
+      "lines": 206,
+      "baseline_bytes": 11579,
+      "baseline_lines": 206,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-archive-change/SKILL.md": {
+      "sha256": "c3df5c96f8e829ed16952689de041d215b7d5749b0b261b1531c685d4ee68bed",
+      "bytes": 16645,
+      "lines": 221,
+      "baseline_bytes": 16645,
+      "baseline_lines": 221,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-explore/SKILL.md": {
+      "sha256": "0c97108351cff3bc0b84b53c173cfa6615b5fbcb67742140940bd7f2858e6231",
+      "bytes": 23819,
+      "lines": 356,
+      "baseline_bytes": 23819,
+      "baseline_lines": 356,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-propose/SKILL.md": {
+      "sha256": "3649c686b6afa5743998ae468cae29d343726fb5f27b657fc8bdd66b5a4ea1de",
+      "bytes": 16749,
+      "lines": 175,
+      "baseline_bytes": 16749,
+      "baseline_lines": 175,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-sync-specs/SKILL.md": {
+      "sha256": "6f951016a31d8400669573a1d154bb7275b71aee31e0891b1565c942b0df4a4f",
+      "bytes": 15826,
+      "lines": 290,
+      "baseline_bytes": 15826,
+      "baseline_lines": 290,
+      "added_lines": 0,
+      "removed_lines": 0
+    },
+    ".agents/skills/openspec-update-change/SKILL.md": {
+      "sha256": "06eec5a4cc52f1ec436cdde3a0207b1ceafc3f1d8c7f6cbb853f3f648c0dbbee",
+      "bytes": 11777,
+      "lines": 109,
+      "baseline_bytes": 11777,
+      "baseline_lines": 109,
+      "added_lines": 0,
+      "removed_lines": 0
+    }
+  },
+  "planning_records_before_archive": {
+    "openspec/changes/complete-openspec-adoption/.openspec.yaml": {
+      "sha256": "aaa3e0023a1a211f8d8b9501dc1658b67e99886f7d9c4d4d884ca042a6c5ce70",
+      "bytes": 182,
+      "lines": 4,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 4,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/design.md": {
+      "sha256": "aeb81ed040a6d5703da047c6a5fbfec3c0f8ecc83aef6e609e7b1135f19f7511",
+      "bytes": 4246,
+      "lines": 29,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 29,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/proposal.md": {
+      "sha256": "42f83511fa0e35cd5fbf9676ccd57f50a2918268a583a6fcb2ed9f3f63e957ef",
+      "bytes": 2478,
+      "lines": 28,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 28,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/specs/engineering-change-workflow/spec.md": {
+      "sha256": "eeaf23ee42efa62845333f116f85852b7af4d743425bde36e8ffade9d163359a",
+      "bytes": 2568,
+      "lines": 36,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 36,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/specs/project-toolkit-integrity/spec.md": {
+      "sha256": "0793ae0ce0f3b2670ba3095ce3908312ba768cd7bec91a912bdc84cb223c5a23",
+      "bytes": 1195,
+      "lines": 23,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 23,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/specs/project-toolkit-reconfiguration/spec.md": {
+      "sha256": "b14cbdcfdcf629120c4a2bbc9735025a46b02af4c08ff3f99c94f7cb70853b61",
+      "bytes": 3429,
+      "lines": 47,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 47,
+      "removed_lines": 0
+    },
+    "openspec/changes/complete-openspec-adoption/tasks.md": {
+      "sha256": "8d1d2855e3579aa1eb180a7136bb2e24effa51cf33412bf86c688329a184ba59",
+      "bytes": 2246,
+      "lines": 24,
+      "baseline_bytes": 0,
+      "baseline_lines": 0,
+      "added_lines": 24,
+      "removed_lines": 0
+    }
+  },
+  "independent_verification_before_archive": {
+    "verdict": "partially_verified",
+    "base": "f24fc4193911768f0b0fe3dea2df50ea642d6295",
+    "source_tree_sha256_before": "605c623e79fce4fefaee7373c780c8d9b2ce995ca1aa9c83901ee86b882f6150",
+    "source_tree_sha256_after": "605c623e79fce4fefaee7373c780c8d9b2ce995ca1aa9c83901ee86b882f6150",
+    "source_unchanged": true,
+    "source_files": 396,
+    "key_source_sha256": {
+      "install.py": "18a2597dec688809e39923dc093cf88b90ee4e1103aa5a9c4a51ac95310e70c2",
+      "project_bootstrap.py": "068341129c31f5ce8d5b4f68de3296633983103da94c7c59e619fbef35d0e64e",
+      "tests/test_project_reconfiguration.py": "552ee7dc5d0dd7a5bd538dcc4b691edcd48d5f4aabd56e68807c8914800972b7",
+      "skills/issue-to-tested-pr-skill/SKILL.md": "7b04d23f7308c4ba78e630269a07fb487e0fbcac9c0a55e48916688c4d4a5cb2"
+    },
+    "targeted_tests": {
+      "new_regressions": 13,
+      "bootstrap": 29,
+      "routing": 13,
+      "install_restore": 60,
+      "positive_clean_package_regressions": 13
+    },
+    "full_suite": {
+      "candidate_tests": 346,
+      "candidate_passed": 337,
+      "baseline_tests": 333,
+      "baseline_passed": 324,
+      "candidate_errors": [
+        "test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery)",
+        "test_native_global_temp_denial_preserves_explicit_narrow_grants (test_benchmark_revisions.OracleRegressionTests.test_native_global_temp_denial_preserves_explicit_narrow_grants)",
+        "test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target)",
+        "test_canaries_and_outside_write (test_large_project_execution.BoundaryTests.test_canaries_and_outside_write)",
+        "test_controller_cancellation_kills_task_descendants (test_large_project_execution.BoundaryTests.test_controller_cancellation_kills_task_descendants)",
+        "test_local_harness_network_is_available (test_large_project_execution.BoundaryTests.test_local_harness_network_is_available)",
+        "test_timeout_and_success_kill_detached_children (test_large_project_execution.BoundaryTests.test_timeout_and_success_kill_detached_children)",
+        "test_aggregate_limits_freeze_and_lifecycle (test_large_project_pipeline.KernelBoundaryTests.test_aggregate_limits_freeze_and_lifecycle)",
+        "test_authoritative_inputs_are_readonly_in_evaluator (test_large_project_pipeline.KernelBoundaryTests.test_authoritative_inputs_are_readonly_in_evaluator)"
+      ],
+      "baseline_errors": [
+        "test_native_git_inside_repository_stops_parent_discovery (test_benchmark_revisions.OracleRegressionTests.test_native_git_inside_repository_stops_parent_discovery)",
+        "test_native_global_temp_denial_preserves_explicit_narrow_grants (test_benchmark_revisions.OracleRegressionTests.test_native_global_temp_denial_preserves_explicit_narrow_grants)",
+        "test_native_grader_cannot_overwrite_protected_alias_target (test_benchmark_revisions.OracleRegressionTests.test_native_grader_cannot_overwrite_protected_alias_target)",
+        "test_canaries_and_outside_write (test_large_project_execution.BoundaryTests.test_canaries_and_outside_write)",
+        "test_controller_cancellation_kills_task_descendants (test_large_project_execution.BoundaryTests.test_controller_cancellation_kills_task_descendants)",
+        "test_local_harness_network_is_available (test_large_project_execution.BoundaryTests.test_local_harness_network_is_available)",
+        "test_timeout_and_success_kill_detached_children (test_large_project_execution.BoundaryTests.test_timeout_and_success_kill_detached_children)",
+        "test_aggregate_limits_freeze_and_lifecycle (test_large_project_pipeline.KernelBoundaryTests.test_aggregate_limits_freeze_and_lifecycle)",
+        "test_authoritative_inputs_are_readonly_in_evaluator (test_large_project_pipeline.KernelBoundaryTests.test_authoritative_inputs_are_readonly_in_evaluator)"
+      ],
+      "exact_error_set_equal": true,
+      "introduced_errors": []
+    },
+    "cli_flow_invocations": 48,
+    "upstream_generated_files_preserved": 7,
+    "current_source_mutants_detected": 2,
+    "required_static_gates_passed": true,
+    "strict_openspec_current_items": 8,
+    "strict_openspec_archive_task_items": 3,
+    "strict_openspec_copied_archived_delta_items": 3,
+    "unavailable": [
+      "nine exact baseline-matched namespace/kernel tests",
+      "Python3.11/3.13 hosted CI matrix",
+      "hosted CI on candidate",
+      "live Codex host discovery",
+      "model/paid evaluations (out of scope)"
+    ]
+  },
+  "independent_source_review": {
+    "verdict": "ready",
+    "findings": [],
+    "tracked_diff_sha256": "b7f72d52ede492196f36b50967473ba44a5dbd7cda68eba5fd4936bbb5194e1f",
+    "scope": "all 17 candidate files before final metadata and synchronization"
+  },
+  "archived_change_files": {
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/.openspec.yaml": {
+      "sha256": "aaa3e0023a1a211f8d8b9501dc1658b67e99886f7d9c4d4d884ca042a6c5ce70",
+      "bytes": 182,
+      "lines": 4
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/design.md": {
+      "sha256": "aeb81ed040a6d5703da047c6a5fbfec3c0f8ecc83aef6e609e7b1135f19f7511",
+      "bytes": 4246,
+      "lines": 29
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/proposal.md": {
+      "sha256": "42f83511fa0e35cd5fbf9676ccd57f50a2918268a583a6fcb2ed9f3f63e957ef",
+      "bytes": 2478,
+      "lines": 28
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/specs/engineering-change-workflow/spec.md": {
+      "sha256": "eeaf23ee42efa62845333f116f85852b7af4d743425bde36e8ffade9d163359a",
+      "bytes": 2568,
+      "lines": 36
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/specs/project-toolkit-integrity/spec.md": {
+      "sha256": "0793ae0ce0f3b2670ba3095ce3908312ba768cd7bec91a912bdc84cb223c5a23",
+      "bytes": 1195,
+      "lines": 23
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/specs/project-toolkit-reconfiguration/spec.md": {
+      "sha256": "b14cbdcfdcf629120c4a2bbc9735025a46b02af4c08ff3f99c94f7cb70853b61",
+      "bytes": 3429,
+      "lines": 47
+    },
+    "openspec/changes/archive/2026-11-14-complete-openspec-adoption/tasks.md": {
+      "sha256": "8d1d2855e3579aa1eb180a7136bb2e24effa51cf33412bf86c688329a184ba59",
+      "bytes": 2246,
+      "lines": 24
+    }
+  },
+  "synchronized_specs": {
+    "openspec/specs/engineering-change-workflow/spec.md": {
+      "sha256": "876b5b970b3618b656d337f2ca0c6cefb054ca1b8fc37aa21ae8e30b7dfe408d",
+      "bytes": 2592,
+      "lines": 35
+    },
+    "openspec/specs/package-catalog/spec.md": {
+      "sha256": "e2ea1559ecdf0e1880eeb3cafb66365cbb080be6a1d558cb152cdc2ad34b08c5",
+      "bytes": 2240,
+      "lines": 45
+    },
+    "openspec/specs/personal-installation-status/spec.md": {
+      "sha256": "8198ba83f335da79c6e328c3422b369f79dab811ca08aff5da58c7d0f1f2559f",
+      "bytes": 3143,
+      "lines": 46
+    },
+    "openspec/specs/project-toolkit-integrity/spec.md": {
+      "sha256": "26bd6111a85e38ac072e456e6f34e6c124b004b1c34481634c78c9a6ec03ee12",
+      "bytes": 3201,
+      "lines": 57
+    },
+    "openspec/specs/project-toolkit-reconfiguration/spec.md": {
+      "sha256": "3eb55d2ac89ee16c6957d4a2715a22a9398a00254fdc0d9403c260dcacb4566f",
+      "bytes": 3457,
+      "lines": 46
+    }
+  },
+  "archive": {
+    "change": "complete-openspec-adoption",
+    "archived_as": "2026-11-14-complete-openspec-adoption",
+    "specs_updated": true,
+    "requirements_added": 8,
+    "requirements_modified": 1,
+    "tasks_complete": 8,
+    "tasks_total": 8,
+    "current_strict_items_passed": 9,
+    "archive_strict_items_passed": 4,
+    "other_active_changes_unchanged": true,
+    "runtime_test_skill_bytes_unchanged_since_independent_acceptance": true
+  }
+}

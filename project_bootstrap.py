@@ -14,7 +14,8 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-SCHEMA = "agent-toolkit-project/v1"
+LEGACY_SCHEMA = "agent-toolkit-project/v1"
+SCHEMA = "agent-toolkit-project/v2"
 MANIFEST = ".agent-toolkit/manifest.json"
 BLOCK_START = b"<!-- AGENT_TOOLKIT:START -->"
 BLOCK_END = b"<!-- AGENT_TOOLKIT:END -->"
@@ -287,8 +288,8 @@ def source_identity(root: Path, files: dict[str, FileState], block: bytes) -> di
     return {"commit": commit, "dirty": dirty, "content_sha256": fingerprint}
 
 
-def validate_manifest(content: bytes, available: dict[str, str] | None = None) -> dict[str, Any]:
-    """Validate relative ownership records before trusting any destination path."""
+def validate_manifest(content: bytes) -> dict[str, Any]:
+    """Validate historical ownership independently of today's source catalog."""
 
     def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
@@ -302,9 +303,12 @@ def validate_manifest(content: bytes, available: dict[str, str] | None = None) -
         data = json.loads(content, object_pairs_hook=unique_object)
     except (UnicodeError, json.JSONDecodeError) as error:
         raise BootstrapError(f"Malformed project toolkit manifest: {error}") from error
-    if not isinstance(data, dict) or data.get("schema") != SCHEMA:
+    if not isinstance(data, dict) or data.get("schema") not in (LEGACY_SCHEMA, SCHEMA):
         raise BootstrapError("Unsupported project toolkit manifest.")
-    for key, allowed in (("skills", available), ("hosts", HOST_DIRECTORIES)):
+    selections = ["skills", "hosts"]
+    if data["schema"] == SCHEMA:
+        selections.append("requested_skills")
+    for key in selections:
         names = data.get(key)
         if (
             not isinstance(names, list)
@@ -312,15 +316,17 @@ def validate_manifest(content: bytes, available: dict[str, str] | None = None) -
             or any(
                 not isinstance(name, str)
                 or (
-                    name not in allowed
-                    if allowed is not None
+                    name not in HOST_DIRECTORIES
+                    if key == "hosts"
                     else re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*-skill", name) is None
                 )
                 for name in names
             )
             or names != sorted(set(names))
         ):
-            raise BootstrapError(f"Invalid or unavailable {key} in project manifest.")
+            raise BootstrapError(f"Invalid {key} in project manifest.")
+    if data["schema"] == SCHEMA and not set(data["requested_skills"]).issubset(data["skills"]):
+        raise BootstrapError("Requested skills must be recorded in project manifest skills.")
     files = data.get("files")
     if not isinstance(files, dict) or not files:
         raise BootstrapError("Project manifest contains no owned files.")
@@ -514,6 +520,7 @@ def bootstrap(
     skills: list[str] | None = None,
     target: str | None = None,
     update: bool = False,
+    reconfigure: bool = False,
     dry_run: bool = False,
 ) -> None:
     """Copy selected toolkit content into a project with explicit ownership and updates.
@@ -532,8 +539,10 @@ def bootstrap(
         Generated directory and file names excluded from toolkit sources.
     skills, target : optional
         Explicit selection; otherwise reuse a manifest or the engineering defaults.
-    update, dry_run : bool
-        Permit changes to unchanged owned files, or only print the complete plan.
+    update, reconfigure, dry_run : bool
+        Update retained capabilities, explicitly replace the selection, or only print
+        the complete plan. Reconfiguration migrates legacy selections only when the
+        caller supplies the complete requested roots.
     """
     project = Path(os.path.abspath(project.expanduser()))
     check_ancestors(project)
@@ -545,36 +554,58 @@ def bootstrap(
             raise BootstrapError("Project managed destinations overlap the toolkit source.")
     manifest_path = project / MANIFEST
     existing_manifest = read_file(manifest_path)
-    previous = (
-        validate_manifest(existing_manifest.content, available)
-        if existing_manifest is not None
-        else None
+    previous = validate_manifest(existing_manifest.content) if existing_manifest else None
+    if update and reconfigure:
+        raise BootstrapError("--reconfigure cannot be combined with --update.")
+    if (update or reconfigure) and previous is None:
+        mode = "--reconfigure" if reconfigure else "--update"
+        raise BootstrapError(f"{mode} requires an existing project toolkit manifest.")
+    if reconfigure:
+        if skills is None and target is None:
+            raise BootstrapError("--reconfigure requires --skill, --all, or --target.")
+        if previous and previous["schema"] == LEGACY_SCHEMA and skills is None:
+            raise BootstrapError(
+                "Legacy manifests do not record requested skills. Supply the complete "
+                "desired selection with --skill (repeatable) or --all to migrate."
+            )
+    recorded_roots = (
+        (previous["requested_skills"] if previous["schema"] == SCHEMA else previous["skills"])
+        if previous
+        else DEFAULT_SKILLS
     )
-    if update and previous is None:
-        raise BootstrapError("--update requires an existing project toolkit manifest.")
-    selected = resolve_skills(
-        list(
-            skills if skills is not None else (previous["skills"] if previous else DEFAULT_SKILLS)
-        ),
-        available,
-    )
+    requested = sorted(set(skills if skills is not None else recorded_roots))
     hosts = (
         sorted(HOST_DIRECTORIES if target == "both" else [target])
         if target
         else (previous["hosts"] if previous else sorted(HOST_DIRECTORIES))
     )
-    if not selected or set(selected) - available.keys():
-        raise BootstrapError(f"Unknown or empty skill selection: {selected}")
+    if not requested:
+        raise BootstrapError("Empty requested skill selection.")
     if not hosts or any(host not in HOST_DIRECTORIES for host in hosts):
         raise BootstrapError(f"Unknown host selection: {hosts}")
-    # Version one stores the full selection, not requested roots. Preserve every old
-    # package while permitting only newly required dependencies during explicit update.
-    expected_selection = resolve_skills(previous["skills"], available) if previous else selected
-    if previous and (selected != expected_selection or hosts != previous["hosts"]):
-        raise BootstrapError(
-            "Changing project skills or hosts is not supported by this manifest version. "
-            "Keep the recorded selection; manage a deliberate reconfiguration through project Git."
+    if previous and not reconfigure:
+        unavailable = sorted(set(previous["skills"]) - available.keys())
+        if unavailable:
+            raise BootstrapError(
+                f"Recorded skills unavailable in this source: {', '.join(unavailable)}. "
+                "Preserve the old manifest; preview --reconfigure with a complete --skill "
+                "selection to retire obsolete capabilities deliberately."
+            )
+        # Ordinary updates retain old packages even if new dependency metadata no
+        # longer requires them. Only explicit reconfiguration can prune selection.
+        selected = resolve_skills(previous["skills"], available)
+        selection_changed = skills is not None and (
+            requested != previous["requested_skills"]
+            if previous["schema"] == SCHEMA
+            else resolve_skills(requested, available) != selected
         )
+        if selection_changed or hosts != previous["hosts"]:
+            raise BootstrapError(
+                "Changing project skills or hosts requires --reconfigure. "
+                "Preview the complete desired selection with --reconfigure --dry-run."
+            )
+    else:
+        selected = resolve_skills(requested, available)
     files = collect_files(root, selected, hosts, agents, ignored)
     block = instruction_block(selected)
     agents_path = project / "AGENTS.md"
@@ -596,13 +627,15 @@ def bootstrap(
         separator = b"\n\n" if agents_content else b""
         updated_agents = agents_content + separator + block + b"\n"
     manifest = {
-        "schema": SCHEMA,
+        "schema": previous["schema"] if previous and not reconfigure else SCHEMA,
         "hosts": hosts,
         "skills": selected,
         "source": source_identity(root, files, block),
         "files": {name: digest(state.content) for name, state in sorted(files.items())},
         "agents_block_sha256": digest(block),
     }
+    if manifest["schema"] == SCHEMA:
+        manifest["requested_skills"] = requested
     old_files = previous["files"] if previous else {}
     before: dict[Path, FileState | None] = {}
     changes: dict[Path, FileState | None] = {}
@@ -628,7 +661,7 @@ def bootstrap(
     before[manifest_path] = existing_manifest
     if desired_manifest != existing_manifest:
         changes[manifest_path] = desired_manifest  # Commit the ownership record last.
-    if previous and changes and not update:
+    if previous and changes and not (update or reconfigure):
         raise BootstrapError(
             "Project toolkit changes are available; inspect --update --dry-run first."
         )

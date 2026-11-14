@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-14
+goal: Complete issue 18 through safe project reconfiguration, one OpenSpec
+  record, independent checks, and measured workflow simplification
