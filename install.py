@@ -357,9 +357,18 @@ def installation_status(
 
 
 def plan_install(
-    root: Path, target: str, skills: list[str], paths: dict[str, Path], *, backup_existing: bool
+    root: Path,
+    target: str,
+    skills: list[str],
+    paths: dict[str, Path],
+    *,
+    backup_existing: bool,
+    preserve_legacy_skills: tuple[str, ...] = (),
 ) -> list[Entry]:
     """Preflight selected links and legacy migrations without filesystem writes."""
+    unknown = set(preserve_legacy_skills) - SKILL_ALIASES.keys()
+    if unknown:
+        raise InstallError(f"Unknown legacy skills to preserve: {', '.join(sorted(unknown))}")
     skills = selected_skills(skills, inventory(root))
     candidates = []
     for name in skills:
@@ -370,7 +379,7 @@ def plan_install(
                 if canonical == agent and present(paths[f"{target}-agents"] / old):
                     candidates.append(Entry(f"{target}-agents", old, None))
         for old, canonical in SKILL_ALIASES.items():
-            if canonical != name:
+            if canonical != name or old in preserve_legacy_skills:
                 continue
             if present(paths[f"{target}-skills"] / old):
                 candidates.append(Entry(f"{target}-skills", old, None))
@@ -436,6 +445,8 @@ def install(
     *,
     backup_existing: bool = False,
     dry_run: bool = False,
+    preserve_legacy_skills: tuple[str, ...] = (),
+    receipt_id: str | None = None,
 ) -> Path | None:
     """Install a preflighted selection and return its restoration receipt.
 
@@ -453,12 +464,18 @@ def install(
         Move conflicting entries into backup before replacing them.
     dry_run : bool
         Print the complete plan without creating any filesystem entries.
+    preserve_legacy_skills : tuple of str
+        Recognized legacy skill names intentionally left untouched.
+    receipt_id : str or None
+        Optional caller-owned operation ID; reserves that exact receipt directory.
 
     Returns
     -------
     Path or None
         Receipt path, or None when dry-running or already installed.
     """
+    if receipt_id is not None and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}", receipt_id):
+        raise InstallError("Receipt ID must be a safe single component of at most 128 characters.")
     paths = locations(home, codex_home)
     areas = [f"{target}-skills", f"{target}-agents"]
     if target == "codex":
@@ -466,7 +483,16 @@ def install(
     storage = home / ".local/state/agent-toolkit/installations"
     validate_layout(root, {area: paths[area] for area in areas}, storage)
     check_parents(storage)
-    entries = plan_install(root, target, skills, paths, backup_existing=backup_existing)
+    entries = plan_install(
+        root,
+        target,
+        skills,
+        paths,
+        backup_existing=backup_existing,
+        preserve_legacy_skills=preserve_legacy_skills,
+    )
+    for name in sorted(set(preserve_legacy_skills)):
+        print(f"Preserve legacy skill {name}: leave existing aliases untouched.")
     for entry in entries:
         destination = paths[entry.area] / entry.name
         kind = "hard link" if entry.area == "codex-agents" else "symbolic link"
@@ -476,7 +502,9 @@ def install(
     if dry_run or not entries:
         print("Dry run; no changes." if dry_run else "Already installed; no changes.")
         return None
-    run = storage / (datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:12])
+    run = storage / (
+        receipt_id or (datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:12])
+    )
     receipt = run / "receipt.json"
     data: dict[str, Any] = {
         "schema": SCHEMA,
@@ -484,6 +512,7 @@ def install(
         "home": str(home),
         "codex_home": str(codex_home),
         "source": str(root),
+        "preserved_legacy_skills": sorted(set(preserve_legacy_skills)),
         "entries": [
             {
                 "area": entry.area,
@@ -494,12 +523,17 @@ def install(
             for entry in entries
         ],
     }
+    if receipt_id is not None:
+        data["operation_id"] = receipt_id
     created: list[Path] = []
     moved: list[tuple[Path, Path]] = []
     linked: list[tuple[Path, Path]] = []
+    reserved = False
     try:
-        make_directories(run, created)
-        run.chmod(0o700)
+        make_directories(storage, created)
+        run.mkdir(mode=0o700)
+        reserved = True
+        created.append(run)
         write_receipt(receipt, data)
         for index, entry in enumerate(entries):
             destination = paths[entry.area] / entry.name
@@ -530,7 +564,7 @@ def install(
                 if present(destination):
                     raise InstallError(f"Concurrent edit prevents rollback: {destination}")
                 backup.rename(destination)
-            if receipt.exists():
+            if reserved and receipt.exists():
                 receipt.unlink()
             for directory in reversed(created):
                 directory.rmdir()
@@ -721,6 +755,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     apply.add_argument("--codex-home", type=Path, help="Explicit custom Codex directory.")
     apply.add_argument("--backup-existing", action="store_true")
+    apply.add_argument(
+        "--preserve-legacy-skill",
+        action="append",
+        default=[],
+        choices=sorted(SKILL_ALIASES),
+        help="Keep a recognized legacy skill unchanged; repeat to preserve several.",
+    )
     apply.add_argument("--dry-run", action="store_true")
     status = commands.add_parser("status", help="Inspect selected personal links without changes.")
     status.add_argument("--target", choices=tuple(AGENTS), required=True)
@@ -870,6 +911,7 @@ def main(argv: list[str] | None = None) -> int:
                         codex_home,
                         backup_existing=args.backup_existing,
                         dry_run=args.dry_run,
+                        preserve_legacy_skills=tuple(args.preserve_legacy_skill),
                     )
     except (OSError, ValueError, KeyError, TypeError) as error:
         if args.command == "status" and args.json:

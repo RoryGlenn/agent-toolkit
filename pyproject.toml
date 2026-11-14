@@ -22,4 +22,4 @@ select = ["E", "F", "I", "UP", "B"]
 python_version = "3.11"
 strict = true
 exclude = ["skill_authoring/upstream/"]
-files = ["authoring.py", "skill_authoring", "benchmarks", "install.py", "project_bootstrap.py", "skills/documentation-skill/scripts/check_environment.py", "skills/ddia-skill/scripts/book.py", "skills/ddia-skill/scripts/guide.py", "skills/ddia-skill/evals/evaluate.py", "skills/ddia-skill/scripts/experiments.py", "skills/software-design-skill/scripts/book.py", "skills/legacy-code-skill/scripts/legacy_code.py"]
+files = ["authoring.py", "skill_authoring", "benchmarks", "install.py", "project_bootstrap.py", "usage_audit.py", "toolkit_update.py", "skills/documentation-skill/scripts/check_environment.py", "skills/ddia-skill/scripts/book.py", "skills/ddia-skill/scripts/guide.py", "skills/ddia-skill/evals/evaluate.py", "skills/ddia-skill/scripts/experiments.py", "skills/software-design-skill/scripts/book.py", "skills/legacy-code-skill/scripts/legacy_code.py"]

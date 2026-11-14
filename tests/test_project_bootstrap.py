@@ -254,6 +254,10 @@ class ProjectBootstrapTests(unittest.TestCase):
 
     def test_role_rendering_inherits_settings_and_preserves_all_other_fields(self) -> None:
         """Copied Codex roles preserve instructions but inherit the collaborator's host settings."""
+        source_role = self.source / "agents/codex/implementation-owner-agent.toml"
+        source_role.write_text(
+            'model = "fixture-model"\nmodel_reasoning_effort = "high"\n' + source_role.read_text()
+        )
         self.apply()
         for path in (self.app / ".codex/agents").iterdir():
             original = tomllib.loads((self.source / "agents/codex" / path.name).read_text())
@@ -267,8 +271,8 @@ class ProjectBootstrapTests(unittest.TestCase):
                 },
             )
         self.assertIn(
-            'model = "gpt-5.6"',
-            (self.source / "agents/codex/implementation-owner-agent.toml").read_text(),
+            'model = "fixture-model"',
+            source_role.read_text(),
         )
         wrapper = (self.app / ".codex/agents/documentation-agent.toml").read_text()
         self.assertIn(".agents/skills/documentation-skill/SKILL.md under that root", wrapper)
