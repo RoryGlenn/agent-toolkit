@@ -361,7 +361,7 @@ class InstallerTests(unittest.TestCase):
             "Deprecated skill selector 'doc-agent'; use 'documentation-skill'", errors.getvalue()
         )
         self.assertEqual(
-            [path.name for path in (self.home / ".agents/skills").iterdir()],
+            sorted(path.name for path in (self.home / ".agents/skills").iterdir()),
             ["documentation-skill", "task-routing-skill"],
         )
         self.assertEqual(
@@ -503,7 +503,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(
             {path.name for path in (self.home / ".agents/skills").iterdir()}, set(skills)
         )
-        self.assertEqual(len(list((self.codex / "agents").iterdir())), 6)
+        self.assertEqual(len(list((self.codex / "agents").iterdir())), 7)
         self.assertEqual(
             {path.name for path in (self.home / ".copilot/skills").iterdir()}, set(skills)
         )
@@ -991,7 +991,12 @@ class InstallerTests(unittest.TestCase):
                     {entry["name"] for entry in entries if entry["area"] == f"{target}-skills"},
                     set(skills),
                 )
-                self.assertEqual(len(entries), len(skills) + (6 if target == "codex" else 0))
+                roles = {name for names in install.AGENTS[target].values() for name in names}
+                self.assertEqual(
+                    {entry["name"] for entry in entries if entry["area"] == f"{target}-agents"},
+                    roles,
+                )
+                self.assertEqual(len(entries), len(skills) + len(roles))
         self.assertEqual(self.status_snapshot(), before)
 
     def test_status_json_argument_errors_emit_one_object(self) -> None:

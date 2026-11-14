@@ -398,12 +398,50 @@
         "skills/task-routing-skill/evals/cases.json",
         "tests/test_routing.py",
         "standards/authoring/reviews/routing.md",
-        "standards/authoring/reviews/routing-observations.json"
+        "standards/authoring/reviews/routing-observations.json",
+        "tests/test_legacy_code_suite.py",
+        "standards/authoring/reviews/legacy-code.md"
       ],
       "assessment": "reviewed",
-      "next_check": "Resolve the observed partial missing-skill capability-discovery/disclosure and protocol-qualification gap; repeat final-snapshot failure, subtask, software-design and topic-change cases before reliability claims.",
+      "next_check": "Resolve the previously observed partial missing-skill discovery/disclosure and protocol-qualification gap; observe the new legacy route and repeat failure/topic-change/subtask and software-design cases after native isolation and configured reasoning effort are supported. New cases are authored/fixture evidence only.",
       "review_record": "standards/authoring/reviews/routing.md",
-      "reviewed_sha256": "cac5c86f197b564060cd7b21ae3d43eac1089ebe335eb43a832fd57f013fbff8"
+      "reviewed_sha256": "2958fd04d1d40dbcf939056658fe615e9f3f717fae9d2fcd0d9eb60b07a7487c"
+    },
+    {
+      "path": "skills/legacy-code-skill/SKILL.md",
+      "basis": "Feathers first-edition full-source study and bounded safe-change procedure.",
+      "evidence": [
+        "tests/test_legacy_code_book.py",
+        "tests/test_legacy_code_suite.py",
+        "skills/legacy-code-skill/evals/README.md",
+        "skills/legacy-code-skill/evals/evals.json",
+        "skills/legacy-code-skill/evals/integration-cases.json",
+        "skills/legacy-code-skill/references/coverage.json",
+        "standards/authoring/reviews/legacy-code.md",
+        "standards/authoring/reviews/legacy-code-runtime-sha256.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Run the frozen matched pilot when native isolation and the configured max reasoning effort are supported; then check actual source consultation, routing, ownership and held-out behavior.",
+      "review_record": "standards/authoring/reviews/legacy-code.md",
+      "reviewed_sha256": "ea1159dc06e84ce959f5f53abb6066591d8c1888289cc3bfa998fa908adedeec"
+    },
+    {
+      "path": "agents/codex/legacy-code-agent.toml",
+      "basis": "Codex thin role loading legacy-code-skill with inherited settings and assigned ownership.",
+      "evidence": [
+        "tests/test_legacy_code_book.py",
+        "tests/test_legacy_code_suite.py",
+        "skills/legacy-code-skill/evals/README.md",
+        "skills/legacy-code-skill/evals/evals.json",
+        "skills/legacy-code-skill/evals/integration-cases.json",
+        "skills/legacy-code-skill/references/coverage.json",
+        "standards/authoring/reviews/legacy-code.md",
+        "standards/authoring/reviews/legacy-code-runtime-sha256.json"
+      ],
+      "assessment": "reviewed",
+      "next_check": "Observe actual named-role dispatch, inherited settings, source use and LC11/LC12 ownership/routing/fallback behavior after the native isolation and reasoning-effort blockers are resolved.",
+      "review_record": "standards/authoring/reviews/legacy-code.md",
+      "reviewed_sha256": "3df03b0d0719006a30ed965fb21259b6142034cc19b72e2957d0f8f2e3607da2"
     }
   ]
 }

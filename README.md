@@ -1,54 +1,158 @@
-# Agent Toolkit
+# 🧰 Agent Toolkit
 
-A reusable agentic starting layer for full-stack, frontend, backend, and local software
-projects. Bring established engineering workflows and domain expertise into a project's
-repository so collaborators can use the same guidance. Each project supplies its own
-architecture, stack, package manager, commands, audience, and terminology.
+**Give your AI coding assistant reusable instructions for building, reviewing, and maintaining software.**
 
-The [OpenSpec trial](docs/openspec/README.md) uses upstream project workflows and
-feature specifications alongside the existing toolkit. Its [paired comparison](experiments/openspec-pilot/README.md)
-records three implemented CLI features, matched candidate results, review findings,
-and the maintenance overhead observed so far. Toolkit bootstrap remains independent
-of OpenSpec.
+Add this toolkit to a new or existing project so **Codex or GitHub Copilot** can follow
+shared workflows for implementation, code review, documentation, and design decisions.
+Your project keeps its own stack, tools, and conventions.
+
+[![Repository checks](https://github.com/RoryGlenn/agent-toolkit/actions/workflows/checks.yml/badge.svg)](https://github.com/RoryGlenn/agent-toolkit/actions/workflows/checks.yml)
+
+**[🚀 Quick start](#-quick-start)** · **[🧭 Choose a skill](#-choose-a-skill)** · **[💬 Example prompts](#-try-it-in-your-project)** · **[🏠 Personal setup](#personal-installation)** · **[📖 Reference](#-reference)**
+
+> [!TIP]
+> **Start here:** add the default toolkit to one project, open that project in your coding
+> assistant, and try a prompt below. You can choose individual skills later.
+
+## 🧭 Choose a skill
+
+Think of each **skill** as a playbook your coding assistant can load for a particular job.
+
+| I want to… | Use this skill |
+| --- | --- |
+| 🛠️ Implement a feature or fix, with tests and independent review | [issue-to-tested-pr-skill](skills/issue-to-tested-pr-skill/SKILL.md) |
+| 🔎 Review a pull request, branch, or local change | [independent-diff-review-skill](skills/independent-diff-review-skill/SKILL.md) |
+| 📝 Write documentation people can follow | [documentation-skill](skills/documentation-skill/SKILL.md) |
+| 🧩 Improve module boundaries, APIs, or maintainability | [software-design-skill](skills/software-design-skill/SKILL.md) |
+| 🗄️ Reason about databases, transactions, retries, or recovery | [ddia-skill](skills/ddia-skill/SKILL.md) |
+| 📦 Check a package and its docs before release | [release-and-docs-skill](skills/release-and-docs-skill/SKILL.md) |
+| ✂️ Find complexity that can be removed or simplified | [simplify-or-delete-skill](skills/simplify-or-delete-skill/SKILL.md) |
+| 🧯 Change poorly tested code safely | [legacy-code-skill](skills/legacy-code-skill/SKILL.md) — optional |
+
+The default project setup includes the first seven skills and their shared
+[task-routing-skill](skills/task-routing-skill/SKILL.md), which helps choose relevant
+expertise. The legacy code skill and [separate DDIA workflow entry points](#ddia-workflow-skills)
+are optional. Use `--all` to include the entire collection.
+
+## 🚀 Quick start
+
+**You need:** Git, **Python 3.11+**, and an existing **Codex or GitHub Copilot** setup.
+Run the commands below in a **macOS or Linux terminal**. The installer uses Python's
+standard library; no extra Python packages are required.
+
+### 1. Download the toolkit
+
+```bash
+git clone https://github.com/RoryGlenn/agent-toolkit.git
+cd agent-toolkit
+python3 install.py check
+```
+
+### 2. Add it to your project
+
+Replace `/path/to/my-project` with the folder for your new or existing application,
+separate from the toolkit checkout. Preview the files, then apply the setup:
+
+```bash
+python3 install.py bootstrap --project /path/to/my-project --dry-run
+python3 install.py bootstrap --project /path/to/my-project
+```
+
+The default supports both hosts: Codex receives skills and named agent roles;
+Copilot receives skills. To choose one, add `--target codex` or `--target copilot`
+to both commands.
+
+**What gets added:**
+
+```text
+my-project/
+├── AGENTS.md                     Project guidance + a toolkit routing block
+├── .agents/skills/               Selected skill packages
+├── .codex/agents/                Codex worker roles
+└── .agent-toolkit/manifest.json  Tracks toolkit-owned files for updates
+```
+
+Existing project guidance is preserved. These are regular file copies, so the project
+keeps working if you move it or remove the toolkit checkout. Bootstrap adds engineering
+instructions; it does not generate your application or install application dependencies.
+
+**Success:** the command ends with `Project toolkit ready.` and asks you to review and
+commit the generated files with your application. It does not stage or commit them for you.
+
+### 3. Open your project and try a task
+
+Open **your application folder** in Codex or Copilot, complete its normal project-trust
+prompt, and start a fresh session or refresh the current one. Confirm the selected skills
+are available, then try one of the prompts below.
+
+> [!NOTE]
+> **Terminal commands install the files. Prompts use them.** Paste the examples below
+> into your coding assistant's chat, rather than your terminal. Named worker roles are
+> supplied for Codex; Copilot uses the portable skills.
+
+## 💬 Try it in your project
+
+### Improve a README
+
+```text
+Use $documentation-skill to rewrite this project's README for a first-time contributor.
+Explain what the project does, how to run it, and how to verify it works.
+```
+
+### Build a scoped feature
+
+```text
+Use $issue-to-tested-pr-skill to add a --name option to this project's CLI.
+Preserve the current default behavior and test both paths.
+```
+
+### Review your changes
+
+```text
+Use $independent-diff-review-skill to review my working-tree changes.
+Focus on bugs, behavior regressions, and missing tests.
+```
+
+Adapt the feature example to your project. Your assistant uses the repository's actual
+commands and conventions. The toolkit supplies instructions and supporting tools;
+results still depend on your host, model, and task. Check its work as you normally would.
+
+<details>
+<summary><strong>🧠 What's the difference between a skill and an agent?</strong></summary>
+
+A **skill** gives the current assistant instructions and reference material. A **named agent
+role** defines a worker the assistant can delegate a bounded task to. Installing a role
+does not start a background service.
+
+For example, these Codex prompts use the same design guidance in different ways:
+
+- **Current assistant:** “Use `$software-design-skill` to review this API.”
+- **Separate worker:** “Ask `software_design_agent` to review this API.”
+
+Skill names end in `-skill`; Codex delegation identifiers end in `_agent`. A workflow can
+share worker roles with other workflows. If your host cannot delegate to a named role,
+use the skill directly and describe that fallback accurately.
+
+</details>
+
+<details>
+<summary><strong>🎛️ Choose individual skills, pin a version, or update a project</strong></summary>
 
 ## Start a project
 
-The bootstrap command requires Python 3.11 or newer on macOS or Linux. Run it from an
-existing toolkit checkout, targeting a new or existing application directory:
+The quick start installs the default engineering selection. For a smaller setup, select
+skills explicitly. Dependencies and associated Codex roles are included automatically.
+For example, from the toolkit root:
 
 ```bash
-python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project --dry-run
-python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project
-```
-
-The default engineering selection includes `documentation-skill`, `ddia-skill`,
-`software-design-skill`, `independent-diff-review-skill`, `issue-to-tested-pr-skill`,
-`release-and-docs-skill`, and `simplify-or-delete-skill`, plus their shared
-`task-routing-skill` dependency. It supplies Codex agent roles and portable skills; the Copilot target is skill-only.
-Use repeated `--skill` flags for an explicit selection or `--all` for the entire
-collection. Select one host with `--target codex` or `--target copilot`.
-
-For example, a documentation-only Codex project:
-
-```bash
-python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/docs-project \
+python3 install.py bootstrap --project /path/to/docs-project \
+  --target codex --skill documentation-skill --dry-run
+python3 install.py bootstrap --project /path/to/docs-project \
   --target codex --skill documentation-skill
 ```
 
-The bootstrap copies regular files into the application repository:
-
-```text
-AGENTS.md                         Existing guidance plus one managed routing block
-.agents/skills/<name>-skill/       Shared skill packages for both hosts
-.codex/agents/*-agent.toml         Selected Codex roles
-.agent-toolkit/manifest.json      Relative owned paths, hashes, and source provenance
-```
-
-Review and commit these generated files with the application so collaborators receive the
-same layer after cloning. The command does not stage or commit them. Copies remain usable
-when the toolkit checkout is removed or the application is relocated. Bootstrap creates
-engineering guidance, not application code or a framework scaffold. It adds no dependencies,
-services, credentials, global configuration, or trust settings.
+Repeat `--skill` to select several skills, or use `--all`. Review and commit the generated
+files in your application so collaborators receive the same setup when they clone it.
 
 The managed `AGENTS.md` block routes only to selected skills. Existing project instructions
 remain intact and authoritative within system and user instructions. Work starts by
@@ -148,55 +252,129 @@ skill-only target preserves those files; use the original restoration receipt or
 manage a separate migration if you want to retire them. Updating the repository alone does
 not update a running host session or silently remove personal configuration.
 
-## Naming convention: skills and agents
+</details>
 
-A **skill** is reusable instructions, references, and optional tools loaded by the current
-agent. An **agent** is a host-specific worker role to which a parent can delegate work.
-Installing an agent definition does not start a permanent worker or service.
+## Personal installation
 
-Every toolkit name states its type:
+**For skills available across your projects,** use a personal installation instead
+of copying them into each repository. This setup links to the
+toolkit checkout, so keep it in a stable location.
 
-| Artifact | Required naming pattern | Example |
+The same Python 3.11+ and macOS/Linux requirements apply. No service, credentials,
+or runtime dependencies are needed to install it.
+
+Run these commands from the repository root:
+
+```bash
+python3 install.py list
+python3 install.py list --json
+python3 install.py check
+python3 install.py install --target codex --skill documentation-skill --dry-run
+python3 install.py install --target codex --skill documentation-skill
+```
+
+For scripts, `list --json` writes one JSON object with `schema_version: 1` and a `skills`
+array sorted by canonical name. Each entry contains `name`, `description`, `dependencies`
+(sorted direct skill dependencies), and `roles` (each supported host mapped to sorted runtime
+role names). Skill-only hosts have empty role arrays. It validates the current package and
+dependency availability, reads no user configuration, and creates no installation directories.
+Without `--json`, `list` keeps its human-readable output.
+
+Restart or refresh your agent session, then invoke `$documentation-skill` for a documentation task. The new session should show the installed skill and `documentation_agent` role. Installation checks files and links; actual model behavior also depends on the host, selected model, and available tools.
+
+Install several skills by repeating `--skill`, or install the full collection:
+
+```bash
+python3 install.py install --target codex --all
+python3 install.py install --target copilot --skill documentation-skill
+```
+
+Select skills with `--skill`; their associated roles are included automatically, as shown
+in the [full catalog](#included-skills). You do not need to install each role separately. For example,
+selecting `release-and-docs-skill` installs only that workflow skill, while selecting `ddia-skill`
+for Codex installs its skill and the `ddia_agent` role.
+
+| Target | Skills | Agent definitions |
 | --- | --- | --- |
-| Skill directory and `SKILL.md` frontmatter `name` | `<task-or-domain>-skill` | `skills/documentation-skill/SKILL.md`, invoked as `$documentation-skill` |
-| Codex agent file | `<role-or-domain>-agent.toml` | `agents/codex/documentation-agent.toml` |
-| Codex agent `name` and delegation identifier | Filename stem converted to snake_case, ending `_agent` | `documentation_agent` |
-| Display names | End with **Skill** or **Agent** according to the artifact | **Documentation Skill**, **Documentation Agent** |
+| Codex | `~/.agents/skills/<name>` | `${CODEX_HOME:-~/.codex}/agents/` |
+| Copilot (skills only) | `~/.copilot/skills/<name>` | None |
 
-Use lowercase kebab-case for directory and file stems. New agent definitions use Codex
-TOML only. Legacy Copilot filenames remain recognized for ownership-safe cleanup, not new
-agent authoring. Keep the host-defined
-`SKILL.md` and optional `agents/openai.yaml` names unchanged: the latter contains skill UI
-metadata and does not define a separate worker. `python3 install.py check` enforces skill
-directory/frontmatter names, agent filenames and runtime names, and agent associations.
+Inspect selected personal links without changing them:
 
-“Specialist” describes expertise in prose; it is not an artifact type or naming suffix.
-A workflow skill can use shared agents or run without a dedicated agent.
+```bash
+python3 install.py status --target codex --skill documentation-skill --home ~
+python3 install.py status --target copilot --all --home /path/to/home --json
+```
 
-For example, these Codex prompts use the same guidance in different ways:
+Status requires `--home`, ignores inherited `CODEX_HOME`, and accepts `--codex-home`
+for an explicit role directory. It follows install aliases, repeated `--skill` selectors
+and dependency closure, reporting each expected destination once. Copilot reports skills only.
+Human output lists paths and states. JSON output is one object with `schema_version: 1`
+and `entries` sorted by `area`, then `name`; each entry contains `area`, `name` and `state`.
+Exit status is zero only when every entry is `current`; missing, different or invalid
+inspections return nonzero. Inspection or argument errors add an `error` string to the JSON
+object with empty entries and print stderr diagnostics.
 
-- **Use the current agent:** “Use `$software-design-skill` to review this API.”
-- **Delegate to another worker:** “Ask `software_design_agent` to review this API.”
+`current` means a skill symlink names this checkout's canonical absolute source directory,
+or a Codex role is a regular hardlink sharing the current source inode. Absent entries
+are `missing`; foreign entries, dangling links, copied skills, copied roles, role symlinks
+and role hardlinks detached by atomic source replacement are `different`, even with
+identical bytes. Equivalent relative symlink targets are also `different`, matching install's
+canonical target convention. Status creates no directories or receipts and performs no repairs.
+It inspects selected expected destinations, not legacy duplicates or unrelated entries.
+Linkage is an observation at inspection time, not proof of host loading, pristine content,
+historical ownership or permission to overwrite. It cannot distinguish an outdated owned
+entry from user edits without additional evidence. Unsafe destination parents and invalid
+package sources fail inspection; concurrent changes can invalidate the observation.
 
-The first loads the skill into the current agent's work. The second asks for a worker using
-the named role, which loads that skill. Use the exact identifiers in the catalog below;
-skill names and role names are distinct. If a host cannot dispatch a named role, follow
-the skill's documented fallback rather than claiming a separate specialist ran.
+<details>
+<summary><strong>⚙️ Personal install paths, links, and host settings</strong></summary>
+
+Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Imported engineering roles retain their existing model selections; edit `agents/codex/*.toml` if your account uses different models. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
+
+Copilot can also discover shared `~/.agents/skills` content. Avoid separately maintaining another copy of a skill it already discovers. Host versions can differ in how duplicate names appear; inspect the skill picker after installation.
+
+To test an installation without affecting your normal setup, supply `--home /path/to/disposable-home` outside the toolkit checkout. This ignores inherited `CODEX_HOME`; `--codex-home /explicit/path` can override the agent directory deliberately. The source checkout, active and legacy installation directories, and backup storage must be separate: aliases and nested locations are rejected before changes. The `install` subcommand handles personal links; use `bootstrap` for portable project copies. Windows installation is not supported.
+
+</details>
+
+## 🛟 Troubleshooting
+
+| What happened? | What to do |
+| --- | --- |
+| The skill does not appear after setup | Open the application folder, refresh or start a new host session, and check skill discovery. |
+| Installation reports an existing file or link | Inspect the reported path. For personal installs, preview `--backup-existing`; see [restore and migration](#existing-installations-and-restore). |
+| A project update reports edited or missing managed files | Preserve your custom work in project Git, reconcile the conflict, then retry. Updates do not force-overwrite it. |
+| A named role is unavailable | Use the installed skill directly. Verify role support in your host before relying on delegation. |
+| A book-based skill cannot find the original book | Use its packaged guidance and disclose the source gap, or initialize the optional local library in the specialist setup below. |
+
+## 📖 Reference
+
+The setup above is enough to begin. Expand a section when you need its details.
+
+The opt-in [OpenSpec trial](docs/openspec/README.md) uses upstream project workflows and
+feature specifications alongside the existing toolkit. Its [paired comparison](experiments/openspec-pilot/README.md)
+records three implemented CLI features, matched candidate results, review findings,
+and the maintenance overhead observed so far. Toolkit bootstrap remains independent
+of OpenSpec.
+
+<details>
+<summary><strong>🧾 Full skill catalog, worker roles, and routing</strong></summary>
 
 ## Included skills
 
-The role columns show **roles installed with the selected skill**, not the state of your
-current installation. **None** means the installer supplies the skill without a named role
-for that host. `python3 install.py list` reads these associations from `install.py` and the
-actual role names from their definitions.
+The tables show **Codex roles installed with each selected skill**. Copilot receives skills
+only. Shared dependencies and roles are installed once. To see the current catalog, run
+`python3 install.py list` from the toolkit root.
 
 ### Book-based skills and their agents
 
-| Skill | Use it for | Codex roles installed | Copilot roles installed |
-| --- | --- | --- | --- |
-| [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) | None (skills only) |
-| [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) | None (skills only) |
-| [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) | None (skills only) |
+| Skill | Use it for | Codex roles installed |
+| --- | --- | --- |
+| [documentation-skill](skills/documentation-skill/SKILL.md) | Documentation and reader task success, using *Docs for Developers*. | [documentation_agent](agents/codex/documentation-agent.toml) |
+| [ddia-skill](skills/ddia-skill/SKILL.md) | All 14 DDIA chapters through scoped engineering procedures and portable concept references. | [ddia_agent](agents/codex/ddia-agent.toml) |
+| [software-design-skill](skills/software-design-skill/SKILL.md) | Module boundaries, API contracts, and maintenance complexity, using *A Philosophy of Software Design*. | [software_design_agent](agents/codex/software-design-agent.toml) |
+| [legacy-code-skill](skills/legacy-code-skill/SKILL.md) | Safe changes, characterization, and dependency breaking, using *Working Effectively with Legacy Code*. | [legacy_code_agent](agents/codex/legacy-code-agent.toml) |
 
 ### DDIA workflow skills
 
@@ -243,113 +421,62 @@ host limitations. CLI execution does not by itself establish VS Code GUI behavio
 
 ### Workflow and task skills
 
-| Skill | Use it for | Codex roles installed | Copilot roles installed |
-| --- | --- | --- | --- |
-| [independent-diff-review-skill](skills/independent-diff-review-skill/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. | [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) | None |
-| [issue-to-tested-pr-skill](skills/issue-to-tested-pr-skill/SKILL.md) | Implementation by one writer, followed by independent review and verification. | [implementation_owner_agent](agents/codex/implementation-owner-agent.toml), [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) | None |
-| [release-and-docs-skill](skills/release-and-docs-skill/SKILL.md) | Package, installation, upgrade, and release-documentation verification. | None | None |
-| [simplify-or-delete-skill](skills/simplify-or-delete-skill/SKILL.md) | Proposals to reduce unnecessary complexity. | None | None |
+| Skill | Use it for | Codex roles installed |
+| --- | --- | --- |
+| [independent-diff-review-skill](skills/independent-diff-review-skill/SKILL.md) | Independent review of a branch, pull request, commit, or working-tree change. | [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) |
+| [issue-to-tested-pr-skill](skills/issue-to-tested-pr-skill/SKILL.md) | Implementation by one writer, followed by independent review and verification. | [implementation_owner_agent](agents/codex/implementation-owner-agent.toml), [adversarial_reviewer_agent](agents/codex/adversarial-reviewer-agent.toml), [verifier_agent](agents/codex/verifier-agent.toml) |
+| [release-and-docs-skill](skills/release-and-docs-skill/SKILL.md) | Package, installation, upgrade, and release-documentation verification. | None |
+| [simplify-or-delete-skill](skills/simplify-or-delete-skill/SKILL.md) | Proposals to reduce unnecessary complexity. | None |
 
 The writer, reviewer, and verifier are shared engineering roles. Selecting both engineering
 workflows installs their shared roles once. On hosts without named custom roles, those
 workflows use separate generic agents when delegation is available and disclose when
 independent evidence cannot be obtained.
 
-## Repository map
+</details>
 
-```text
-skills/<task-or-domain>-skill/
-  SKILL.md                 Reusable instructions and invocation boundary
-  agents/openai.yaml       Optional skill display metadata, not a named role
-  references/, scripts/    Supporting material or tools, when needed
-agents/
-  codex/*-agent.toml       Named Codex agent definitions
-books/                     Included source books; not skills or agent roles
-install.py                 Catalog and CLI for personal install and project bootstrap
-project_bootstrap.py        Portable project copies, ownership, and updates
-tests/                     Package, retrieval, and installer behavior checks
-```
+<details>
+<summary><strong>🏷️ Naming convention for contributors</strong></summary>
 
-Detailed personal studies and some source books live in `~/.local/share/<specialist>/`,
-outside this checkout; see the specialist setup sections below. The top-level `agents/`
-directory contains roles. A skill's optional `agents/openai.yaml` describes how that skill
-appears in the host and does not create a separate worker.
+## Naming convention: skills and agents
 
-## Personal installation
+A **skill** is reusable instructions, references, and optional tools loaded by the current
+agent. An **agent** is a host-specific worker role to which a parent can delegate work.
+Installing an agent definition does not start a permanent worker or service.
 
-The installer requires Python 3.11 or newer on macOS or Linux. It uses the standard library
-and creates links to this checkout; keep the checkout in a stable location. No service,
-credentials, or runtime dependencies are needed to install it.
+Every toolkit name states its type:
 
-Run these commands from the repository root:
-
-```bash
-python3 install.py list
-python3 install.py list --json
-python3 install.py check
-python3 install.py install --target codex --skill documentation-skill --dry-run
-python3 install.py install --target codex --skill documentation-skill
-```
-
-For scripts, `list --json` writes one JSON object with `schema_version: 1` and a `skills`
-array sorted by canonical name. Each entry contains `name`, `description`, `dependencies`
-(sorted direct skill dependencies), and `roles` (each supported host mapped to sorted runtime
-role names). Skill-only hosts have empty role arrays. It validates the current package and
-dependency availability, reads no user configuration, and creates no installation directories.
-Without `--json`, `list` keeps its human-readable output.
-
-Restart or refresh your agent session, then invoke `$documentation-skill` for a documentation task. The new session should show the installed skill and `documentation_agent` role. Installation checks files and links; actual model behavior also depends on the host, selected model, and available tools.
-
-Install several skills by repeating `--skill`, or install the full collection:
-
-```bash
-python3 install.py install --target codex --all
-python3 install.py install --target copilot --skill documentation-skill
-```
-
-Select skills with `--skill`; their associated roles are included automatically, as shown
-in the catalog above. You do not need to install each role separately. For example,
-selecting `release-and-docs-skill` installs only that workflow skill, while selecting `ddia-skill`
-for Codex installs its skill and the `ddia_agent` role.
-
-| Target | Skills | Agent definitions |
+| Artifact | Required naming pattern | Example |
 | --- | --- | --- |
-| Codex | `~/.agents/skills/<name>` | `${CODEX_HOME:-~/.codex}/agents/` |
-| Copilot (skills only) | `~/.copilot/skills/<name>` | None |
+| Skill directory and `SKILL.md` frontmatter `name` | `<task-or-domain>-skill` | `skills/documentation-skill/SKILL.md`, invoked as `$documentation-skill` |
+| Codex agent file | `<role-or-domain>-agent.toml` | `agents/codex/documentation-agent.toml` |
+| Codex agent `name` and delegation identifier | Filename stem converted to snake_case, ending `_agent` | `documentation_agent` |
+| Display names | End with **Skill** or **Agent** according to the artifact | **Documentation Skill**, **Documentation Agent** |
 
-Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Imported engineering roles retain their existing model selections; edit `agents/codex/*.toml` if your account uses different models. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
+Use lowercase kebab-case for directory and file stems. New agent definitions use Codex
+TOML only. Legacy Copilot filenames remain recognized for ownership-safe cleanup, not new
+agent authoring. Keep the host-defined
+`SKILL.md` and optional `agents/openai.yaml` names unchanged: the latter contains skill UI
+metadata and does not define a separate worker. `python3 install.py check` enforces skill
+directory/frontmatter names, agent filenames and runtime names, and agent associations.
 
-Copilot can also discover shared `~/.agents/skills` content. Avoid separately maintaining another copy of a skill it already discovers. Host versions can differ in how duplicate names appear; inspect the skill picker after installation.
+“Specialist” describes expertise in prose; it is not an artifact type or naming suffix.
+A workflow skill can use shared agents or run without a dedicated agent.
 
-To test an installation without affecting your normal setup, supply `--home /path/to/disposable-home` outside the toolkit checkout. This ignores inherited `CODEX_HOME`; `--codex-home /explicit/path` can override the agent directory deliberately. The source checkout, active and legacy installation directories, and backup storage must be separate: aliases and nested locations are rejected before changes. The `install` subcommand handles personal links; use `bootstrap` for portable project copies. Windows installation is not supported.
+For example, these Codex prompts use the same guidance in different ways:
 
-Inspect selected personal links without changing them:
+- **Use the current agent:** “Use `$software-design-skill` to review this API.”
+- **Delegate to another worker:** “Ask `software_design_agent` to review this API.”
 
-```bash
-python3 install.py status --target codex --skill documentation-skill --home ~
-python3 install.py status --target copilot --all --home /path/to/home --json
-```
+The first loads the skill into the current agent's work. The second asks for a worker using
+the named role, which loads that skill. Use the exact identifiers in the full skill catalog;
+skill names and role names are distinct. If a host cannot dispatch a named role, follow
+the skill's documented fallback rather than claiming a separate specialist ran.
 
-Status requires `--home`, ignores inherited `CODEX_HOME`, and accepts `--codex-home`
-for an explicit role directory. It follows install aliases, repeated `--skill` selectors
-and dependency closure, reporting each expected destination once. Copilot reports skills only.
-Human output lists paths and states. JSON output is one object with `schema_version: 1`
-and `entries` sorted by `area`, then `name`; each entry contains `area`, `name` and `state`.
-Exit status is zero only when every entry is `current`; missing, different or invalid
-inspections return nonzero. Inspection or argument errors add an `error` string to the JSON
-object with empty entries and print stderr diagnostics.
+</details>
 
-`current` means a skill symlink names this checkout's canonical absolute source directory,
-or a Codex role is a regular hardlink sharing the current source inode. Absent entries
-are `missing`; foreign entries, dangling links, copied skills, copied roles, role symlinks
-and role hardlinks detached by atomic source replacement are `different`, even with
-identical bytes. Equivalent relative symlink targets are also `different`, matching install's
-canonical target convention. Status creates no directories or receipts and performs no repairs.
-It inspects selected expected destinations, not legacy duplicates or unrelated entries.
-Linkage is an observation at inspection time, not proof of host loading, pristine content,
-historical ownership or permission to overwrite. It cannot distinguish an outdated owned
-entry from user edits without additional evidence. Unsafe destination parents and invalid
-package sources fail inspection; concurrent changes can invalidate the observation.
+<details>
+<summary><strong>📚 Book-based specialist setup and evidence limits</strong></summary>
 
 ## DDIA skill and agent
 
@@ -479,6 +606,82 @@ search, source/index tampering, safe image materialization, and selected install
 These checks establish retrieval and packaging behavior. Actual role execution and judgment
 need a separate host/behavior check; they do not follow from a valid TOML file alone.
 
+## Legacy code skill and agent
+
+`legacy-code-skill` applies Michael C. Feathers' *Working Effectively with Legacy Code*
+to a specific change whose behavior is poorly tested or whose dependencies obstruct useful
+feedback. It helps characterize existing behavior, find a test boundary, choose a minimal
+dependency-breaking step, and sequence the change with relevant checks. Software Design
+Skill contributes boundary and caller-contract judgment; the existing writer, reviewer,
+and verifier retain their responsibilities. Routine changes with adequate checks do not
+need a new seam or specialist consultation.
+
+Select this optional capability explicitly; it is included by `--all`, while the default
+project profile stays unchanged:
+
+```bash
+python3 install.py install --target codex --skill legacy-code-skill --dry-run
+python3 install.py install --target codex --skill legacy-code-skill
+```
+
+In a fresh session, use `$legacy-code-skill`, or ask the parent to delegate a bounded
+question to `legacy_code_agent`. The role inherits model and reasoning settings.
+Consultation and review return findings without edits; implementation requires assigned
+sole ownership. A host without named-role dispatch can load the skill directly and must
+describe that fallback accurately. Copilot installation supplies skills only.
+
+The original book is optional private evidence, separate from the installed package.
+Initialize its supported first-edition EPUB (ISBN 9780132931755) from your own local file:
+
+```bash
+LEGACY_CODE_TOOLS="$HOME/.agents/skills/legacy-code-skill"
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" init --epub /path/to/your-copy.epub
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" verify
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" catalog --chapter 13
+python3 "$LEGACY_CODE_TOOLS/scripts/book.py" read --ref 'OEBPS/html/ch13.html#ch13sec1lev1'
+```
+
+Success means initialization reports 25 chapters, `verify` confirms the source hash and
+complete index, and the section read identifies its exact locator. Follow any printed
+`CONTINUES` command to finish a long section. `search 'enabling point' --chapter 4` performs
+a case-insensitive literal-text search, retaining phrase order and code punctuation, and
+returns bounded excerpts and locators. Read the original section before a consequential attribution.
+`asset --ref <IMAGE-member>` returns an indexed local raster image for inspection. Code
+breaks and table cells are retained; CSS positioning is not reconstructed.
+
+The source, index, cached images, and optional private study live under
+`~/.local/share/legacy-code-specialist/`, outside the toolkit and project copies. Every
+source-dependent operation rechecks the complete source-derived index. Identical
+initialization preserves existing files; conflicting or incomplete state fails rather than
+overwriting it. Existing library and asset-cache directories must have no group/other
+access; permissive directories are refused without changing their permissions. Use a new
+private location or explicitly restrict the chosen library/cache directory first.
+Preserve conflicting state before rebuilding, or use `--data-dir /new/private/path`
+before the command to select a separate library. Missing source permits useful bounded
+advice with an explicit attribution gap. Indexing establishes access; source-study and
+behavior-evaluation evidence have their own scope.
+
+Book operations perform no network requests. Model inference follows your configured
+Codex provider and permissions; local retrieval does not make that inference offline.
+The package distributes original guidance and synthetic fixtures, without the EPUB,
+extracted source text, private study, or raw model runs.
+
+Use the installation's printed receipt to preview and restore that installation:
+
+```bash
+python3 install.py restore /path/to/receipt.json --dry-run
+python3 install.py restore /path/to/receipt.json
+```
+
+Restore preserves the independently managed book library and protects shared dependencies
+still needed by another selection. Project copies use the existing manifest-based update
+rules; the personal `restore` command does not restore a project copy.
+
+</details>
+
+<details>
+<summary><strong>↩️ Existing installations, migration, and restore</strong></summary>
+
 ## Existing installations and restore
 
 When upgrading from names without type suffixes, keep the old checkout/version available
@@ -523,6 +726,31 @@ or role still required by a surviving managed skill linked to the same source ch
 first. A recorded backup is restored as the prior entry, without claiming compatibility
 of that historical version with newer consumers. It refuses to overwrite a link or file you replaced after installation. It removes the toolkit links, restores prior entries, and keeps the receipt as a record. Empty host directories remain. Ordinary installation or restoration errors trigger rollback; interrupted processes and manual changes to receipts require inspection before further changes. Backups use filesystem moves, so a custom Codex home on another filesystem may prevent a migration; a failed move is rolled back.
 
+</details>
+
+<details>
+<summary><strong>🗂️ Repository layout and authoring guidance</strong></summary>
+
+## Repository map
+
+```text
+skills/<task-or-domain>-skill/
+  SKILL.md                 Reusable instructions and invocation boundary
+  agents/openai.yaml       Optional skill display metadata, not a named role
+  references/, scripts/    Supporting material or tools, when needed
+agents/
+  codex/*-agent.toml       Named Codex agent definitions
+books/                     Included source books; not skills or agent roles
+install.py                 Catalog and CLI for personal install and project bootstrap
+project_bootstrap.py        Portable project copies, ownership, and updates
+tests/                     Package, retrieval, and installer behavior checks
+```
+
+Detailed personal studies and some source books live in `~/.local/share/<specialist>/`,
+outside this checkout; see the [specialist setup](#ddia-skill-and-agent). The top-level `agents/`
+directory contains roles. A skill's optional `agents/openai.yaml` describes how that skill
+appears in the host and does not create a separate worker.
+
 ## Maintain the collection
 
 Use the [shared agent and skill authoring standard](standards/authoring/README.md) for
@@ -556,6 +784,11 @@ See the [completed authoring adoption assessment](standards/authoring/reviews/RE
 for per-artifact dispositions, representative cases and remaining host/behavior checks.
 Reviewed artifacts retain their useful structures; the standard does not require identical
 headings or turn structural validation into a quality certification.
+
+</details>
+
+<details>
+<summary><strong>🧪 Development checks and benchmark</strong></summary>
 
 ## Development checks
 
@@ -598,7 +831,16 @@ See the benchmark guide before a model run: explicit source profiles, signed-in 
 selection, native isolation canaries and bounded budgets are required. CI runs only trusted
 repository controls and the existing checks, with no model credentials or paid calls.
 
+</details>
+
 ## Sources and ownership
+
+> [!IMPORTANT]
+> **No repository-wide redistribution license has been assigned.** Review the provenance
+> below before redistributing. Included books retain their original copyright notices.
+
+<details>
+<summary><strong>📜 Source attribution, history, and ownership details</strong></summary>
 
 This toolkit is the maintained source for the collected skills and agent definitions. Original repositories and installations are retained until deliberately migrated; no source repository, published history, or old installer manifest is changed by this package.
 
@@ -609,4 +851,4 @@ This toolkit is the maintained source for the collected skills and agent definit
 - The Codex docs wrapper came from Rory's local custom configuration.
 - The disabled `hatch-pet` installation is excluded because its provenance and overlap with the installed Work Pets plugin need separate resolution. Bundled and third-party plugin skills are not copied.
 
-This repository has no redistribution license assigned. Review provenance and choose licensing before publishing it for others.
+</details>

@@ -127,8 +127,15 @@ def validate_controls() -> dict[str, Any]:
                     materialize(workspace, case, control, phase)
                     grade = Oracle(workspace, case, TrustedControlExecutor(), phase).run()
                     controls[control] = grade.to_dict()
-                passed = not controls["reference"]["failures"] and bool(
-                    controls["wrong"]["failures"]
+                reference, wrong = controls["reference"], controls["wrong"]
+                passed = (
+                    reference["status"] in {"passed", "needs_review"}
+                    and reference["objective_complete"]
+                    and not reference["failures"]
+                    and reference["harness_error"] is None
+                    and wrong["status"] == "failed"
+                    and bool(wrong["failures"])
+                    and wrong["harness_error"] is None
                 )
                 results.append(
                     {"case_id": case.id, "phase": phase, "validated": passed, "controls": controls}

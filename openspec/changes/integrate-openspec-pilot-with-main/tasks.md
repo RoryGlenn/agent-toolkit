@@ -1,0 +1,12 @@
+# Tasks
+
+## Integration
+
+- [x] 1.1 Integrate current main and resolve README/configuration conflicts while preserving pilot and main behavior.
+- [x] 1.2 Verify catalog, personal status, project integrity, newer legacy-code selection, frozen evidence, and generated hashes.
+
+## Validation and delivery
+
+- [x] 2.1 Run required repository checks, current/archived OpenSpec validation, and independent source review and verification.
+- [x] 2.2 Record actual validation results, unavailable checks, source identity, and delivery state.
+- [ ] 2.3 Commit and push only with the user's separate delivery authorization; verify hosted CI and PR state afterward.
