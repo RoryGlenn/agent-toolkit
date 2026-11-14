@@ -14,6 +14,12 @@ evaluation. It is independent of the toolkit's custom skills, agents, and benchm
 
 Run the [development checks](README.md#development-checks) before completing a change.
 
+This repository opts substantial changes into upstream OpenSpec. Use its generated
+workflows or CLI instructions and keep progress in the change's one task record.
+Accepted user scope remains authoritative; preserve independent engineering checks,
+then synchronize, archive and validate the completed change. Trivial work stays
+proportionate. Installing the toolkit does not opt other projects into OpenSpec.
+
 For changes to a reviewed artifact, reassess affected contract and behavior claims, update
 its linked review record and `reviewed_sha256`, and preserve explicit evaluation gaps.
 Do not refresh a fingerprint without the assessment it represents.

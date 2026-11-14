@@ -217,7 +217,7 @@ current toolkit source do not cause drift, and current skill packages need not b
 Extra unowned files and changes outside the managed `AGENTS.md` block are allowed. The
 manifest is the project's integrity record, not a signed proof against deliberate changes
 to both the content and its recorded hashes. `--check` cannot be combined with `--update`,
-`--dry-run`, `--skill`, `--all`, or `--target`. Use `--update --dry-run` to preview upgrades.
+`--reconfigure`, `--dry-run`, `--skill`, `--all`, or `--target`. Use `--update --dry-run` to preview upgrades.
 
 ### Update a project's layer
 
@@ -236,14 +236,63 @@ block; edits there are preserved. Unrelated files, including additions within a 
 folder, are preserved. There is no force-overwrite option. Resolve a conflict by preserving
 custom work in project Git and deliberately reconciling it before retrying.
 
-This manifest version keeps the original hosts and selected capabilities fixed. An explicit
-update may add newly required shared dependencies, while preserving every previously selected
-package. It still rejects unrelated skill/host reconfiguration. A deliberate
-reconfiguration requires removing or reverting the prior generated layer through project
-Git, including its managed instruction block and manifest, then bootstrapping the new
-selection. The command does not perform that removal for you. Ordinary write failures roll
-back in process; it is not a crash-atomic transaction. Review or revert updates with the
-application's Git history rather than a second installation receipt system.
+An ordinary update preserves the hosts and every previously selected skill, adding newly
+required dependencies when needed. It does not silently prune capabilities when dependency
+metadata changes. Deliberate selection changes use the separate reconfiguration mode below.
+Ordinary write failures roll back in process; interrupted processes require inspecting the
+project diff before retrying. Review or revert completed updates with the application's Git
+history rather than a second installation receipt system.
+
+### Change a project's skills or hosts
+
+Save the existing generated files and `.agent-toolkit/manifest.json` in project Git first;
+they preserve the old ownership and source record for recovery. Choose the **complete desired
+selection**, including every skill you want to retain. For example, keep documentation and
+independent review on Codex:
+
+```bash
+python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project \
+  --reconfigure --skill documentation-skill --skill independent-diff-review-skill --target codex --dry-run
+python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project \
+  --reconfigure --skill documentation-skill --skill independent-diff-review-skill --target codex
+python3 /path/to/agent-toolkit/install.py bootstrap --project /path/to/my-project --check
+```
+
+Review the preview's additions, updates and `remove owned file` entries before applying.
+Only unchanged owned files are retired. Shared skills and roles still needed by the new
+selection remain, along with unowned files and instructions outside the managed block.
+Edited/missing managed files, unsafe paths and unmanaged collisions stop the whole plan.
+An obsolete skill absent from the current catalog can still be checked and deliberately
+retired using the old manifest. Empty directories may remain after retirement.
+
+New installations use `agent-toolkit-project/v2`: `requested_skills` stores your choices,
+while `skills` includes resolved dependencies. Old v1 records retain all recorded skills
+during ordinary updates. They migrate only with an explicit complete `--skill` selection
+or `--all`; the tool cannot know which old entries you originally requested. On v2,
+`--reconfigure --target copilot` can reuse known roots and retire owned Codex roles.
+Reconfiguration requires an existing installation and a selection, and cannot be combined
+with `--update` or `--check`. `--all` explicitly requests every current catalog skill.
+
+After success, inspect and save the project diff and run the project's checks. A late
+ordinary failure restores prior content and modes; concurrent edits can prevent rollback
+and are reported. This is not a crash-atomic transaction. To undo a completed migration,
+restore the prior generated files, routing block and manifest together from project Git.
+Older toolkit versions cannot read v2, so restore the matching old project state before
+using an older installer. Personal installations use their own receipts and are unaffected.
+
+### Optional OpenSpec planning
+
+For substantial changes in a project that has opted into OpenSpec, the implementation
+skill uses upstream planning, task tracking, specification synchronization and archive
+directly. Maintain progress in the change's single task record; link reviews and PRs to
+that contract and its evidence. Original accepted scope and authorization remain
+authoritative, and actual tests plus independent review still establish correctness.
+
+Ordinary projects and trivial edits keep the lightweight path without OpenSpec. Bootstrap
+does not install OpenSpec, create its configuration, or adopt it for another project.
+Missing tooling is disclosed while useful available checks continue. See the
+[adoption assessment](docs/validation/openspec-adoption-2026-11-14.md) for ownership,
+observed results and limits; broader defaults remain a separate decision.
 
 ### Existing Copilot roles
 

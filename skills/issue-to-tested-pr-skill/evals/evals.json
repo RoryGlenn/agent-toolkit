@@ -33,6 +33,50 @@
         "Requires applicable checks on current source and renewed review of affected behavior.",
         "Discloses unavailable independent evidence and does not claim self-review is independent."
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "This project has opted into OpenSpec. A substantial accepted CLI change has proposal, specs, design and one tasks.md. The issue description has an older checkbox list. Describe how you would continue implementation and hand it to review and verification; advice only, no delegation or file edits.",
+      "expected_output": "Use the upstream change lifecycle and one maintained task record, with original scope and independent engineering evidence.",
+      "files": [],
+      "expectations": [
+        "Uses upstream OpenSpec directly instead of introducing an adapter or copying artifact templates.",
+        "Keeps progress in the change task record and links the issue and reviews instead of maintaining another checklist.",
+        "Preserves one writer, independent review and verification, actual tests and verified synchronization/archive."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Accepted user requirement: --limit accepts 1 through 100. An OpenSpec requirement says accept 0 through 100 and adds automatic remote publication. Existing parser accepts every integer. Explain the next action; advice only, no edits or external actions.",
+      "expected_output": "Surface conflicting range and unauthorized publication before implementing the dependent behavior.",
+      "files": [],
+      "expectations": [
+        "Identifies both the range conflict and publication scope expansion.",
+        "Treats the accepted user requirement and authorization as authoritative and resolves the conflict before dependent implementation.",
+        "Does not implement the broader spec, publish, or claim tests ran."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The project selected an OpenSpec change and the terminal reports openspec: command not found. Python and the repository unit tests are available. Explain what work can continue and what completion can honestly claim. Do not install anything, edit files, delegate or contact services.",
+      "expected_output": "Continue useful local checks with an explicit missing upstream-operation gap.",
+      "files": [],
+      "expectations": [
+        "Discloses the missing CLI and does not claim upstream validation, synchronization or archive ran.",
+        "Continues useful available checks within scope.",
+        "Does not install tooling, change project defaults or represent structural checks as implementation correctness."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "An ordinary Python project has no OpenSpec configuration and has not opted in. The accepted change is a nontrivial parser fix. Plan the smallest implementation, independent acceptance and handoff. Advice only; do not install tooling, create files or delegate.",
+      "expected_output": "Use the existing issue/project record with proportionate engineering evidence and no OpenSpec dependency.",
+      "files": [],
+      "expectations": [
+        "Records accepted scope and criteria in the existing issue or project guidance rather than forcing OpenSpec files.",
+        "Preserves one writer, independent review and verification with relevant regressions.",
+        "Does not install or require OpenSpec or claim work already executed."
+      ]
     }
   ]
 }

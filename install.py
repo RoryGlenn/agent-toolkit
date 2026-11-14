@@ -741,7 +741,11 @@ def main(argv: list[str] | None = None) -> int:
     project_selection = project.add_mutually_exclusive_group()
     project_selection.add_argument("--skill", action="append", dest="skills")
     project_selection.add_argument("--all", action="store_true")
-    project.add_argument("--update", action="store_true")
+    project_mode = project.add_mutually_exclusive_group()
+    project_mode.add_argument("--update", action="store_true")
+    project_mode.add_argument(
+        "--reconfigure", action="store_true", help="Explicitly replace project skills or hosts."
+    )
     project.add_argument("--dry-run", action="store_true")
     project.add_argument(
         "--check", action="store_true", help="Verify recorded project integrity without changes."
@@ -763,6 +767,7 @@ def main(argv: list[str] | None = None) -> int:
             flag
             for flag, value in (
                 ("--update", args.update),
+                ("--reconfigure", args.reconfigure),
                 ("--dry-run", args.dry_run),
                 ("--skill", args.skills),
                 ("--all", args.all),
@@ -825,6 +830,7 @@ def main(argv: list[str] | None = None) -> int:
                     skills=selected,
                     target=args.target,
                     update=args.update,
+                    reconfigure=args.reconfigure,
                     dry_run=args.dry_run,
                 )
             else:

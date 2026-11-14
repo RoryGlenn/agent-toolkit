@@ -327,12 +327,15 @@
         "skills/task-routing-skill/evals/cases.json",
         "tests/test_routing.py",
         "standards/authoring/reviews/routing.md",
-        "standards/authoring/reviews/routing-observations.json"
+        "standards/authoring/reviews/routing-observations.json",
+        "docs/validation/openspec-adoption-2026-11-14.md",
+        "docs/validation/openspec-adoption-source.json",
+        "tests/test_project_reconfiguration.py"
       ],
       "assessment": "reviewed",
-      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
-      "review_record": "standards/authoring/reviews/routing.md",
-      "reviewed_sha256": "8a4c94f77ced91f1b9cfe45de1a8b6535c85930ef1c65fbd4b9fc64f06885cb5"
+      "next_check": "Repeat opt-in and ordinary-project behavior on fresh tasks and supported hosts; retain shared-context smoke limits and missing-role/skill gaps. Review upstream upgrades before regenerating workflows.",
+      "review_record": "docs/validation/openspec-adoption-2026-11-14.md",
+      "reviewed_sha256": "7b04d23f7308c4ba78e630269a07fb487e0fbcac9c0a55e48916688c4d4a5cb2"
     },
     {
       "path": "skills/release-and-docs-skill/SKILL.md",
