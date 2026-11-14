@@ -1,5 +1,139 @@
 # Public development benchmark
 
+## Matched Codex comparisons
+
+### One-file review demo
+
+From the toolkit checkout on Ubuntu or macOS, with Python 3.11 or newer and Git:
+
+```bash
+python3 -m benchmarks demo --output .benchmark-runs/sqlite-demo
+```
+
+Review `stock/workspace` and `default-toolkit/workspace` under the output directory
+in separate fresh Codex sessions. Use a Codex profile free of personal toolkit
+instructions, the same model and effort, and read-only workspace access. Send
+exactly **Review this diff.** in both sessions. Use `--case rollback-clean` and
+a new output directory to repeat the review with the clean patch.
+
+After completing both reviews, run `python3 -m benchmarks demo-check`. The original
+and clean variant leave zero rows after rollback. The refactor leaves one
+because `executescript()` commits the caller's pending transaction in SQLite
+legacy transaction mode. All three pass the startup check. The fixture proves the
+bug. Measuring review quality requires completing and grading the two reviews.
+
+### Prepare a sealed campaign
+
+The automated runner requires native sandbox checks and a diagnostic that
+shows the actual model-visible tool catalog. Codex CLI 0.167 with the bundled
+`gpt-5.5` profile omits that catalog from `debug prompt-input`, so automated
+execution stops before the model runs. The [live study](https://github.com/RoryGlenn/agent-toolkit/issues/27)
+tracks qualification. Use the manual demo above for an interactive comparison.
+Offline staging requires no model invocation or authentication.
+
+```bash
+python3 -m benchmarks validate --matched
+python3 -m benchmarks plan --comparison demo --model gpt-5.5 \
+  --output .benchmark-runs/demo-plan.json
+python3 -m benchmarks prepare .benchmark-runs/demo-plan.json --index 0 \
+  --output .benchmark-runs/demo-slot
+```
+
+### Run on a qualified runtime
+
+Run these commands from the toolkit checkout after verifying the CLI/model
+combination exposes the required catalog and passes the native checks on your
+Linux or macOS host. Freeze a new plan for that same runtime. Use your selected
+regular Codex auth file. Controlled role and calibration runs also need the
+native V1 worker protocol for verbatim handoff and worker-result verification.
+
+```bash
+python3 -m benchmarks run .benchmark-runs/demo-plan.json \
+  --auth-source /absolute/path/to/codex/auth.json --output .benchmark-runs/demo
+python3 -m benchmarks export-reviews .benchmark-runs/demo \
+  --output .benchmark-runs/demo-review-packets
+python3 -m benchmarks report .benchmark-runs/demo
+```
+
+The planner pins the CLI, interpreter, Git, and host identity. It defaults to
+medium effort and 180 seconds for each matched session. `run` generates a private
+schedule and results directory, including Markdown and JSON reports. A setup
+failure keeps its slot and does not start a model. Use `prepare PLAN --index N
+--output NEW_DIRECTORY` to inspect a staged slot without starting it.
+
+| Study | Plan options | Compared setups |
+| --- | --- | --- |
+| Minimal review | `--comparison demo` | Stock Codex with native agents available, default project bootstrap |
+| Whole toolkit | `--comparison toolkit` | Same setups across implementation, data, review, and routine work |
+| Explicit single-agent control | `--comparison toolkit --include-single-agent` | Also run stock Codex with child agents disabled |
+| Individual role | `--comparison role --role NAME` | Single-agent Codex, generic worker, and named worker |
+| Calibration | `--comparison pilot` | 40 planned root sessions across toolkit, reviewer, and DDIA comparisons |
+
+Use `--case ID` to select public cases within a track and `--attempts N` for
+fresh repetitions. The [role case matrix](comparison_cases.py) contains two
+public tasks for each of the seven named roles. The default project install uses
+the normal bootstrap. Named-worker arms expose only the selected role and its
+required runtime skill guidance. The generic arm uses a neutral local Codex role
+with no toolkit guidance. Its instructions replace the coordinator's handoff
+instructions when Codex starts the child. Root coordination is matched between
+generic and named workers. Grades come from the frozen product or direct worker
+response. Missing native dispatch, settings, handoff, or worker output leaves a
+delegated result unverified.
+
+### Grade and interpret the results
+
+Send the exported review packets to independent graders. The packets contain
+randomized IDs, the prompt, the original diff where applicable, frozen outputs,
+and the grading instructions. Keep the campaign directory and assignment key
+with the curator. Worker prose may still reveal a chosen workflow, so record
+that if it happens. Use `report RUN --reviews REVIEWS.json --output REPORT.json`
+to bind judgments to the sealed submissions and regenerate the report.
+
+The review file maps each packet ID to `scores`, an array of objects with
+`reviewer`, `pass`, and `evidence`. The `evidence` should explain why the frozen
+submission meets or misses the rubric. For the SQLite seeded diff also include
+`flags` with `caught_regression`, `false_positive`, and `safe_correction`. For the
+clean diff include `flags` with `false_positive`. The verdict must agree with
+these flags. A seeded review passes when it catches the regression, supplies a
+safe correction, and avoids false positives. A clean review passes when it
+avoids false positives.
+
+Keep public cases exploratory. After calibration, use a private
+`--held-out MANIFEST.json` with `--comparison toolkit` or `--comparison role`.
+Each `cases` entry has a unique case ID and `prompt`, `files` (path to base text),
+`diff` (path to changed text, or an empty object), `rubric`, `cluster`, and
+`read_only`, plus `controls` for the correct and deliberately wrong sample.
+For each control record its `evidence_sha256` and `pass` verdict under
+`reference` and `wrong`. Add the private receipt
+`controls/CASE-ID/reference.json` or `controls/CASE-ID/wrong.json` beside the
+manifest. Each receipt binds `case_id`, `case_fingerprint`, and two independent
+`scores` with verdicts and evidence. Calculate the case fingerprint over the
+case object without its `controls` key, and the receipt fingerprint over its
+full JSON object. Use `benchmarks.runtime.fingerprint` for both. The runner
+validates the recorded verdicts and identities and executes the built-in
+control pairs before model runs from the public cases.
+Keep graders' expected behavior in the rubric. Use distinct
+project or case-family cluster labels for independent groups. The `analysis`
+object sets `minimum_effect` (a success-rate fraction), `min_clusters`,
+`alpha: 0.05`, and `claim_count` (the number of predeclared comparisons).
+The report requires two independent held-out judgments. When they disagree,
+include `adjudication` with a third reviewer's verdict and evidence.
+Set the study size, sample provenance, minimum useful effect, and aggregate
+budget before reviewing any held-out outputs.
+
+The report keeps all scheduled attempts, false positives, comparison outcomes,
+latency, and observed usage visible. Held-out estimates give each task equal
+weight across repetitions and resample clusters. Improvement flags require
+eligible evidence and the same conclusion under unfavorable missing outcomes.
+With incomplete child telemetry, run-wide tokens and price stay unavailable.
+Keep the campaign directory, credentials, raw outputs, and review inputs private.
+The structured report omits raw traces, free-form judgments, reviewer identities,
+and held-out case names and product paths.
+Check the report and any excerpts before sharing them. No live improvement
+is claimed by the deterministic checks.
+
+## Historical development suite
+
 This is a runnable, twelve-task development benchmark for the toolkit's three book-based
 specialists and integrated workflow. It measures objective task behavior separately from
 independent design/documentation review. The cases are public, small and deliberately

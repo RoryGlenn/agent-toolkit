@@ -345,7 +345,7 @@ def run_attempt(
             ) -> Any:
                 return cell.execute(argv, cwd, environment=environment, timeout=timeout)
 
-            result["prompt_surface"] = verify_prompt_surface(executor, root, client)
+            result["prompt_surface"] = verify_prompt_surface(executor, root, run=client)
             execution = cell.execute(
                 [
                     str(codex),

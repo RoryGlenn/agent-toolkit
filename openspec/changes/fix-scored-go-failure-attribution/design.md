@@ -18,6 +18,12 @@ controls for compiler failure attribution. Test parsing currently loses that con
 
 ## Risks / Trade-offs
 
+Before publication, main advanced to `72ef2cdc7f82e860fb9f970e6d49dc022f8f1d16`,
+adding matched benchmark plans and native catalog qualification. Integrate that work
+without changing its comparison protocol or the large-project isolation/qualification
+requirements. Recheck shared CLI, runtime, file helpers, and both regression suites;
+do not run a model study as part of integration.
+
 - Reclassifying incomplete output could hide runtime faults: add missing-terminal, skip, timeout, and signal counterexamples.
 - Parser tests alone do not prove evaluator wiring: verify scored/control context at the evaluator boundary and final grade behavior.
 - Linux qualification may fail on host prerequisites: run existing gates without policy changes and retain actual diagnostics and cleanup evidence.

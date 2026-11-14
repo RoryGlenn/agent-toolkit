@@ -3,6 +3,7 @@
 ## 1. Integration
 
 - [x] 1.1 Resolve the CI conflict while preserving both locked checks and opt-in qualification; verify no unmerged paths remain.
+- [x] 1.2 Integrate main `72ef2cd`, preserving matched benchmarks and large-project entrypoints; verify shared-path regressions, required checks, and independent review before publication.
 
 ## 2. Failure attribution
 

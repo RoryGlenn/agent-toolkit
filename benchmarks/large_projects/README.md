@@ -124,6 +124,8 @@ recording its 20-unit completion-boundary overshoot. Configuration parsing alone
 ## Candidate and evaluator pipeline
 
 The common `plan`, `prepare`, `run`, `grade` and `report` operations handle large cases.
+Use `--large-context` for these cases. The separate matched comparison workflow's
+`--comparison` option cannot be combined with a large-project context.
 Planning requires `--large-context CONTEXT.json`, an explicit large case and descendant
 budget. Context selects prepared sources, completed current qualification, runtime proof,
 toolchains, verified dependency bundles and optional resource limits:

@@ -7,6 +7,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import socket
 import stat
@@ -17,9 +18,11 @@ from collections.abc import Sequence
 from contextlib import ExitStack
 from functools import cache
 from pathlib import Path
-from typing import Any
+from typing import IO, Any
+from urllib.parse import unquote, urlsplit
 
 import install
+import project_bootstrap
 from benchmarks.cases import REPOSITORY
 from benchmarks.process import Execution, bounded_process, sanitized_environment
 
@@ -83,7 +86,7 @@ def fingerprint(values: Any) -> str:
     return hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
 
 
-def harness_fingerprint() -> str:
+def harness_fingerprint(*, comparison: bool = False) -> str:
     """Bind plans to every Python source file in the executing benchmark package."""
     files = {
         str(path.relative_to(HARNESS_ROOT)): digest(path)
@@ -93,6 +96,8 @@ def harness_fingerprint() -> str:
     if not files:
         raise ValueError("benchmark harness sources are missing")
     files["../install.py"] = digest(Path(install.__file__).resolve())
+    if comparison:
+        files["../project_bootstrap.py"] = digest(Path(project_bootstrap.__file__).resolve())
     package = HARNESS_ROOT / "large_projects"
     for path in [*package.glob("*.json"), *package.glob("controls/*"), *package.glob("vendor/*")]:
         if path.is_file():
@@ -280,7 +285,9 @@ def stage_arm(
     }
 
 
-def permission_config(workspace: Path, readonly: Sequence[Path], temporary: Path) -> str:
+def permission_config(
+    workspace: Path, readonly: Sequence[Path], temporary: Path, *, writable: bool = True
+) -> str:
     """Build deny-by-default native filesystem and network permissions."""
     permissions = {
         ":root": "deny",
@@ -289,7 +296,7 @@ def permission_config(workspace: Path, readonly: Sequence[Path], temporary: Path
         # before adding narrow grants; :tmpdir would deny our explicitly writable TMPDIR.
         str(Path("/tmp").resolve()): "deny",
         str(Path("/var/tmp").resolve()): "deny",
-        str(workspace.resolve()): "write",
+        str(workspace.resolve()): "write" if writable else "read",
         str(temporary.resolve()): "write",
     }
     for path in readonly:
@@ -331,9 +338,17 @@ def config_text(
     readonly_extra: Sequence[Path] = (),
     shell_environment: dict[str, str] | None = None,
     project_guidance: bool = False,
+    project_instructions: bool = False,
+    agents_enabled: bool = True,
+    max_children: int = 3,
+    writable: bool = True,
+    readonly: Sequence[Path] = (),
+    instructions: str = "",
 ) -> str:
     """Generate isolated client configuration, including tree-wide bounded rollout units."""
-    readonly = [actor_home, *readonly_extra]
+    if local_network and project_instructions:
+        raise ValueError("large-project V2 and matched V1 profiles cannot be combined")
+    readonly = [actor_home, *readonly, *readonly_extra]
     if (client_home / "agents").exists():
         readonly.append(client_home / "agents")
     lines = [
@@ -343,7 +358,8 @@ def config_text(
         'default_permissions = "benchmark"',
         'web_search = "disabled"',
         "allow_login_shell = false",
-        f"project_doc_max_bytes = {32768 if project_guidance else 0}",
+        f"project_doc_max_bytes = {32768 if project_guidance or project_instructions else 0}",
+        f"developer_instructions = {json.dumps(instructions, ensure_ascii=False)}",
         "[skills.bundled]",
         "enabled = false",
         "[shell_environment_policy]",
@@ -364,6 +380,8 @@ def config_text(
             "multi_agent = true",
             "multi_agent_v2 = true",
         ]
+    elif project_instructions:
+        lines += ["multi_agent = true", "multi_agent_v2 = false", "code_mode = false"]
     if budget_units is not None:
         if budget_units < 2:
             raise ValueError("budget units must be at least two")
@@ -377,12 +395,17 @@ def config_text(
         ]
     lines += [
         "[agents]",
-        "enabled = true",
-        "max_concurrent_threads_per_session = 3",
+        f"enabled = {json.dumps(agents_enabled)}",
+        f"max_concurrent_threads_per_session = {max_children}",
         f"default_subagent_model = {json.dumps(model)}",
         f"default_subagent_reasoning_effort = {json.dumps(effort)}",
     ]
-    permissions = permission_config(workspace, readonly, temporary)
+    if project_instructions:
+        lines += [
+            f"[projects.{json.dumps(str(workspace.resolve()))}]",
+            'trust_level = "trusted"',
+        ]
+    permissions = permission_config(workspace, readonly, temporary, writable=writable)
     if local_network:
         permissions = permissions.replace(
             "[permissions.benchmark.network]\nenabled = false",
@@ -439,7 +462,9 @@ class NativeExecutor:
         command = [str(self.codex), "sandbox", "-P", "benchmark", "-C", str(cwd), *argv]
         return bounded_process(command, cwd, self.environment, stdin=stdin, timeout=timeout)
 
-    def preflight(self, forbidden: Sequence[Path]) -> list[dict[str, Any]]:
+    def preflight(
+        self, forbidden: Sequence[Path], *, writable: bool = True
+    ) -> list[dict[str, Any]]:
         """Require workspace/private scratch access and host read/write/alias/network denial."""
         if platform.system() not in {"Darwin", "Linux"}:
             raise ValueError("unsupported native sandbox platform")
@@ -484,13 +509,15 @@ class NativeExecutor:
             cleanup.callback(readonly_control.unlink, missing_ok=True)
             control = self.workspace / ".isolation-control"
             control.write_text("allowed")
+            different = self.workspace / ".isolation-different"
+            different.write_text("different")
             alias = self.workspace / ".isolation-alias"
             alias.symlink_to(forbidden[0])
             for path in (
                 control,
                 alias,
                 self.workspace / ".isolation-write",
-                self.workspace / ".isolation-different",
+                different,
                 self.workspace / ".isolation-hardlink",
             ):
                 cleanup.callback(path.unlink, missing_ok=True)
@@ -499,12 +526,18 @@ class NativeExecutor:
             listener.listen(1)
             port = listener.getsockname()[1]
             paths = [str(path.resolve()) for path in forbidden] + [str(alias)]
-            source = f"""import json, pathlib, socket, subprocess, tempfile
+            source = f"""import errno, json, pathlib, socket, subprocess, tempfile
 out={{}}
 root=pathlib.Path({str(self.workspace)!r})
 out['allowed_read']=(root/'.isolation-control').read_text()=='allowed'
-(root/'.isolation-write').write_text('allowed')
-out['allowed_write']=(root/'.isolation-write').read_text()=='allowed'
+try:
+    (root/'.isolation-write').write_text('allowed')
+except OSError as error:
+    out['workspace_write_policy']=not {writable!r} and error.errno in (
+        errno.EPERM, errno.EACCES, errno.EROFS
+    )
+else:
+    out['workspace_write_policy']={writable!r} and (root/'.isolation-write').read_text()=='allowed'
 out['allowed_readonly_read']=pathlib.Path({str(readonly_control)!r}).read_text()=='known-readonly'
 with tempfile.TemporaryDirectory() as directory:
     private=pathlib.Path(directory)
@@ -513,7 +546,6 @@ with tempfile.TemporaryDirectory() as directory:
                                     and (private/'control').read_text()=='private')
 version=subprocess.run(['git','--version'],capture_output=True,text=True,timeout=5)
 out['allowed_git_version']=version.returncode==0 and version.stdout.startswith('git version ')
-(root/'.isolation-different').write_text('different')
 diff=subprocess.run(['git','--no-pager','diff','--no-index','--no-ext-diff','--no-textconv',
                      '--','.isolation-control','.isolation-different'],
                     capture_output=True,text=True,timeout=5)
@@ -554,7 +586,7 @@ else:
 try:
     (root/'.isolation-hardlink').hardlink_to({str(forbidden[0].resolve())!r})
 except OSError as error:
-    out['denied_hardlink']=error.errno in (1,2,13)
+    out['denied_hardlink']=error.errno in (1,2,13,30)
 else:
     out['denied_hardlink']=False
 try:
@@ -608,7 +640,9 @@ def resolve_codex(path: str = "codex") -> Path:
     return Path(found).resolve()
 
 
-def session_projection(path: Path) -> dict[str, Any]:
+def session_projection(
+    path: Path, *, include_worker_result: bool = False, workspace: Path | None = None
+) -> dict[str, Any]:
     """Read bounded rollout metadata, excluding identities, instructions and inherited turns."""
     descriptor = os.open(path.anchor, os.O_RDONLY | os.O_DIRECTORY)
     try:
@@ -646,6 +680,8 @@ def session_projection(path: Path) -> dict[str, Any]:
                 "effort": None,
             }
             if not isinstance(spawn, dict):
+                if include_worker_result:
+                    result.update(native_root_projection(stream, workspace))
                 return result
             result["parent_thread_id"] = spawn.get("parent_thread_id")
             result["agent_role"] = spawn.get("agent_role")
@@ -659,7 +695,11 @@ def session_projection(path: Path) -> dict[str, Any]:
             # Earlier turn_context records may describe the parent's different model/effort.
             start = payload.get("subagent_history_start_ordinal")
             if type(start) is not int or start < 1:
-                return result
+                if not include_worker_result or payload.get("history_base") is not None:
+                    return result
+                # Native fresh workers have no inherited rollout or boundary ordinal.
+                # Result attribution separately requires the root's explicit no-fork call.
+                start = 1
             total = len(line)
             for ordinal in range(1, 4096):
                 line = stream.readline(1_000_001)
@@ -668,21 +708,110 @@ def session_projection(path: Path) -> dict[str, Any]:
                 total += len(line)
                 if len(line) > 1_000_000 or total > 16_000_000:
                     break
-                if ordinal < start:
-                    continue
                 event = json.loads(line)
-                if event.get("type") == "turn_context" and isinstance(event.get("payload"), dict):
+                event_ordinal = event.get("ordinal")
+                if (event_ordinal if type(event_ordinal) is int else ordinal) < start:
+                    continue
+                data = event.get("payload")
+                if not isinstance(data, dict):
+                    continue
+                if event.get("type") == "turn_context" and result["model"] is None:
                     for key in ("model", "effort"):
-                        value = event["payload"].get(key)
+                        value = data.get(key)
                         if isinstance(value, str):
                             result[key] = value
-                    break
+                    if not include_worker_result:
+                        break
+                if not include_worker_result:
+                    continue
+                if event.get("type") == "response_item" and data.get("role") == "user":
+                    content = data.get("content")
+                    if isinstance(content, list):
+                        messages = result.setdefault("worker_inputs", [])
+                        messages.append(
+                            "".join(
+                                item["text"]
+                                for item in content
+                                if isinstance(item, dict)
+                                and item.get("type") == "input_text"
+                                and isinstance(item.get("text"), str)
+                            )
+                        )
+                if event.get("type") == "event_msg" and data.get("type") in {
+                    "task_complete",
+                    "turn_complete",
+                }:
+                    message = data.get("last_agent_message")
+                    if isinstance(message, str) and message and data.get("error") is None:
+                        result["worker_output"] = message
+                        result["worker_completed_turns"] = (
+                            result.get("worker_completed_turns", 0) + 1
+                        )
+                if event.get("type") == "event_msg" and data.get("type") == "item_completed":
+                    item = data.get("item")
+                    if isinstance(item, dict) and item.get("type") == "CommandExecution":
+                        record_archive_startup(
+                            result,
+                            item.get("command"),
+                            item.get("exit_code"),
+                            item.get("cwd"),
+                            workspace,
+                        )
             return result
     finally:
         os.close(descriptor)
 
 
-def observe_run_sessions(client_home: Path | None, root_thread_id: str | None) -> dict[str, Any]:
+def native_root_projection(stream: IO[bytes], workspace: Path | None) -> dict[str, Any]:
+    """Extract a bounded root spawn receipt without exposing raw rollout content."""
+    calls: list[dict[str, Any]] = []
+    result: dict[str, Any] = {"spawn_calls": calls}
+    total = 0
+    for _ in range(4096):
+        line = stream.readline(1_000_001)
+        if not line:
+            return result
+        total += len(line)
+        if len(line) > 1_000_000 or total > 16_000_000:
+            return {}
+        record = json.loads(line)
+        event = record.get("payload")
+        if not isinstance(event, dict):
+            continue
+        if record.get("type") == "turn_context":
+            if all(isinstance(event.get(key), str) for key in ("model", "effort")):
+                result.setdefault("root_settings", []).append(
+                    {"model": event["model"], "effort": event["effort"]}
+                )
+        if record.get("type") == "event_msg" and event.get("type") == "item_completed":
+            item = event.get("item")
+            if isinstance(item, dict) and item.get("type") == "CommandExecution":
+                record_archive_startup(
+                    result,
+                    item.get("command"),
+                    item.get("exit_code"),
+                    item.get("cwd"),
+                    workspace,
+                )
+        if record.get("type") != "response_item":
+            continue
+        if event.get("type") != "function_call" or event.get("name") != "spawn_agent":
+            continue
+        if event.get("namespace") not in {None, "collaboration", "multi_agent_v1"}:
+            continue
+        payload = json.loads(event.get("arguments", "null"))
+        if isinstance(payload, dict):
+            calls.append(payload)
+    return {}
+
+
+def observe_run_sessions(
+    client_home: Path | None,
+    root_thread_id: str | None,
+    *,
+    include_worker_result: bool = False,
+    workspace: Path | None = None,
+) -> dict[str, Any]:
     """Observe only descendants of stdout's root in this invocation's isolated session tree."""
     result: dict[str, Any] = {
         "root_thread_id": root_thread_id,
@@ -707,7 +836,9 @@ def observe_run_sessions(client_home: Path | None, root_thread_id: str | None) -
             result["warnings"].append("session file inspection limit reached")
             break
         try:
-            record = session_projection(path)
+            record = session_projection(
+                path, include_worker_result=include_worker_result, workspace=workspace
+            )
             result["headers_inspected"] += 1
             identifier = record["thread_id"]
             if not isinstance(identifier, str):
@@ -737,6 +868,13 @@ def observe_run_sessions(client_home: Path | None, root_thread_id: str | None) -
         observations.extend(added)
         known.update(record["thread_id"] for record in added)
     result["observations"] = observations
+    if include_worker_result:
+        root_record = records.get(root_thread_id, {})
+        result["spawn_calls"] = root_record.get("spawn_calls", [])
+        result["root_archive_startup_exit_codes"] = root_record.get(
+            "archive_startup_exit_codes", []
+        )
+        result["root_settings"] = root_record.get("root_settings", [])
     result["status"] = (
         "partial"
         if result["warnings"]
@@ -747,19 +885,31 @@ def observe_run_sessions(client_home: Path | None, root_thread_id: str | None) -
     return result
 
 
-def observe_trace(text: str, client_home: Path | None = None) -> dict[str, Any]:
+def observe_trace(
+    text: str,
+    client_home: Path | None = None,
+    *,
+    include_worker_result: bool = False,
+    workspace: Path | None = None,
+) -> dict[str, Any]:
     """Extract actual events and parent-bound local session metadata, never catalog claims."""
     events: list[dict[str, Any]] = []
     usage: dict[str, Any] | None = None
     dispatch: list[dict[str, Any]] = []
     source_calls: list[dict[str, Any]] = []
+    skill_reads: set[str] = set()
+    archive: dict[str, Any] = {}
     root_thread_id: str | None = None
+    root_tools_confined = True
+    parsed_all = True
     for line in text.splitlines():
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
+            parsed_all = False
             continue
         if not isinstance(event, dict):
+            parsed_all = False
             continue
         events.append(event)
         if event.get("type") == "thread.started" and root_thread_id is None:
@@ -773,7 +923,28 @@ def observe_trace(text: str, client_home: Path | None = None) -> dict[str, Any]:
             item_type = item.get("type", "")
             if item_type == "collab_tool_call" and item.get("tool") == "spawn_agent":
                 dispatch.append(item)
+            if item_type == "collab_tool_call":
+                root_tools_confined &= item.get("tool") in {
+                    "spawn_agent",
+                    "wait",
+                    "wait_agent",
+                    "close_agent",
+                    "list_agents",
+                }
+            elif item_type:
+                root_tools_confined &= item_type in {"agent_message", "reasoning", "todo_list"}
             command = item.get("command", "")
+            if item_type == "command_execution" and item.get("status") in {"completed", "failed"}:
+                record_archive_startup(
+                    archive, command, item.get("exit_code"), item.get("cwd"), workspace
+                )
+            if (
+                item_type == "command_execution"
+                and isinstance(command, str)
+                and item.get("status") == "completed"
+                and item.get("exit_code") == 0
+            ):
+                skill_reads.update(re.findall(r"\.agents/skills/([a-z0-9-]+)/SKILL\.md", command))
             if (
                 item_type == "command_execution"
                 and isinstance(command, str)
@@ -786,7 +957,16 @@ def observe_trace(text: str, client_home: Path | None = None) -> dict[str, Any]:
                 source_calls.append(
                     {"command": command, "evidence": "successful command, not proof of reading"}
                 )
-    session_evidence = observe_run_sessions(client_home, root_thread_id)
+    session_evidence = observe_run_sessions(
+        client_home,
+        root_thread_id,
+        include_worker_result=include_worker_result,
+        workspace=workspace,
+    )
+    archive_codes = {
+        *archive.get("archive_startup_exit_codes", []),
+        *session_evidence.pop("root_archive_startup_exit_codes", []),
+    }
     observations = list(session_evidence["observations"])
     known = {record["thread_id"] for record in observations}
     for event in dispatch:
@@ -801,11 +981,109 @@ def observe_trace(text: str, client_home: Path | None = None) -> dict[str, Any]:
     return {
         "event_count": len(events),
         "reported_root_usage": usage,
+        "native_turn_completed": parsed_all and single_completed_turn(events, root_thread_id),
         "aggregate_tree_tokens": None,
         "cost": None,
         "role_dispatch_observed": observations,
         "stdout_role_dispatch_events": dispatch,
         "session_dispatch_evidence": session_evidence,
+        "root_tools_confined": root_tools_confined and parsed_all,
+        "archive_startup_exit_codes": sorted(archive_codes),
+        "coordinator_worker": coordinator_worker(events, root_thread_id)
+        if include_worker_result and parsed_all
+        else None,
         "source_access_observed": source_calls,
+        "skill_read_calls_observed": sorted(skill_reads),
         "accounting_note": "Root turn usage is not assumed to include children; unknown is null.",
     }
+
+
+def record_archive_startup(
+    value: dict[str, Any],
+    command: Any,
+    code: Any,
+    cwd: Any,
+    workspace: Path | None,
+) -> None:
+    """Recognize a direct startup of the supplied archive from native command evidence."""
+    if type(code) is not int or workspace is None:
+        return
+    if isinstance(command, str):
+        try:
+            command = shlex.split(command)
+        except ValueError:
+            return
+    if not isinstance(command, list) or not all(isinstance(arg, str) for arg in command):
+        return
+    if len(command) == 3 and Path(command[0]).name in {"sh", "bash", "zsh"}:
+        if command[1] in {"-c", "-lc"}:
+            record_archive_startup(value, command[2], code, cwd, workspace)
+        return
+    work_dir = None
+    if isinstance(cwd, str):
+        uri = urlsplit(cwd)
+        if not uri.scheme and Path(cwd).is_absolute():
+            work_dir = Path(cwd)
+        elif uri.scheme == "file" and uri.netloc in {"", "localhost"}:
+            work_dir = Path(unquote(uri.path))
+    if len(command) == 2 and re.fullmatch(r"python(?:3(?:\.\d+)?)?", Path(command[0]).name):
+        target = Path(command[1])
+        if target.is_absolute() and target == workspace / "release.pyz":
+            value.setdefault("archive_startup_exit_codes", []).append(code)
+        elif work_dir == workspace and target == Path("release.pyz"):
+            value.setdefault("archive_startup_exit_codes", []).append(code)
+
+
+def single_completed_turn(events: list[dict[str, Any]], root: str | None) -> bool:
+    """Distinguish a completed model turn from CLI, provider and transport failures."""
+    milestones = {"thread.started", "turn.started", "turn.completed", "turn.failed"}
+    return root is not None and [
+        event.get("type") for event in events if event.get("type") in milestones
+    ] == ["thread.started", "turn.started", "turn.completed"]
+
+
+def coordinator_worker(events: list[dict[str, Any]], root: str | None) -> str | None:
+    """Bind the one observed successful spawn and wait to a completed root turn."""
+    if not single_completed_turn(events, root):
+        return None
+    if any(
+        event.get("type")
+        not in {
+            "thread.started",
+            "turn.started",
+            "turn.completed",
+            "error",
+            "item.started",
+            "item.updated",
+            "item.completed",
+        }
+        for event in events
+    ):
+        return None
+    worker = None
+    waited = False
+    for event in events:
+        item = event.get("item")
+        if event.get("type") != "item.completed" or not isinstance(item, dict):
+            continue
+        if item.get("type") != "collab_tool_call":
+            continue
+        if item.get("status") != "completed" or item.get("sender_thread_id") != root:
+            return None
+        receivers = item.get("receiver_thread_ids")
+        if (
+            not isinstance(receivers, list)
+            or len(receivers) != 1
+            or not isinstance(receivers[0], str)
+        ):
+            return None
+        kind, receiver = item.get("tool"), receivers[0]
+        if kind == "spawn_agent" and worker is None:
+            worker = receiver
+        elif kind in {"wait", "wait_agent"} and worker == receiver:
+            states = item.get("agents_states")
+            state = states.get(worker) if isinstance(states, dict) else None
+            waited |= isinstance(state, dict) and state.get("status") == "completed"
+        elif kind != "close_agent" or worker != receiver or not waited:
+            return None
+    return worker if waited else None

@@ -1,7 +1,7 @@
 # PR #6 review follow-up — 13 November 2026
 
-Status: code repairs and integration are prepared locally; Linux qualification remains
-**unqualified**. The pending work has not been committed, pushed, or tested by hosted CI.
+This initial verification checkpoint preceded commit and publication. Linux qualification
+remains **unqualified**; subsequent integration and delivery checkpoints are recorded below.
 
 ## Repairs and source
 
@@ -76,3 +76,28 @@ Actual native-tool/descendant-budget proof and all four integrated project quali
 were **not reached**. No source/dependency corpus was downloaded after the runtime gate
 failed. No model calls or comparison study ran. A supported Linux host must still pass
 the existing runtime and complete case gates before this PR qualifies; it remains a draft.
+
+## Integration with newer main before publication
+
+The reviewed initial tree was preserved in DCO-signed-off commit
+`5a4783f7acbb7070794a3d1844d4c683bb18dc34`. Before publication, main advanced to
+`72ef2cdc7f82e860fb9f970e6d49dc022f8f1d16` with matched benchmark execution.
+The subsequent integration preserves both matched V1 and large-project V2 runtime
+profiles, read-only workspaces, global temporary-file denial, streaming artifact reads,
+large-project dispatch, frozen-delta reconciliation, and cancellation reporting.
+Prompt inspection retains the execution-cell runner rather than executing on the host.
+
+Five new integration tests cover the shared profile, prompt, artifact, cancellation,
+and planning contracts. Independent source review found no actionable issue.
+Independent verification of the combined source recorded:
+
+- 310 unit tests: 301 passed, the same nine environment errors, no assertion failures or skips.
+- 52/52 targeted tests, all 13 existing and seven matched benchmark control groups passed.
+- Demo controls preserved rollback row counts 0/1/0; CLI staging produced matching diffs
+  and prompts without starting actors.
+- Lint, formatting, typing, authoring/upstream/package, whitespace, and strict OpenSpec checks passed.
+
+A fresh runtime qualification on this combined source again stopped at nested tmpfs
+mounting with `EACCES`, exit one and zero OOM events; cleanup completed. Actual
+native/budget proof and all four project gates remain unexecuted. No model study ran.
+The source-bound local receipts are retained in the publication verification directory.
