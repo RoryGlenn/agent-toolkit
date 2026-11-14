@@ -228,6 +228,9 @@ distinct in receipts and the existing reports.
   or check-world coverage is claimed.
 
 For scored submissions, ordinary compiler diagnostics become candidate build failures.
+Completed Go assertion failures and detected data races also count as candidate failures,
+including failures in the full queue run. Trusted qualification controls remain strict:
+an unexpected race or failing full-queue diagnostic cannot qualify the parent/reference.
 Signals, resource/runtime faults and incomplete output remain distinct environment failures;
 a failed trusted-control build cannot establish regression reproduction.
 

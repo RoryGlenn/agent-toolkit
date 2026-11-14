@@ -49,6 +49,7 @@ from benchmarks.large_projects.resources import (
     checked_toolchains,
     docker,
     require,
+    system_mounts,
 )
 from benchmarks.large_projects.runner import harness_hashes
 from benchmarks.process import Execution, bounded_process
@@ -57,6 +58,15 @@ from benchmarks.runtime import stage_runtime
 
 class PipelineDataTests(unittest.TestCase):
     """Archive data and incomplete checks cannot become authoritative passing evidence."""
+
+    def test_system_python_prefix_does_not_duplicate_runtime_mounts(self) -> None:
+        """Docker receives each mount once when system Python shares the /usr prefix."""
+        with patch("benchmarks.large_projects.resources.sys.base_prefix", "/usr"):
+            mounts = system_mounts()
+        self.assertEqual(len(mounts), len(set(mounts)))
+        self.assertEqual(mounts.count((Path("/usr"), Path("/usr"))), 1)
+        self.assertIn((Path("/usr/bin"), Path("/bin")), mounts)
+        self.assertIn((Path("/usr/sbin"), Path("/sbin")), mounts)
 
     def test_actor_keeps_canonical_runtime_and_private_bison_data(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -292,6 +302,72 @@ class PipelineDataTests(unittest.TestCase):
         self.assertEqual(grade["status"], "failed")
         self.assertIsNone(grade["harness_error"])
         self.assertEqual(grade["failures"], ["required"])
+
+    def test_evaluator_distinguishes_scored_races_from_trusted_controls(self) -> None:
+        """An artifact used by qualification stays trusted, unlike a scored artifact."""
+        case = {
+            "id": "otel-queue-cancellation",
+            "parent": "0" * 40,
+            "fixed": "1" * 40,
+            "test_paths": [],
+        }
+        command = Command(
+            "race", ["go", "test"], Path("."), "test", parser="go", expected={"Required": "pass"}
+        )
+        events = [{"Action": "run", "Test": "Required"}, {"Action": "fail", "Test": "Required"}]
+        execution = Execution(
+            command.argv, 1, "\n".join(json.dumps(e) for e in events), "WARNING: DATA RACE", 1
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            artifact = root / "artifact"
+            artifact.mkdir()
+            (artifact / "changes.json").write_text("{}")
+            for index, (frozen, expected_side, expected) in enumerate(
+                (
+                    (artifact, None, "behavior_mismatch"),
+                    (artifact, "fixed", "environment_failure"),
+                    (None, None, "environment_failure"),
+                )
+            ):
+                with (
+                    self.subTest(artifact=frozen is not None, expected_side=expected_side),
+                    patch(
+                        "benchmarks.large_projects.integration.export_parent",
+                        side_effect=lambda _case, _curator, target: target.mkdir(),
+                    ),
+                    patch("benchmarks.large_projects.integration.apply_delta"),
+                    patch("benchmarks.large_projects.integration.finalize", return_value=[]),
+                    patch("benchmarks.large_projects.integration.seed_bundle", return_value={}),
+                    patch("benchmarks.large_projects.integration.commands", return_value=[command]),
+                    patch(
+                        "benchmarks.large_projects.integration.evaluator_command",
+                        return_value=execution,
+                    ),
+                    patch("benchmarks.large_projects.integration.ResourceCell") as cells,
+                ):
+                    cell = cells.return_value.__enter__.return_value
+                    cell.events.return_value = {"oom_kill": 0}
+                    cell.enforcement = {}
+                    evaluated = evaluate(
+                        case,
+                        root / "curator",
+                        root / f"evaluation-{index}",
+                        [],
+                        Deadline(30),
+                        "test-owner",
+                        Limits(),
+                        artifact=frozen,
+                        expected_side=expected_side,
+                    )
+                    self.assertEqual(evaluated["status"], expected)
+                    grade = grade_record(case["id"], evaluated)
+                    self.assertEqual(
+                        grade["status"],
+                        "failed"
+                        if frozen is artifact and expected_side is None
+                        else "harness_error",
+                    )
 
     def test_real_candidate_compiler_error_is_not_an_environment_failure(self) -> None:
         compiler = shutil.which("cc")

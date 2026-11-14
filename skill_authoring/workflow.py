@@ -254,8 +254,9 @@ def run(
             produced = root / "workspace/outputs"
             install_snapshot(files(produced) if produced.exists() else {}, root / "outputs")
             (root / "outputs").mkdir(exist_ok=True)
-            if (root / "final.txt").is_file():
-                (root / "outputs/response.md").write_bytes(read(root / "final.txt"))
+            response = root / "outputs/response.md"
+            if (root / "final.txt").is_file() and not (produced / "response.md").exists():
+                response.write_bytes(read(root / "final.txt"))
             write_json(
                 root / "timing.json",
                 {

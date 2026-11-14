@@ -31,6 +31,7 @@ AGENTS = {
         "ddia-operate-skill": ["ddia-agent.toml"],
         "ddia-explain-skill": ["ddia-agent.toml"],
         "software-design-skill": ["software-design-agent.toml"],
+        "legacy-code-skill": ["legacy-code-agent.toml"],
         "independent-diff-review-skill": ["adversarial-reviewer-agent.toml", "verifier-agent.toml"],
         "issue-to-tested-pr-skill": [
             "adversarial-reviewer-agent.toml",

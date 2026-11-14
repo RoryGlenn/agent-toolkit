@@ -1,0 +1,12 @@
+{
+  "agents/codex/legacy-code-agent.toml": "3df03b0d0719006a30ed965fb21259b6142034cc19b72e2957d0f8f2e3607da2",
+  "skills/legacy-code-skill/SKILL.md": "ea1159dc06e84ce959f5f53abb6066591d8c1888289cc3bfa998fa908adedeec",
+  "skills/legacy-code-skill/agents/openai.yaml": "188170d738ffd219a997b290c55b929ed03ed876d2d82000de669ba7f0fbdf0f",
+  "skills/legacy-code-skill/references/coverage.json": "72aa951586c0b488b1d0801622d006f85282088dbbf27415dee136b80c98fb6a",
+  "skills/legacy-code-skill/references/dependency-breaking.md": "f0a238423eeb896c4d74e2d68103d4fe21f4f01a0c8d55a8dbf3b55055a68f3b",
+  "skills/legacy-code-skill/references/safe-change.md": "f2ad2323f4d51f2f8e3311e7071ec30798f4f37060f90dfa3dceca7797ad4062",
+  "skills/legacy-code-skill/scripts/book.py": "bd19bed4defca1886a17537c18b6bff99f5e4d93a2b86162b2b2a3864f7eaa9c",
+  "skills/legacy-code-skill/scripts/legacy_code.py": "93ef28560e5b2d836de572f827f9eb8a3f9f49cf2d235d2910d09246ad62e437",
+  "skills/task-routing-skill/SKILL.md": "2958fd04d1d40dbcf939056658fe615e9f3f717fae9d2fcd0d9eb60b07a7487c",
+  "skills/task-routing-skill/agents/openai.yaml": "86bb7704d1cb339296063b690c258263cdfe29c0d01bb4d75f43089c59a74c1b"
+}

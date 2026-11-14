@@ -2,19 +2,27 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import sys
 import tempfile
 import tomllib
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
+import benchmarks.__main__ as benchmark_cli
 from benchmarks.__main__ import make_plan, prepare, read_plan, report, validate_controls, write_json
-from benchmarks.cases import CASES, materialize
-from benchmarks.oracles import Oracle, artifact_hashes, inspect_archive
-from benchmarks.process import TrustedControlExecutor, bounded_process, sanitized_environment
+from benchmarks.cases import CASES, get_case, materialize
+from benchmarks.oracles import Grade, Oracle, artifact_hashes, inspect_archive
+from benchmarks.process import (
+    Execution,
+    TrustedControlExecutor,
+    bounded_process,
+    sanitized_environment,
+)
 from benchmarks.runtime import (
     NativeExecutor,
     config_text,
@@ -33,6 +41,53 @@ class BenchmarkControlsTests(unittest.TestCase):
         failed = [item for item in result["cases"] if not item["validated"]]
         self.assertFalse(failed, json.dumps(failed, indent=2))
         self.assertEqual(len(result["cases"]), 13)
+
+    def test_controller_error_cannot_validate_a_wrong_control(self) -> None:
+        execute = Oracle.execute
+
+        def fail_wrong_control(
+            oracle: Oracle, argv: list[str], stdin: str = "", cwd: Path | None = None
+        ) -> Execution:
+            if oracle.root.name.endswith("-wrong"):
+                raise RuntimeError("injected controller failure")
+            return execute(oracle, argv, stdin, cwd)
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "controls.json"
+            with (
+                patch.object(benchmark_cli, "CASES", (get_case("design-easy"),)),
+                patch.object(Oracle, "execute", fail_wrong_control),
+                patch.object(sys, "argv", ["benchmarks", "validate", "--output", str(output)]),
+                redirect_stdout(io.StringIO()),
+                self.assertRaises(SystemExit) as stopped,
+            ):
+                benchmark_cli.main()
+            self.assertEqual(stopped.exception.code, 1)
+            result = json.loads(output.read_text())
+        self.assertFalse(result["validated"])
+        self.assertFalse(result["cases"][0]["validated"])
+        controls = result["cases"][0]["controls"]
+        self.assertEqual(controls["reference"]["status"], "passed")
+        self.assertEqual(controls["wrong"]["status"], "harness_error")
+        self.assertIn("injected controller failure", controls["wrong"]["harness_error"])
+
+    def test_reference_control_must_complete_objective_checks(self) -> None:
+        run = Oracle.run
+
+        def incomplete_reference(oracle: Oracle) -> Grade:
+            grade = run(oracle)
+            if oracle.root.name.endswith("-reference"):
+                grade.objective_complete = False
+            return grade
+
+        with (
+            patch.object(benchmark_cli, "CASES", (get_case("design-easy"),)),
+            patch.object(Oracle, "run", incomplete_reference),
+        ):
+            result = validate_controls()
+        self.assertFalse(result["validated"])
+        self.assertFalse(result["cases"][0]["validated"])
+        self.assertEqual(result["cases"][0]["controls"]["reference"]["failures"], [])
 
     def test_contracts_and_fingerprints(self) -> None:
         self.assertEqual(len(CASES), 12)

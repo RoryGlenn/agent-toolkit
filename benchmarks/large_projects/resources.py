@@ -108,7 +108,7 @@ def system_mounts() -> list[tuple[Path, Path]]:
     for name in ("/etc/ld.so.cache", "/etc/alternatives", "/etc/ssl/certs"):
         if Path(name).exists():
             pairs.append((Path(name), Path(name)))
-    return pairs
+    return list(dict.fromkeys(pairs))
 
 
 def checked_toolchains(paths: Sequence[Path], private: Sequence[Path]) -> list[Path]:

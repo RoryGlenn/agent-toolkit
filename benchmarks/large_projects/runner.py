@@ -95,18 +95,20 @@ def environment(root: Path, toolchains: list[Path], *, network: bool) -> dict[st
 
 
 def outcome(
-    command: Command, result: Any, read_text: Callable[[Path], str] | None = None
+    command: Command,
+    result: Any,
+    read_text: Callable[[Path], str] | None = None,
+    *,
+    scored: bool = False,
 ) -> tuple[str, dict[str, Any]]:
     """Classify required tests separately from setup and reference-only diagnostics."""
     checks: dict[str, Any] = {}
     combined = result.stdout + result.stderr
-    if command.parser.startswith("go") and any(
-        marker in combined
-        for marker in (
-            "panic: test timed out after",
-            "WARNING: DATA RACE",
-            "[build failed]",
-        )
+    expected = command.expected
+    data_race = command.parser.startswith("go") and "WARNING: DATA RACE" in combined
+    if command.parser.startswith("go") and (
+        any(marker in combined for marker in ("panic: test timed out after", "[build failed]"))
+        or (data_race and not scored)
     ):
         return "environment_failure", checks
     if command.parser == "go-all":
@@ -120,12 +122,8 @@ def outcome(
             if event.get("Action") == "run" and name and "/" not in name:
                 names.append(name)
         checks = go_checks(result.stdout, names)
-        if not checks or result.timed_out or result.output_limited or result.returncode:
-            return "environment_failure", checks
-        return (
-            "passed" if all(v == "pass" for v in checks.values()) else "environment_failure"
-        ), checks
-    if command.parser == "go":
+        expected = dict.fromkeys(names, "pass")
+    elif command.parser == "go":
         known_deadlock = command.expected == {"TestCondCancellationNotification": "fail"}
         checks = go_checks(
             result.stdout, list(command.expected), allow_detected_deadlock=known_deadlock
@@ -208,7 +206,26 @@ def outcome(
             if result.returncode == 0 and not result.timed_out and not result.output_limited
             else "environment_failure"
         ), checks
-    return classify(result, checks, command.expected), checks
+    if data_race:
+        complete = (
+            bool(checks)
+            and set(checks) == set(expected)
+            and all(value in {"pass", "fail"} for value in checks.values())
+            and not result.timed_out
+            and not result.output_limited
+            and result.returncode == 1
+        )
+        return "behavior_mismatch" if complete else "environment_failure", checks
+    status = classify(result, checks, expected)
+    if command.parser == "go-all":
+        status = (
+            "passed"
+            if status == "qualified"
+            else "behavior_mismatch"
+            if scored and status == "behavior_mismatch"
+            else "environment_failure"
+        )
+    return status, checks
 
 
 def postgres_schedules(command: Command, read_text: Callable[[Path], str] | None = None) -> bool:

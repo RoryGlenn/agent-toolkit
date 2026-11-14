@@ -3,6 +3,8 @@
 **Status: unqualified.** The macOS scratch-boundary repair is verified, but the integrated
 Linux runtime and four large-project case gates remain unverified. Issue #5 remains open.
 This record distinguishes source preparation, local tests and actual Linux qualification.
+The [13 November local follow-up](review-followup-2026-11-13.md) records later grading and
+runtime-mount repairs and another blocked qualification attempt; readiness remains unqualified.
 The [archived curator results](README.md) at `4fa5d4e` do not qualify the integrated runner.
 
 ## Local repair and repository checks

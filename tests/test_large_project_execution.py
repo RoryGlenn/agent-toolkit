@@ -13,7 +13,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from benchmarks.__main__ import objective_outcome
 from benchmarks.large_projects.adapters import CP_CONTROLS, GO_CONTROLS, GO_REGRESSIONS, Command
+from benchmarks.large_projects.candidate import grade_record
 from benchmarks.large_projects.export import export_parent
 from benchmarks.large_projects.grading import classify, go_checks, python_checks
 from benchmarks.large_projects.isolation import LinuxBoundary
@@ -116,6 +118,78 @@ class ClassificationTests(unittest.TestCase):
             )[0],
             "environment_failure",
         )
+
+    def test_scored_go_failures_have_objective_failed_grades(self) -> None:
+        """Completed candidate assertions and races are failures, not missing evidence."""
+        for parser, race, terminal in (
+            ("go-all", False, "fail"),
+            ("go", True, "fail"),
+            ("go-all", True, "fail"),
+            ("go", True, "pass"),
+            ("go-all", True, "pass"),
+        ):
+            with self.subTest(parser=parser, race=race, terminal=terminal):
+                name = "TestAdditionalExistingControl"
+                events = [
+                    {"Action": "run", "Test": name},
+                    {"Action": terminal, "Test": name},
+                ]
+                text = "\n".join(json.dumps(e) for e in events)
+                command = Command(
+                    "full-queue" if parser == "go-all" else name,
+                    ["go", "test", "-json", "-race"],
+                    Path("."),
+                    parser=parser,
+                    expected={} if parser == "go-all" else {name: "pass"},
+                )
+                result = Execution(command.argv, 1, text, "WARNING: DATA RACE" if race else "", 1)
+                status, checks = outcome(command, result, scored=True)
+                self.assertEqual(status, "behavior_mismatch")
+                grade = grade_record(
+                    "otel-queue-cancellation",
+                    {
+                        "status": status,
+                        "commands": [
+                            {
+                                **result.to_dict(),
+                                "name": command.name,
+                                "status": status,
+                                "checks": checks,
+                            }
+                        ],
+                    },
+                )
+                self.assertEqual(grade["status"], "failed")
+                self.assertEqual(grade["failures"], [command.name])
+                self.assertFalse(objective_outcome({"grade": grade}))
+                self.assertEqual(outcome(command, result)[0], "environment_failure")
+
+    def test_scored_go_incomplete_execution_remains_environmental(self) -> None:
+        """A race warning cannot turn incomplete or unavailable execution into a score."""
+        for parser in ("go", "go-all"):
+            command = Command(
+                "queue",
+                ["go", "test"],
+                Path("."),
+                parser=parser,
+                expected={"Required": "pass"} if parser == "go" else {},
+            )
+            run = json.dumps({"Action": "run", "Test": "Required"})
+            failed = run + "\n" + json.dumps({"Action": "fail", "Test": "Required"})
+            skipped = run + "\n" + json.dumps({"Action": "skip", "Test": "Required"})
+            for result in (
+                Execution([], 1, run, "WARNING: DATA RACE", 1),
+                Execution([], 1, skipped, "WARNING: DATA RACE", 1),
+                Execution([], 1, failed, "WARNING: DATA RACE", 1, timed_out=True),
+                Execution([], 1, failed, "WARNING: DATA RACE", 1, output_limited=True),
+                Execution([], -9, failed, "WARNING: DATA RACE", 1),
+                Execution([], 0, failed, "WARNING: DATA RACE", 1),
+                Execution([], 1, failed, "[build failed]", 1),
+            ):
+                with self.subTest(parser=parser, result=result):
+                    self.assertEqual(
+                        outcome(command, result, scored=True)[0], "environment_failure"
+                    )
 
     def test_browser_exact_roles_not_totals(self) -> None:
         """Swapping regression/control outcomes or replacing pending identity fails."""

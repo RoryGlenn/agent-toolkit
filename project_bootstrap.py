@@ -35,6 +35,7 @@ SKILL_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 SKILL_DEPENDENCIES.update(
     {f"ddia-{mode}-skill": ("ddia-skill", ROUTING_SKILL) for mode in DDIA_WORKFLOWS}
 )
+SKILL_DEPENDENCIES["legacy-code-skill"] = (ROUTING_SKILL,)
 HOST_DIRECTORIES = {"codex": ".codex/agents", "copilot": ".github/agents"}
 INHERITED_SETTINGS = {"model", "model_reasoning_effort", "sandbox_mode"}
 ROUTES = {
@@ -42,6 +43,7 @@ ROUTES = {
     "documentation-skill": "Documentation, explanations, and reader task success",
     "ddia-skill": "Consequential data architecture, transactions, retries, and recovery",
     "software-design-skill": "Consequential module boundaries, APIs, and maintenance complexity",
+    "legacy-code-skill": "Safe changes to poorly tested code and obstructive dependencies",
     "independent-diff-review-skill": "Independent review of a pull request, branch, or patch",
     "issue-to-tested-pr-skill": "Accepted nontrivial implementation, fixes, and refactoring",
     "release-and-docs-skill": "Release, package, and documentation verification",

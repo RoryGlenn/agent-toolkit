@@ -494,11 +494,12 @@ def evaluate(
             def read_text(path: Path) -> str:
                 return require(cell.execute(["/bin/cat", str(path)], timeout=10)).stdout
 
-            status, checks = outcome(command, result, read_text)
+            scored = artifact is not None and expected_side is None
+            status, checks = outcome(command, result, read_text, scored=scored)
             if status == "environment_failure" and candidate_compile_failure(
                 command,
                 result,
-                scored=artifact is not None and expected_side is None,
+                scored=scored,
                 oom=bool(cell.events()["oom_kill"]),
             ):
                 status = "candidate_build_failure"

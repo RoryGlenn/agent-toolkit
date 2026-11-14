@@ -17,8 +17,10 @@ uv run python -m benchmarks validate
 ```
 
 `validate` runs all trusted reference solutions and targeted wrong controls, including the
-second design-hard phase. Each reference must satisfy its executable oracle and each wrong
-control must fail it. This command deliberately uses ordinary bounded subprocesses **only
+second design-hard phase. Each reference must complete and satisfy its executable oracle,
+and each wrong control must fail it. An internal harness error in either control makes
+validation fail; it cannot establish that the oracle detects incorrect behavior.
+This command deliberately uses ordinary bounded subprocesses **only
 for repository-owned controls**. It does not execute submissions and does not establish
 native isolation. CI runs this deterministic check without credentials or model calls.
 
