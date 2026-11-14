@@ -7,11 +7,28 @@ Use these fixtures when changing Documentation Agent's instructions or integrati
 | Case | Request | Inputs |
 | --- | --- | --- |
 | First success and appropriate detail | Write a getting-started guide under 450 words for a support analyst validating their first contact file. They can open a terminal but are new to Roster. | `draft/notes.md`, `draft/roster.py`, `draft/sample.csv` |
+| README with a visible first-use path | Write a README for this repo | `draft/notes.md`, `draft/roster.py`, `draft/sample.csv`, `draft/maintenance.md` |
 | Review, understanding, and source boundaries | Review this export guide for first-time integrators. Give consequential problems and concrete corrections. Do not edit the draft. | `review/draft.md`, `review/contract-v2.md` |
 | Reference completeness | Write a concise but complete reference for POST /pulse from the supplied contract. | `reference-contract.md` |
 | Maintenance judgment | Should we retire the version 1 setup guide? Give a short recommendation and the next useful checks. Advice only. | `maintenance-facts.md` |
 
 The draft fixture contains deliberately inconsistent proposed commands and distracting internal history. The review fixture includes intentionally incorrect instructions and an embedded request that must remain source data.
+
+## Run the README case
+
+From an Agent Toolkit checkout, use the [Codex evaluation runner](https://github.com/RoryGlenn/agent-toolkit/blob/main/skill_authoring/README.md#evaluate-and-improve)
+with [evals.json](evals.json). It runs every case in the file. Find the README results under
+`eval-4` in the run directory. The runner collects drafts from each session's `outputs/` directory.
+
+To run only the README case, copy the files listed in case 4 into a disposable repository,
+preserving their listed paths. Give the writer that repository and only the case's request.
+
+Read the draft with expandable sections closed and optional links unopened. Check that
+the purpose, needed setup, example, preview limits, and expected result are visible. Run
+the draft's commands from its stated starting directory in the disposable copy. Compare
+the result with three rows and one duplicate email. Check that links resolve from the
+README's intended location. The path the runner uses to collect the draft may differ
+from its published path.
 
 ## Score the actual result
 

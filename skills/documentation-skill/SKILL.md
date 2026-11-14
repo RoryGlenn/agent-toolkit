@@ -35,6 +35,14 @@ When the project lacks reusable documentation context, adapt the [project contex
 
 Match the reader's job to a content pattern. Read [content-patterns.md](references/content-patterns.md) when creating a substantial document, changing its structure, or deciding between tutorial, how-to, concept, reference, and troubleshooting content. It also covers code and visuals.
 
+For new or substantially revised repository READMEs and getting-started guides, default
+to one clear path to a first useful result. Explain what the project helps readers do,
+then give them the prerequisites, copyable steps, a realistic example, and a way to
+verify success. Keep required setup visible and put consequential warnings before the
+steps they affect. Link to reference pages or use clearly labeled expandable sections
+for optional setup, migration, and maintainer details. Follow the user's requirements
+and project conventions. Keep the full supported contract in API and CLI references.
+
 Keep one clear purpose per page where practical. A step-by-step procedure needs a starting state, ordered actions, expected results, and relevant recovery paths. An explanation needs a useful mental model, relationships, examples, and boundaries. Reference material should be predictable and sufficiently complete for precise lookup.
 
 For every important fact, ask what the reader should understand, decide, or do because of it. Supply the missing connection when it is relevant. Define unfamiliar concepts before relying on them. Preserve necessary reasoning, tradeoffs, limitations, and prerequisites; move optional depth to an appropriate existing destination. Do not turn every statement into a long explanation or every request into a new page.
