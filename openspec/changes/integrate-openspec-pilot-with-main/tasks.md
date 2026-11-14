@@ -4,6 +4,7 @@
 
 - [x] 1.1 Integrate current main and resolve README/configuration conflicts while preserving pilot and main behavior.
 - [x] 1.2 Verify catalog, personal status, project integrity, newer legacy-code selection, frozen evidence, and generated hashes.
+- [x] 1.3 Integrate main `72ef2cd` and verify pilot probes, matching current catalog, repository checks, and independent source review.
 
 ## Validation and delivery
 

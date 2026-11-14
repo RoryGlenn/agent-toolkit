@@ -14,6 +14,10 @@ Your project keeps its own stack, tools, and conventions.
 > **Start here:** add the default toolkit to one project, open that project in your coding
 > assistant, and try a prompt below. You can choose individual skills later.
 
+Want to compare the results? The [one-file SQLite demo](benchmarks/README.md#matched-codex-comparisons)
+gives stock Codex and Agent Toolkit the same prompt, **“Review this diff.”** The demo
+includes a verified rollback regression and a clean control.
+
 ## 🧭 Choose a skill
 
 Think of each **skill** as a playbook your coding assistant can load for a particular job.

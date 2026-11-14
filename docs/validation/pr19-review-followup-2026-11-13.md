@@ -1,7 +1,7 @@
 # PR #19 integration verification — 13 November 2026
 
-Status: prepared locally, with a pending merge. This record does not establish a
-commit, push, hosted CI run, or merge of the PR.
+This is the initial local verification checkpoint, before commit or publication.
+Later integration and delivery checkpoints are recorded below.
 
 ## Source and changes
 
@@ -54,3 +54,22 @@ Detailed receipts and snapshots are retained in the task-owned local verificatio
 
 The local integration has no unresolved Git paths. Commit, push, hosted CI, and final
 remote readback remain separate steps. The broader OpenSpec adoption issue is unchanged.
+
+## Integration with newer main before publication
+
+The reviewed initial tree was preserved in DCO-signed-off commit
+`efbfd9dc71645bcbe27a18f8a34e0700069f1b28`. Main then advanced to
+`72ef2cdc7f82e860fb9f970e6d49dc022f8f1d16`; its matched benchmark work integrated
+cleanly. The pilot CLI implementation, generated workflows, and frozen evidence are unchanged.
+Independent source review found no actionable issue.
+
+Independent verification of this newer integration recorded 268 unit tests: 266 passed
+and the same two Bubblewrap environment errors, with no assertion failures. Installer
+60/60, bootstrap 29/29, and the original feature probes 35/35 passed. Feature expectations
+use the matching main `72ef2cd` inventory. All seven generated hashes still match and frozen
+pilot evidence has zero changed bytes.
+
+All 13 existing benchmark phases and seven matched controls passed. Demo controls
+preserved rollback row counts 0/1/0, and CLI demo staging produced matching diffs/prompts
+without actors. Lint, formatting, typing, authoring/upstream/package, whitespace, and
+strict OpenSpec checks passed. Hosted publication and CI are distinct from these local results.

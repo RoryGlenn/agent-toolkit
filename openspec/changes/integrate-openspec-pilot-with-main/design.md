@@ -15,6 +15,10 @@ OpenSpec setup on main. Its historical experiment remains a separate frozen sour
 
 ## Risks / Trade-offs
 
+Main advanced to `72ef2cdc7f82e860fb9f970e6d49dc022f8f1d16` before publication.
+Integrate its matched benchmark work and documentation, preserving the pilot's CLI
+contracts and frozen evidence, and verify the resulting source separately.
+
 - Integration can silently lose newer catalog entries: verify legacy-code selection and dependencies.
 - This host previously denied Bubblewrap loopback configuration: retain unavailable checks explicitly.
 - Local integration does not update the hosted PR or establish hosted CI success.
