@@ -342,6 +342,21 @@ python3 install.py install --target codex --all
 python3 install.py install --target copilot --skill documentation-skill
 ```
 
+If an established legacy skill must remain available under its existing name, opt
+out of that alias migration explicitly. For example, keep an independently
+maintained `doc-agent` while installing the canonical documentation package:
+
+```bash
+python3 install.py install --target codex --all --preserve-legacy-skill doc-agent --dry-run
+python3 install.py install --target codex --all --preserve-legacy-skill doc-agent
+```
+
+Repeat `--preserve-legacy-skill` for recognized legacy names. Their files remain
+untouched and the receipt records the selection. Canonical destination conflicts
+still require inspection and `--backup-existing`. The preserved legacy package and
+canonical package retain distinct identities; repeat the opt-out on later installs.
+Without it, the existing migration behavior is unchanged.
+
 Select skills with `--skill`; their associated roles are included automatically, as shown
 in the [full catalog](#included-skills). You do not need to install each role separately. For example,
 selecting `release-and-docs-skill` installs only that workflow skill, while selecting `ddia-skill`
@@ -383,9 +398,19 @@ package sources fail inspection; concurrent changes can invalidate the observati
 <details>
 <summary><strong>⚙️ Personal install paths, links, and host settings</strong></summary>
 
-Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Imported engineering roles retain their existing model selections; edit `agents/codex/*.toml` if your account uses different models. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
+Codex's [skill discovery](https://learn.chatgpt.com/docs/build-skills) supports symbolically linked skill directories. Its [agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents) discovers custom TOML roles. Codex 0.165.0 opens role files without following symbolic links at runtime, so the installer creates hard links for Codex roles: regular files sharing the canonical source inode. Skills remain symbolic links. Existing Codex role symlinks require a selected reinstall with `--backup-existing`; unselected roles are untouched. The installer does not change global `AGENTS.md`, model settings, host configuration, or permissions. Domain specialists and the implementation owner inherit the caller's model and effort. Reviewer and verifier roles retain explicit model selections; inspect `agents/codex/*.toml` for account compatibility. Their `sandbox_mode` fields are retained from the original definitions, but current Codex does not use those fields to override the parent session's permissions. Review-only behavior is expressed in the role instructions.
 
 Copilot can also discover shared `~/.agents/skills` content. Avoid separately maintaining another copy of a skill it already discovers. Host versions can differ in how duplicate names appear; inspect the skill picker after installation.
+
+### Use the toolkit across local Codex projects
+
+Personal installation makes packages available. A concise global routing rule
+requests actual use, and execution traces establish what happened. Follow the
+[global setup and local audit guide](docs/global-dogfooding.md) for explicit named
+delegation, preserving an existing Doc Agent, fresh-session checks, and recovery.
+The on-demand `usage_audit.py` command reads local rollout evidence; it creates no
+schedule and sends no conversation content anywhere. Linkage status, observed
+skill access, completed named agents, and checked outcomes remain separate.
 
 To test an installation without affecting your normal setup, supply `--home /path/to/disposable-home` outside the toolkit checkout. This ignores inherited `CODEX_HOME`; `--codex-home /explicit/path` can override the agent directory deliberately. The source checkout, active and legacy installation directories, and backup storage must be separate: aliases and nested locations are rejected before changes. The `install` subcommand handles personal links; use `bootstrap` for portable project copies. Windows installation is not supported.
 
@@ -844,6 +869,9 @@ headings or turn structural validation into a quality certification.
 <summary><strong>🧪 Development checks and benchmark</strong></summary>
 
 ## Development checks
+
+For optional checked daily updates of an existing personal Codex installation, see
+[Update the global installation from GitHub](docs/global-dogfooding.md#update-the-global-installation-from-github).
 
 `uv` manages the development tools; it is not required for installation.
 

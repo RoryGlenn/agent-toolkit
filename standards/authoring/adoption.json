@@ -73,8 +73,8 @@
       ],
       "assessment": "reviewed",
       "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
-      "review_record": "standards/authoring/reviews/routing.md",
-      "reviewed_sha256": "922010ffcb32091f8c1f3f91b49f06eea32d694b7350a49ad6f2286950b7ddc6"
+      "review_record": "standards/authoring/reviews/global-dogfooding.md",
+      "reviewed_sha256": "0d6a70125c75d35d30a5a5a1d2faa942acf08ec3c318e88665a138d9032e254a"
     },
     {
       "path": "agents/codex/software-design-agent.toml",

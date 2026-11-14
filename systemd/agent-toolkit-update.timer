@@ -1,0 +1,12 @@
+# Managed by agent-toolkit-updater
+[Unit]
+Description=Check for Agent Toolkit updates daily
+
+[Timer]
+OnCalendar=*-*-* 11:30:00 America/New_York
+Persistent=true
+AccuracySec=1min
+Unit=agent-toolkit-update.service
+
+[Install]
+WantedBy=timers.target

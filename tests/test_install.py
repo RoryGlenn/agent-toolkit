@@ -52,6 +52,8 @@ class InstallerTests(unittest.TestCase):
         target: str = "codex",
         backup_existing: bool = False,
         dry_run: bool = False,
+        preserve_legacy_skills: tuple[str, ...] = (),
+        receipt_id: str | None = None,
     ) -> Path | None:
         """Install a selected package into this test's isolated home."""
         return install.install(
@@ -62,7 +64,112 @@ class InstallerTests(unittest.TestCase):
             self.codex,
             backup_existing=backup_existing,
             dry_run=dry_run,
+            preserve_legacy_skills=preserve_legacy_skills,
+            receipt_id=receipt_id,
         )
+
+    def test_explicit_receipt_id_is_reserved_and_default_remains_compatible(self) -> None:
+        receipt = self.apply(receipt_id="operation-123")
+        assert receipt is not None
+        self.assertEqual(receipt.parent.name, "operation-123")
+        self.assertEqual(json.loads(receipt.read_text())["operation_id"], "operation-123")
+        self.assertIsNone(self.apply(receipt_id="unused-noop"))
+        self.assertFalse((receipt.parent.parent / "unused-noop").exists())
+        install.restore(receipt)
+        ordinary = self.apply()
+        assert ordinary is not None
+        self.assertNotIn("operation_id", json.loads(ordinary.read_text()))
+
+    def test_receipt_id_validation_and_dry_run_do_not_create_state(self) -> None:
+        for value in ("", "../escape", "/absolute", "with.dot", "x" * 129):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(install.InstallError, "Receipt ID"):
+                    self.apply(receipt_id=value)
+                self.assertFalse(self.home.exists())
+        self.assertIsNone(self.apply(receipt_id="dry-run", dry_run=True))
+        self.assertFalse(self.home.exists())
+
+    def test_receipt_reservation_collision_preserves_foreign_state(self) -> None:
+        storage = self.home / ".local/state/agent-toolkit/installations"
+        storage.mkdir(parents=True)
+        for kind in ("file", "directory", "symlink"):
+            with self.subTest(kind=kind):
+                reservation = storage / kind
+                if kind == "directory":
+                    reservation.mkdir()
+                    marker = reservation / "receipt.json"
+                    marker.write_text("foreign receipt")
+                elif kind == "symlink":
+                    marker = self.base / "foreign-marker"
+                    marker.write_text("foreign receipt")
+                    reservation.symlink_to(marker)
+                else:
+                    marker = reservation
+                    marker.write_text("foreign receipt")
+                with self.assertRaises(install.InstallError):
+                    self.apply(receipt_id=kind)
+                self.assertEqual(marker.read_text(), "foreign receipt")
+                self.assertTrue(os.path.lexists(reservation))
+                self.assertFalse((self.home / ".agents/skills/documentation-skill").exists())
+
+    def test_preserved_legacy_skill_survives_full_install_and_restore(self) -> None:
+        """Explicit compatibility keeps both old locations and exact original files."""
+        legacy_files = []
+        for directory in [self.codex / "skills", self.home / ".agents/skills"]:
+            legacy = directory / "doc-agent/SKILL.md"
+            legacy.parent.mkdir(parents=True)
+            legacy.write_text("original standalone workflow")
+            legacy_files.append((legacy, legacy.stat().st_ino))
+        receipt = self.apply(
+            list(install.inventory(self.root)), preserve_legacy_skills=("doc-agent",)
+        )
+        assert receipt is not None
+        self.assertEqual(json.loads(receipt.read_text())["preserved_legacy_skills"], ["doc-agent"])
+        self.assertTrue((self.home / ".agents/skills/documentation-skill").is_symlink())
+        self.assertIsNone(
+            self.apply(list(install.inventory(self.root)), preserve_legacy_skills=("doc-agent",))
+        )
+        install.restore(receipt)
+        for legacy, inode in legacy_files:
+            self.assertEqual(legacy.read_text(), "original standalone workflow")
+            self.assertEqual(legacy.stat().st_ino, inode)
+
+    def test_preserve_legacy_does_not_hide_canonical_conflicts(self) -> None:
+        """An opt-out affects alias retirement, never canonical collision checks."""
+        canonical = self.home / ".agents/skills/documentation-skill"
+        canonical.mkdir(parents=True)
+        with self.assertRaisesRegex(install.InstallError, "Existing entries"):
+            self.apply(preserve_legacy_skills=("doc-agent",))
+        self.assertTrue(canonical.is_dir())
+
+    def test_preserve_legacy_dry_run_and_unknown_alias_are_read_only(self) -> None:
+        """Dry run and bad programmatic selectors create no host state."""
+        self.apply(dry_run=True, preserve_legacy_skills=("doc-agent",))
+        self.assertFalse(self.home.exists())
+        with self.assertRaisesRegex(install.InstallError, "Unknown legacy skills"):
+            self.apply(preserve_legacy_skills=("unknown-agent",))
+        self.assertFalse(self.home.exists())
+
+    def test_cli_preserves_legacy_skill_without_backup(self) -> None:
+        """The public opt-out reaches the installer and leaves the alias in place."""
+        legacy = self.codex / "skills/doc-agent/SKILL.md"
+        legacy.parent.mkdir(parents=True)
+        legacy.write_text("standalone")
+        with patch.object(install, "ROOT", self.root):
+            result = install.main(
+                [
+                    "install",
+                    "--target",
+                    "codex",
+                    "--all",
+                    "--home",
+                    str(self.home),
+                    "--preserve-legacy-skill",
+                    "doc-agent",
+                ]
+            )
+        self.assertEqual(result, 0)
+        self.assertEqual(legacy.read_text(), "standalone")
 
     def list_catalog(self, *, json_output: bool = False) -> str:
         """Run the list command against the disposable package and host."""

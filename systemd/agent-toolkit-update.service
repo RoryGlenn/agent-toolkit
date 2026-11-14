@@ -1,0 +1,14 @@
+# Managed by agent-toolkit-updater
+[Unit]
+Description=Validate and update the personal Agent Toolkit installation
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=@COMMAND@ run
+Environment=PYTHONDONTWRITEBYTECODE=1
+UMask=0077
+Nice=10
+NoNewPrivileges=yes
+TimeoutStartSec=30min
