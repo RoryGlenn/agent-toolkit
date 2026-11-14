@@ -39,6 +39,23 @@
         "Success and error behavior match the supplied contract.",
         "No unsupported authentication mechanism or unspecified parameter constraint is invented."
       ]
+    },
+    {
+      "id": 4,
+      "invocation": "implicit",
+      "prompt": "Write a README for this repo",
+      "expected_output": "A repository README with a clear purpose and one complete first preview path before optional setup or maintenance details.",
+      "files": [
+        "evals/draft/notes.md",
+        "evals/draft/roster.py",
+        "evals/draft/sample.csv",
+        "evals/draft/maintenance.md"
+      ],
+      "expectations": [
+        "With optional sections closed, a newcomer sees what Roster does, the Python 3.10+ prerequisite, and one copyable path to preview the supplied contact file.",
+        "The example runs from the documented starting directory and reports three rows and one duplicate email. The README explains that preview leaves the contact file unchanged and performs no import.",
+        "Migration and maintenance details are accessible through a working link or an expandable section without interrupting the first-use path."
+      ]
     }
   ]
 }

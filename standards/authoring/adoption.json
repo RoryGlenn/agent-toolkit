@@ -291,12 +291,13 @@
         "skills/task-routing-skill/evals/cases.json",
         "tests/test_routing.py",
         "standards/authoring/reviews/routing.md",
-        "standards/authoring/reviews/routing-observations.json"
+        "standards/authoring/reviews/routing-observations.json",
+        "standards/authoring/reviews/documentation-first-use.md"
       ],
       "assessment": "reviewed",
-      "next_check": "Extend final Codex role/case/model coverage and repetitions, especially missing-skill disclosure, failure/subtask cases and topic changes; distinguish root-role test profiles, actual worker dispatch and unverified editor selection.",
-      "review_record": "standards/authoring/reviews/routing.md",
-      "reviewed_sha256": "94b7bcbb5755db1199d61580f20e0ab3602f054bc7f866e76fd21c803deb2bf0"
+      "next_check": "Repeat with held-out READMEs and a matched baseline, then check named-role execution and real-reader success separately.",
+      "review_record": "standards/authoring/reviews/documentation-first-use.md",
+      "reviewed_sha256": "38f68dea9fbfd0d065f90360f10ab630b2c5e79e926a5a9c1bcfe10ac79b0223"
     },
     {
       "path": "skills/independent-diff-review-skill/SKILL.md",
