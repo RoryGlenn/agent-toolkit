@@ -73,3 +73,12 @@ All 13 existing benchmark phases and seven matched controls passed. Demo control
 preserved rollback row counts 0/1/0, and CLI demo staging produced matching diffs/prompts
 without actors. Lint, formatting, typing, authoring/upstream/package, whitespace, and
 strict OpenSpec checks passed. Hosted publication and CI are distinct from these local results.
+
+## Published code checkpoint
+
+DCO-signed-off code commit `70886442d014d8006b26cb34d0ba75d5c7cc3541` was pushed to
+the existing PR #19 branch. Its [push CI](https://github.com/RoryGlenn/agent-toolkit/actions/runs/43547834843)
+and [pull-request CI](https://github.com/RoryGlenn/agent-toolkit/actions/runs/43547839650)
+both passed Python 3.11 and 3.13 checks. The remote branch includes main `72ef2cd`,
+and the PR remains open as a draft. No merge was performed. This delivery receipt is
+a documentation-only follow-up to that tested code checkpoint.
